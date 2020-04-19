@@ -1,0 +1,381 @@
+﻿@using System.Data
+@using ViELearn.BackEnd.Ultilities;
+
+@model DataTable
+
+@{
+    ViewBag.Title = "Thêm tài liệu";
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+@section stylePageLever{
+    <link href="/UITheme/assets/global/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-summernote/summernote.css" rel="stylesheet" type="text/css" />
+
+    <link href="/UITheme/assets/global/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-tagsinput/bootstrap-tagsinput-typeahead.css" rel="stylesheet" type="text/css" />
+
+    <link href="/UITheme/assets/global/plugins/dropzone/dropzone.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/dropzone/basic.min.css" rel="stylesheet" type="text/css" />
+
+    <style type="text/css">
+        .table-scrollable > .table > thead > tr > th {
+            white-space: pre-wrap !important;
+        }
+        thead > tr > th {
+            vertical-align: middle !important;
+        }
+        thead > tr:not(:first-child) > th {
+            font-weight: normal !important;
+            font-size: 85% !important;
+        }
+        .dropzone .note {
+            border-left: 0 !important
+        }
+        .dz-preview {
+            position: relative;
+            display: inline-block;
+            width: 120px;
+            margin: 0.5em;
+        }
+        .modal {
+            width: auto;
+            min-width: 300px;
+            left: 40%;
+            top: 30%;
+        }
+        .panel {
+            margin-bottom:0;
+        }
+    </style>
+}
+@section scriptMainPageLevel{
+    <script src="/UITheme/assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootbox/bootbox.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-summernote/summernote.min.js" type="text/javascript"></script>
+
+    <script src="/UITheme/assets/global/plugins/bootstrap-tagsinput/bootstrap-tagsinput.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/typeahead/handlebars.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/typeahead/typeahead.bundle.min.js" type="text/javascript"></script>
+
+    <script src="/UITheme/assets/global/plugins/dropzone/dropzone.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/clibs.js" type="text/javascript"></script>
+}
+@section scriptConfigPageLevel{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".select2").select2();
+
+            $('.summernote').summernote({ height: 200 });
+
+            $('.mt-multiselect').each(function () {
+                var btn_class = $(this).attr('class');
+                var clickable_groups = ($(this).data('clickable-groups')) ? $(this).data('clickable-groups') : false;
+                var collapse_groups = ($(this).data('collapse-groups')) ? $(this).data('collapse-groups') : false;
+                var drop_right = ($(this).data('drop-right')) ? $(this).data('drop-right') : false;
+                var drop_up = ($(this).data('drop-up')) ? $(this).data('drop-up') : false;
+                var select_all = ($(this).data('select-all')) ? $(this).data('select-all') : false;
+                var width = ($(this).data('width')) ? $(this).data('width') : '';
+                var height = ($(this).data('height')) ? $(this).data('height') : '';
+                var filter = ($(this).data('filter')) ? $(this).data('filter') : false;
+
+                // advanced functions
+                var onchange_function = function (option, checked, select) {
+                    alert('Changed option ' + $(option).val() + '.');
+                }
+                var dropdownshow_function = function (event) {
+                    alert('Dropdown shown.');
+                }
+                var dropdownhide_function = function (event) {
+                    alert('Dropdown Hidden.');
+                }
+
+                // init advanced functions
+                var onchange = ($(this).data('action-onchange') == true) ? onchange_function : '';
+                var dropdownshow = ($(this).data('action-dropdownshow') == true) ? dropdownshow_function : '';
+                var dropdownhide = ($(this).data('action-dropdownhide') == true) ? dropdownhide_function : '';
+
+                // template functions
+                // init variables
+                var li_template;
+                if ($(this).attr('multiple')) {
+                    li_template = '<li class="mt-checkbox-list"><a href="javascript:void(0);"><label class="mt-checkbox"> <span></span></label></a></li>';
+                } else {
+                    li_template = '<li><a href="javascript:void(0);"><label></label></a></li>';
+                }
+
+                // init multiselect
+                $(this).multiselect({
+                    nonSelectedText: ' -- Mời chọn -- ',
+                    nSelectedText: ' được chọn',
+                    showSearch: true,
+                    searchText: 'Tìm, lọc',
+                    enableClickableOptGroups: clickable_groups,
+                    enableCollapsibleOptGroups: collapse_groups,
+                    disableIfEmpty: true,
+                    enableFiltering: filter,
+                    includeSelectAllOption: select_all,
+                    dropRight: drop_right,
+                    buttonWidth: width,
+                    maxHeight: height,
+                    onChange: onchange,
+                    onDropdownShow: dropdownshow,
+                    onDropdownHide: dropdownhide,
+                    buttonClass: btn_class,
+                    //optionClass: function(element) { return "mt-checkbox"; },
+                    //optionLabel: function(element) { console.log(element); return $(element).html() + '<span></span>'; },
+        			/*templates: {
+		                li: li_template,
+		            }*/
+                });
+            });
+
+            var tags = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                prefetch: {
+                    //url: '/UITheme/typeahead_countries.json',
+                    url: '/QuanLyTaiLieu/DanhSachTags',
+                    filter: function (list) {
+                        return $.map(list, function (tagname) {
+                            return { name: tagname };
+                        });
+                    }
+                }
+            });
+
+            tags.initialize();
+            $('#typeahead_tags').tagsinput({
+                typeaheadjs: {
+                    name: 'tags',
+                    displayKey: 'name',
+                    valueKey: 'name',
+                    source: tags.ttAdapter()
+                }
+            });
+
+            $('#seo_keywords').tagsinput({});
+
+            Dropzone.autoDiscover = false;
+            $(".dropzone").dropzone({
+                url: "/QuanLyTaiLieu/UploadFile?id=@ViewBag.Id",
+                resizeWidth: 1280,
+                resizeHeight: 1280,
+                resizeMimeType: 'image/jpeg,image/png,image/gif',
+                resizeMethod: 'contain',
+                acceptedFiles: "image/jpeg,image/png,image/gif",
+            });
+        });
+
+        function ShowFilter(name, title) {
+            $('.filter').each(function () {
+                $(this).hide();
+            });
+            $('#' + name).show();
+
+            $("#divData").html('');
+            //$('#title').text(title);
+        }
+
+        function submit(type) {
+            $("#type").val(type);
+
+            // Kiem tra du lieu dau vao
+            $(".required-nonestyle").each(function () {
+                var v = $(this).val();
+                var title = $(this).parent().text().trim();
+                if (typeof title != 'undefined') {
+                    title = title.substr(0, title.indexOf(':')).trim();
+                }
+                if (typeof v == 'undefined' || v == '' || v == 0 || v == '0') {
+                    bootbox.alert("Dữ liệu '" + title + "' không được để trống!");
+                    return false;
+                }
+            });
+
+            var p_data = {
+                _status: $('#trang_thai').val(),
+                _show_athome: $('#show_athome').val(),
+
+                _price: $('#price').val(),
+                _price_src: $('#price_src').val(),
+                _chapter: $('#chapter_count').val(),
+                _page: $('#page_count').val(),
+                _view_temp: $('#view_temp').val(),
+
+                _title: $('#title').val(),
+                _author: $('#author').val(),
+                _slug: $('#slug').val(),
+                _sapo: $('#sapo').val(),
+                _content: $('#noidung').val(),
+
+                _cates: $('#cates').val(),
+                _cates_slug: string_to_slug($('#cates').val()),
+                _tags: $('#typeahead_tags').val(),
+                _tags_slug: string_to_slug($('#typeahead_tags').val()),
+                _related: $('#related_news').val(),
+                _meta_keywords: $('#seo_keywords').val(),
+                _meta_description: $('#seo_description').val()
+            };
+            var p_url = '/QuanLyTaiLieu/Save?id=@ViewBag.Id';
+            ajax_post(p_url, p_data, type, 'QuanLyTaiLieu');
+        }
+    </script>
+}
+@section actionMenu{
+    <div class="page-bar">
+        <ul class="page-breadcrumb">
+            <li><i class="fa fa-plus icon-home"></i> <i class="fa fa-angle-right"></i></li>
+            <li><a href="/QuanLyTaiLieu">Danh sách</a> <i class="fa fa-angle-right"></i></li>
+            <li><span>@ViewBag.Title</span></li>
+        </ul>
+        <div class="page-toolbar">
+            <div class="btn-group pull-right">
+                <a class="btn btn-default" href="/QuanLyTaiLieu"><i class="fa fa-arrow-left"></i> Quay lại</a>
+                <button class="btn btn-success" onclick="submit(2);"><i class="fa fa-photo"></i> Thêm tài liệu/ảnh</button>
+                <button class="btn btn-info" onclick="submit(1);"><i class="fa fa-save"></i> Lưu, nhập mới</button>
+                <button class="btn btn-primary" onclick="submit(0);"><i class="fa fa-save"></i> Lưu xong đóng</button>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col-lg-4 col-md-5 col-sm-6 col-lg-push-8 col-md-push-7 col-sm-push-6">
+        <div class="form-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Cấu hình <span class="btn btn-sm btn-primary pull-right" style="margin-top: -7px;margin-right: -12px;" onclick="submit_configs()"><i class="fa fa-save" style="padding-left:10px;padding-right:10px;"></i></span></h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="row">
+                            <div class="form-group col-sm-6">
+                                Trạng thái:
+                                <select name="trang_thai" id="trang_thai" class="form-control" @*style="width:100%"*@>
+                                    <option value="0">Đang soạn thảo</option>
+                                    <option value="1">Hiển thị</option>
+                                    <option value="4">Xóa, hạ bài</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                Hiện trang chủ:
+                                <select name="show_athome" id="show_athome" class="form-control" @*style="width:100%"*@>
+                                    <option value="0">Không hiện</option>
+                                    <option value="1">Hiện ở trang chủ</option>
+                                </select>
+                            </div>
+                            <br />
+                            <div class="form-group col-sm-6">
+                                Giá bán: <small class="pull-right font-green">(ngàn đ)</small>
+                                <input type="number" name="price" id="price" class="form-control" value="0" />
+                            </div>
+                            <div class="form-group col-sm-6">
+                                Giá gốc: <small class="pull-right font-green">(ngàn đ)</small>
+                                <input type="number" name="price_src" id="price_src" class="form-control" value="0" />
+                            </div>
+                            <div class="form-group col-sm-4">
+                                Số chương/tập:
+                                <input type="number" name="chapter_count" id="chapter_count" class="form-control" value="1" />
+                            </div>
+                            <div class="form-group col-sm-4">
+                                Số trang:
+                                <input type="number" name="page_count" id="page_count" class="form-control" value="1" />
+                            </div>
+                            <div class="form-group col-sm-4">
+                                Lượt xem:
+                                <div class="input-group">
+                                    <input type="number" name="view_temp" id="view_temp" class="form-control" value="0" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-success" type="button" onclick="submit_cachetotalview()">
+                                            <i class="fa fa-recycle fa-fw"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        
+        <div class="portlet box green">
+            <div class="portlet-title">
+                <div class="caption">
+                    SEO
+                </div>
+                <div class="tools">
+                    <a href="javascript:;" class="collapse" data-original-title="" title=""> </a>
+                    @*<a href="#portlet-config" data-toggle="modal" class="config" data-original-title="" title=""> </a>*@
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="form-group">
+                    Slug: <span class="font-red">(*)</span>
+                    <input name="slug" id="slug" class="form-control required-nonestyle" value="" />
+                </div>
+                <div class="form-group">
+                    Meta-keywords:
+                    <input type="text" value="" id="seo_keywords">
+                </div>
+                <div class="form-group">
+                    Meta-description:
+                    <input type="text" class="form-control" value="" id="seo_description">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8 col-md-7 col-sm-6 col-lg-pull-4 col-md-pull-5 col-sm-pull-6">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="form-group col-md-8">
+                        Tiêu đề: <span class="font-red">(*)</span>
+                        <input name="title" id="title" class="form-control required-nonestyle" onkeyup="update_slug(this, '#slug');" value="" />
+                    </div>
+                    <div class="form-group col-md-4">
+                        Tác giả:
+                        <input name="author" id="author" class="form-control" value="" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    Mô tả ngắn:
+                    <textarea name="sapo" id="sapo" class="form-control" rows="4" onkeyup="clone_val(this, '#seo_description')"></textarea>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    Chuyên mục, chủ đề:
+                    <select name="cates" id="cates" class="form-control select2" multiple style="width:100%">
+                        @foreach (DataRow dr in ViewBag.DsTags.Rows)
+                        {
+                            <option value="@dr["name"]">@dr["name"]</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    Từ khóa, tags:
+                    <input type="text" value="" id="typeahead_tags">
+                </div>
+                <div class="form-group">
+                    Bài viết liên quan:
+                    <select name="related_news" id="related_news" class="form-control select2" multiple style="width:100%">
+                        @*@foreach (DataRow dr in ViewBag.DsBaiViet.Rows)
+                        {
+                            <option value="@dr["id"]">@dr["title"]</option>
+                        }*@
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    Nội dung:
+                    <textarea name="noidung" id="noidung" class="form-control summernote" rows="4"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,8 @@
+﻿@model IEnumerable<ViELearn.Models.ProjectModels.ImageUploadView>
+
+@foreach (var image in Model)
+{
+    <a href="#" onclick="ReturnImage(this)" data-url="@Request.Url.GetLeftPart(UriPartial.Authority)@image.Url">
+        <img src="@image.Url" alt="Hejsan" id="#image" data-source="@image.Url" width="200" height="200" />
+    </a>
+}

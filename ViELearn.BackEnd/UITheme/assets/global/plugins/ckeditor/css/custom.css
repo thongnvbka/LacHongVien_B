@@ -1,0 +1,41 @@
+﻿body {
+}
+
+.btn-hotline {
+    padding: 10px;
+    background-color: #BD8E2D;
+    color: #fff;
+    border-radius: 3px;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 6px;
+    margin-right: 10px;
+}
+
+.btn-tuvan {
+    padding: 10px;
+    background-color: #D80D00;
+    color: #fff;
+    border-radius: 3px;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 6px;
+    margin-right: 10px;
+}
+
+    .btn-hotline a, .btn-tuvan a {
+        color: white;
+        font-size: 17px;
+        text-decoration:none!important;
+    }
+blockquote {
+    padding: 2px 5px;
+    border-style: solid;
+    border-color: #ccc;
+    border-width: 0;
+    border-left: solid 3px #630;
+    background-color: #f5f2f2;
+}
+#muc-luc ol li div{
+    margin-left: 20px!important;
+}

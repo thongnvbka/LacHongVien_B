@@ -1,0 +1,127 @@
+﻿@using Microsoft.AspNet.Identity.EntityFramework;
+@model List<IdentityRole>
+
+@{
+    ViewBag.Title = "Danh sách nhóm người dùng";
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+
+@section stylePageLever
+{
+    <link rel="stylesheet" type="text/css" href="~/UITheme/assets/global/plugins/jstree/dist/themes/default/style.min.css">
+}
+
+<script type="text/javascript" src="~/Scripts/jstree-3.3.2.min.js"></script>
+<script type="text/javascript" src="~/Scripts/jstreegrid.js"></script>
+
+@section actionMenu{
+    <ul class="page-breadcrumb">
+        <li> <i class="icon-home"></i> <a href="/">Trang chủ</a> <i class="fa fa-angle-right"></i> </li>
+        <li> <span>Quản trị hệ thống</span> <i class="fa fa-angle-right"></i> </li>
+        <li> <span>@ViewBag.Title</span> </li>
+    </ul>
+    <div class="page-toolbar">
+    </div>
+}
+
+<div class="portlet">
+    <div class="portlet-header">
+    </div>
+    <div class="portlet-body">
+        <a href="#" data-width="60%" data-url="@Url.Action("Create", "RolesAdmin", new { roleId = 0 })" class="btn blue" onclick="OpenModalCustom(this)"><i class="fa fa-plus"></i>Thêm mới</a>
+        <table id="tableRoles"
+                data-id-field="Id"
+                data-toggle="tableRoles"
+                data-show-refresh="true"
+                data-search="true">
+            <thead>
+                <tr>
+                    <th data-field="state" data-checkbox="true"></th>
+                    <th data-field="Name" data-align="left" data-formatter="operateName" data-sortable="true">Nhóm người dùng</th>
+                    <th data-field="Id" data-formatter="operateListUserInGroup" data-align="center">Người dùng thuộc nhóm</th>
+                    <th data-field="RoleType" data-formatter="operateSetRight" data-align="center">Phân quyền</th>
+                    <th data-field="Id" data-formatter="operateDelete" data-align="center">#</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    var tableRoleControl = $('#tableRoles');
+
+    tableRoleControl.bootstrapTable({
+        method: "post",
+        url: "@Url.Action("GetListRole", "RolesAdmin")",
+        pagination: "true",
+        sidePagination: "client",
+        pageSize: 10,
+        pageList: "[5,10,15]",
+        select: true
+    });
+
+    function operateName(value, row, index) {
+        console.log(value);
+        console.log(row.Id);
+        console.log(index);
+        return [
+                '<a href="#" data-width="60%" data-url="/RolesAdmin/Edit?roleId=' + row.Id + '" onclick="OpenModalCustom(this);">' + row.Name + '</a>'
+        ].join('');
+    }
+
+    function operateListUserInGroup(value, row, index) {
+        return [
+                '<a href="#" data-width="60%" data-url="/RolesAdmin/Details?roleId=' + row.Id + '" onclick="OpenModalCustom(this);">' + 'Chi tiết' + '</a>'
+        ].join('');
+    }
+
+    function operateDelete(value, row, index) {
+        return [
+                '<i class="fa fa-trash-o btn-save" id="' + value + '" data-id="' + value + '" style="color:orangered;cursor:pointer;" onclick="DeleteRole(this)">',
+                '</i>'
+        ].join('');
+    }
+
+    function operateSetRight(value, row, index) {
+        return [
+                '<a href="#" data-width="80%" data-url="/SysMenuManage/GetRoleAccessRight?roleId=' + row.Id + '&isPopup=1" onclick="OpenModalCustom(this);">' + 'Phân quyền' + '</a>'
+        ].join('');
+    }
+
+    function DeleteRole(itm) {
+        bootbox.confirm({
+            message: "Bạn chắc chắn muốn xóa?",
+            buttons: {
+                confirm: {
+                    className: 'btn-danger'
+                },
+                cancel: {
+                    className: 'btn-success'
+                }
+            },
+            callback: function (result) {
+                if (result == true) {
+                    $.ajax({
+                        type: 'post',
+                        url: '@Url.Action("DeleteConfirmed", "RolesAdmin")',
+                        ajaxasync: true,
+                        data: { roleId: $(itm).attr('data-id') },
+                        success: function (data) {
+                            if (data == "Success") {
+                                tableRoleControl.bootstrapTable('refresh');
+                                bootbox.alert("Xóa dữ liệu thành công!");
+                            }
+                            else {
+                                bootbox.alert(data);
+                            }
+                        },
+                        error: function (data) {
+                            bootbox.alert("Có lỗi xảy ra!");
+                        }
+                    });
+                }
+            }
+        });
+    }
+</script>

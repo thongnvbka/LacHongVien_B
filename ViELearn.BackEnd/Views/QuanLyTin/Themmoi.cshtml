@@ -1,0 +1,66 @@
+﻿@using System.Data
+@{
+    ViewBag.Title = "Themmoi";
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+
+@section jsFooter{
+    <script>
+     
+        var editor = CKEDITOR.replace('txtContent', {
+            customConfig: '/Scripts/CkeditorMvc/config.js',
+        });
+    </script>
+}
+
+
+@using (Html.BeginForm("Themmoi","QuanLyTin",FormMethod.Post))
+{
+    <div class="form-group">
+        Tiêu đề
+        <input type="text" class="form-control" value="" name="title">
+    </div>
+
+    <div class="form-group">
+       Sapo
+        <input type="text" class="form-control" value="" name="sapo">
+    </div>
+
+    <div class="form-group">
+      Nội dung
+        <input type="text" class="form-control" id="txtContent" value="" name="noidung">
+    </div>
+    <div class="form-group">
+        Thumbnail url
+        <input type="text" class="form-control" value="" name="url">
+    </div>
+    <div class="form-group">
+        Chuyên mục, chủ đề:
+        <select name="cates" id="cates" class="form-control select2" style="width:100%" onchange="filterChilds(this, 'quanhuyen');">
+            <option value="0">-- Mời chọn --</option>
+            @foreach (DataRow dr in ViewBag.DsTags.Rows)
+            {
+                <option value="@dr["name"]">@dr["name"]</option>
+            }
+        </select>
+    </div>
+    
+    <div class="form-group">
+        Từ khóa
+        <input type="text" class="form-control" value="" name="tag">
+    </div>
+    <div class="form-group">
+        Slug
+        <input type="text" class="form-control" value="" name="slug">
+    </div>
+    <div class="form-group">
+        Meta keyword
+        <input type="text" class="form-control" value="" name="meta_keywords">
+    </div>
+    <div class="form-group">
+        Meta-description:
+        <input type="text" class="form-control" value="" name="meta_descriptions">
+    </div>
+    <input type="submit" value="submit" />
+}
+

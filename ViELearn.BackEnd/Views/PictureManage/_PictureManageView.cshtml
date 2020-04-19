@@ -1,0 +1,108 @@
+﻿<link rel="stylesheet" type="text/css" href="~/Scripts/galereya-latest/css/jquery.galereya.css">
+<link rel="stylesheet" type="text/css" href="~/Scripts/galereya-latest/css/ex1.style.css">
+<link href="~/UITheme/assets/global/plugins/dropzone/dropzone.min.css" rel="stylesheet" type="text/css" />
+
+<script src="~/UITheme/assets/global/plugins/dropzone/dropzone.min.js" type="text/javascript"></script>
+<script src="~/UITheme/assets/pages/scripts/form-dropzone.min.js" type="text/javascript"></script>
+<script src="~/Scripts/galereya-latest/js/jquery.galereya.min.js" type="text/javascript"></script>
+
+<div class="portlet box blue">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-gift"></i>Thư viện ảnh @ViewBag.returnLink
+        </div>
+        <div class="tools">
+            <a href="javascript:;" class="collapse"> </a>
+            <a href="#portlet-config" data-toggle="modal" class="config"> </a>
+        </div>
+    </div>
+    <div class="portlet-body">
+        <div class="row">
+            <div class="col-md-2 col-sm-2 col-xs-2">
+                <ul class="nav nav-tabs tabs-left" id="ulTabDefault"></ul>
+            </div>
+            <div class="col-md-10 col-sm-10 col-xs-10">
+                <div class="tab-content">
+                    @if (string.IsNullOrEmpty(ViewBag.returnLink))
+                    {
+                        <div class="tab-pane active" id="tab_config">
+                            @{Html.RenderPartial("~/Views/PictureManage/_PictureConfig.cshtml");}
+                        </div>
+                    }
+                    <div class="tab-pane" id="tab_gallery_default">
+                        <div id="showGalleryDefault">
+                        </div>
+                        <div id="showGalleryUploadFrom">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function InitTabDefault() {
+        var liTabDefault0 = '<li>' + '<a href="#tab_config" data-toggle="tab">' + 'Cài đặt' + '</a>' + '</li>';
+        var liTabDefault1 = '<li>' + '<a href="#tab_gallery_default" data-toggle="tab" onclick="OnTabLoadImagesDefault(\'AnhTinBai\')">' + 'Ảnh tin bài' + '</a>' + '</li>';
+        var liTabDefault2 = '<li>' + '<a href="#tab_gallery_default" data-toggle="tab" onclick="OnTabLoadImagesDefault(\'AnhThumbnail\')">' + 'Ảnh thumbnail' + '</a>' + '</li>';
+        if ('@ViewBag.returnLink' == '') {
+            $("#ulTabDefault").append(liTabDefault0);
+        }
+        $("#ulTabDefault").append(liTabDefault1);
+        $("#ulTabDefault").append(liTabDefault2);
+    };
+
+    function InitTabAlbum() {
+        $.ajax({
+            type: 'POST',
+            url: "../PictureManage/GetListAlum",
+            success: function (resultData) {
+                var html = '';
+                for (var key in resultData) {
+                    var value = resultData[key];
+                    html += '<li>' + '<a href="#tab_gallery_default" data-toggle="tab" onclick="OnTabLoadImagesDefault(' + value.Id + ')">' + value.Name + '</a>' + '</li>'
+                }
+                $("#ulTabDefault").append(html);
+            }
+        });
+    }
+
+    function RefreshAllTab() {
+        $("#ulTabDefault").html("");
+        InitTabDefault();
+        InitTabAlbum();
+    };
+
+    function OnTabLoadImagesDefault(tab,refreshUpload) {
+        $("#showGalleryDefault").html("")
+        $("#showGalleryDefault").load("../PictureManage/TabDefaultGalleryView?dirSelect=" + tab);
+        if ('@ViewBag.returnLink' == '' && parseInt(tab) != 'NaN' && refreshUpload != 'none')
+        {
+            $("#showGalleryUploadFrom").load("../PictureManage/UploadZoneView?idAlbum=" + tab);
+        }
+    }
+
+    function RefreshGallery(galleryCtrl, dataLoad) {
+        galleryCtrl.html("");
+        galleryCtrl.galereya({
+            modifier: 'ex1',
+            wave: false,
+            spacing: 5,
+            disableSliderOnClick: true,
+            onCellClick: function (e) {                
+                if ('@ViewBag.returnLink' != '') {                    
+                    var hostUrl = window.location.origin;
+                    var returnLink = e.currentTarget.firstChild.currentSrc.replace(hostUrl, '');
+                    $('#@ViewBag.returnLink').val(returnLink);
+                    $('#ajaxLocalModalProject').modal('toggle');
+                }
+            },
+            load: function (next) { next(dataLoad); }
+        });
+    }
+    $(document).ready(function () {
+        RefreshAllTab();
+    });
+</script>

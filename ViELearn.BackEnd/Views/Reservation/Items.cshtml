@@ -1,0 +1,64 @@
+﻿@using System.Data
+@using ViELearn.BackEnd.Ultilities
+
+@foreach (DataRow item in ViewBag.Data.Rows)
+{
+
+    <tr id="@item["Id"]">
+        <td class="text-center"><a href="javascript:void(0)">@(ViewBag.Data.Rows.IndexOf(item) + 1)</a></td>
+        <td class="text-left">@item["Name"]</td>
+        <td class="text-center">@item["Email"]</td>
+        <td class="text-center">@item["Phone"]</td>
+        
+        <td class="text-center">@*@Convert.ToDateTime(item["FromDate"]).ToString("dd/MM/yyyy")*@
+        <div class="form-group">
+                <input value="@Convert.ToDateTime(item["FromDate"]).ToString("yyyy-MM-dd")" type="date" class="form-control hasDatepicker date-picker" name="to" id="date_from" />
+        </div>
+        </td>
+        <th class="text-center" style="width: 120px;"><input value="@item["TimeSet"]" id="timeSet" class="form-control clockpicker js-input-time" type="text" name="time_from" required=""></th>
+        @*<td class="text-center">@Convert.ToDateTime(item["ToDate"]).ToString("dd/MM/yyyy")</td>*@
+        @*<td class="text-center">@item["People"]</td>*@
+        <td class="text-left">@item["Description"]</td>
+        <td class="text-left">
+      
+                <div  id="heading_@item["Id"]">
+                    <h5 class="mb-0">
+                        <button style="text-decoration:none;" class="btn btn-link" data-toggle="collapse" data-target="#collapse_@item["Id"]" aria-expanded="true" aria-controls="collapse_@item["Id"]">
+                          Nội dung:
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapse_@item["Id"]" class="collapse  " aria-labelledby="heading_@item["Id"]" data-parent="#accordion">
+                    <div class="card-body">
+                        <textarea class="txt-note"> @item["Note"]</textarea>
+                    </div>
+                </div>
+      
+        </td>
+        <td class="text-left">
+            <select class="select2 form-control se-status">
+                <option value="0">Mới</option>
+                <option value="1">Đã xử lý</option>
+                <option value="2">Hủy</option>
+            </select>
+            @*@item["Status"]</td>*@
+            </td>
+        <td style="vertical-align:middle" class="text-center">
+            <a href="#" data-id="@item["Id"]"  class="fc-save"><i class="fa fa-floppy-o" aria-hidden="true"></i></a>
+            <a href="javascript:void(0)" title="Xóa bài" data-id="@item["Id"]" onclick="submit_del($(this).data('id'))"><i class="fa fa-trash font-red"></i></a>
+        </td>
+    </tr>
+}
+
+@*<script type="text/javascript">
+    $('#timeSet').clockpicker();
+</script>*@
+<script type="text/javascript">
+    $('.clockpicker').clockpicker({
+        placement: 'bottom',
+        align: 'left',
+        donetext: 'Chọn'
+    });
+    $('.collapse').collapse('hide')
+</script>

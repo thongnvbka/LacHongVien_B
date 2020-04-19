@@ -1,0 +1,95 @@
+﻿@using ViELearn.Models.ProjectModels;
+@model DanhMucChung
+
+<div id="divDetailSpecsParameter">
+    @using (Ajax.BeginForm("SaveSpecsParameter", "SpecsParameters", new AjaxOptions { HttpMethod = "POST", OnSuccess = "TmpCreateOrSaveAlert" }, new { @class = "form-horizontal" }))
+    {
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>@(Model.id>0? "Thông tin danh mục" : "Tạo mới danh mục")</h4>
+            </div>
+            <div class="modal-body">
+                <div class="col sm-12">
+                    <div class="form-body">
+                        @Html.HiddenFor(m => m.id)
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Danh mục cha</label>
+                            <div class="col-md-6">                                
+                                @Html.DropDownList("idDanhMucCha", (SelectList)ViewBag.lstDanhMucCha, new { @class = "form-control",@id="ddlLstDanhMucCha" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Mã danh mục</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="MaDanhMuc" value="@Model.MaDanhMuc" id="MaDanhMuc">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Tên danh mục</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="TenDanhMuc" value="@Model.TenDanhMuc">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Thứ tự</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="ThuTu" value="@Model.SoThuTu">
+                            </div>
+                        </div>                        
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Trạng thái</label>
+                            <div class="col-md-6">
+                                <input type="checkbox" class="make-switch" data-size="mini" id="ckSetActive" data-on-text="Bật" data-off-text="Tắt" name="ChkActive" value="true" @(Model.TrangThai == 1 ? "checked" : "") />
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <div class="row" style="text-align:center">                                
+                                <button type="submit" class="btn blue">@(Model.id != 0?"Lưu thay đổi":"Thêm mới")</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn default" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+}
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $().bootstrapSwitch && $(".make-switch").bootstrapSwitch();                
+        if ('@Model.id' == '0') $("#MaDanhMuc").val($("#customBsSearch-MaDanhMuc").val());
+        $("#ddlLstDanhMucCha").select2({ width: '100%', dropdownAutoWidth: true });
+
+        //$("#MaDanhMuc").autocomplete({
+        //    source: jLstMaDanhMuc,
+        //    width: 300,
+        //    max: 20,
+        //    delay: 100,
+        //    minLength: 1,
+        //    autoFocus: true,
+        //    cacheLength: 1,
+        //    scroll: true,
+        //    highlight: false,
+        //    select: function (event, ui) {
+        //        $("#MaDanhMuc").val(ui.item.MaDanhMuc);
+        //        console.log("aaaa");
+        //    },
+        //    messages: {
+        //        noResults: "", results: ""
+        //    }
+        //});
+    })    
+
+    function TmpCreateOrSaveAlert(data)
+    {
+        CreateOrSaveAlert(data,@Model.id);
+    }
+</script>

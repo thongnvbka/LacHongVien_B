@@ -1,0 +1,38 @@
+﻿<link href="~/Scripts/JqueryThemes/jquery-ui.min.css" rel="stylesheet" type="text/css">
+<link href="~/UITheme/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">    
+<script src="~/Scripts/jquery-2.1.4.min.js" type="text/javascript"></script>
+<script src="~/Scripts/jquery-ui-1.9.2.js" type="text/javascript"></script>
+<script src="~/UITheme/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>     
+
+<div class="row">
+    <div class="col-md-2">     
+        @foreach (var tmpDir in ViewBag.lstDateTimeDir)
+        {
+            <a href="#" onclick="ShowListImages('@tmpDir')">
+                <label>@tmpDir</label>
+            </a>
+            <br/>
+        }
+    </div>
+    <div class="col-md-10" id="ImageListShow">
+        @Html.Action("GetListImg", "NewsManage", new { inDir = ViewBag.lastDir });
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    function ShowListImages(inDir) {
+        var url = '../NewsManage/GetListImg?inDir='+inDir;
+        $('#ImageListShow').load(url);
+    }
+
+    function ReturnImage(itm)
+    {
+        var urlImage = $(itm).attr("data-url");
+        var tmp = $('div[id^="list_"]')
+        //This takes the data value and id of the editor and sends the data(i.e.,image url) back to the caller page
+        window.opener.CKEDITOR.tools.callFunction(1, urlImage);
+        //window.opener.updateValue("cke_125_textInput", urlImage);
+        window.close();
+    }
+</script>

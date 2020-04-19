@@ -1,0 +1,48 @@
+﻿@using System.Data
+@using ViELearn.BackEnd.Ultilities
+
+@if (ViewBag.User != null)
+{
+
+    int stt = 0;
+    foreach (DataRow dr in ViewBag.User.Rows)
+    {
+        stt++;
+        <tr style="height:50px!important" data-id="@dr["id"]">
+            <td class="text-center">@stt</td>
+            <td class="text-left"><a data-url="/Users/DetailsUser?userId=@dr["Id"]" onclick="OpenModalCustom(this);">@dr["UserName"] @*(Số bài viết: @dr["CountNews"].ToString())*@</a></td>
+            <td class="text-left"><a data-id="'@dr["id"]'" class="dlname-up">@dr["DisplayName"]</a></td>
+            <td class="text-center"><a href="@Url.Action("ResetPassword","Users")"  class="btn btn-sm btn-default btn-circle">Reset</a> </td>
+            <td class="text-center"><a data-stt="@dr["LockoutEnabled"]" data-id="@dr["Id"]" onclick="doitrangthai(this,'@dr["Id"]')" class="btn btn-sm btn-default btn-circle"> @Html.Raw(dr["LockoutEnabled"].MapBool() ? "khóa" : "kích hoạt")</a> </td>
+            <td class="text-center">
+                <a><i  data-id="@dr["Id"]" onclick="DeleteUser('@dr["Id"]')" class="fa fa-trash font-red"></i></a>
+            </td>
+        </tr>
+    }
+}
+
+<script>
+    $(".dlname-up").editable({
+        title: 'Thay đổi tên hiển thị',
+        placement: 'right',
+        inputclass: "form-control input-medium",
+        showbuttons: "bottom",
+        emptytext: '....',
+        tpl: "<textarea name='awesome'  style='width: 400px'></textarea>",
+        success: function (response, newValue) {
+            var id = $(this).data('id'); // Lay ra ID cua gia tri thay doi
+            if (newValue != null && newValue != '') {
+                $.ajax({
+                    type: 'post',
+                    datatype: 'json',
+                    url: '/Users/UpdateDisplayName',
+                    data: {
+                        id: id,
+                        name: newValue
+                    }
+                });
+            }
+        }
+    });
+
+</script>

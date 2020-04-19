@@ -1,0 +1,49 @@
+﻿@using ViELearn.Models.SystemModels;
+@model SYS_MENU
+
+@using (Ajax.BeginForm("SaveTaoMoiDanhMuc", "TreeMenuManage", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divTaoMoiDanhMuc", OnSuccess = "CreateOrSaveAlert('Thêm mới thành công!')" }, new { @class = "form-horizontal" }))
+{
+    <div class="form-body form-group" style="margin-bottom:0">
+        <input type="hidden" name="CLASS_MAIN" value="nav-item">
+        <input type="hidden" name="Status" value="1">
+
+        <div class="col-md-4">
+            ID danh mục cha:
+            <input type="number" class="form-control" name="DANHMUCCHA" value="@Model.ID_SYS_MENU" />
+        </div>
+        <div class="col-md-8">
+            Tên danh mục:
+            <input type="text" class="form-control" placeholder="Enter text" name="TENDANHMUC" value="" />
+        </div>
+        <div class="col-md-6">
+            Tên controller:
+            <input type="text" class="form-control" placeholder="Enter text" name="CONTROLLER" value="" />
+        </div>
+        <div class="col-md-6">
+            Action:
+            <input type="text" class="form-control" placeholder="Enter text" name="ACTION" value="" />
+        </div>
+        <div class="col-md-3">
+            Cấp danh mục:
+            <input type="number" min="0" class="form-control" placeholder="Enter text" name="CAPDO" value="@Model.CAPDO" />
+        </div>
+        <div class="col-md-3">
+            Có DM con:
+            <select class="form-control" name="DANHMUCCON">
+                <option selected value="0">Không</option>
+                <option value="1">Có</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            Icon:
+            <input type="text" class="form-control" placeholder="Enter text" name="CLASS" value="" />
+        </div>
+        <div class="col-md-3">
+            Số thứ tự:
+            <input type="number" min="0" class="form-control" placeholder="Enter text" name="ORDERVIEW" value="1" />
+        </div>
+    </div>
+    <div class="form-actions" style="text-align:center;">
+        <button type="submit" class="btn blue"> Tạo mới danh mục</button>
+    </div>
+}

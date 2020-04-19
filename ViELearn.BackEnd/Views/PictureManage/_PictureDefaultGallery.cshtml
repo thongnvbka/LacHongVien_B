@@ -1,0 +1,53 @@
+﻿<div id="galleryDefault">
+</div>
+<nav aria-label="Page navigation example">
+    <ul class="pagination" id="paginationImgTabDefault">
+    </ul>
+</nav>
+
+<script type="text/javascript">
+    var lstImgTabDefault = @Html.Raw(Json.Encode(ViewBag.lstImgTabDefault));
+    var galleryDefaultCtrl = $('#galleryDefault');    
+    var currentPageDefaultGallery = 1;
+    var sizePageDefaultGallery = 10;
+    var maxPageDefaultGallery = parseInt(lstImgTabDefault.length/sizePageDefaultGallery)+1;
+    InitViewTabDefault();
+
+    function InitViewTabDefault()
+    {   
+        RefreshGallery(galleryDefaultCtrl,lstImgTabDefault.slice((currentPageDefaultGallery-1)*sizePageDefaultGallery, currentPageDefaultGallery*sizePageDefaultGallery));
+        var paginationImgTabDefault = $("#paginationImgTabDefault");
+        paginationImgTabDefault.append('<li class="page-item"><a class="page-link" href="#" aria-label="Previous" onclick="LoadPreviousPageDefaultGallery()"><span aria-hidden="true">&laquo;</span><span class="sr-only">Trang trước</span></a></li>');
+        for (i = 0;i<maxPageDefaultGallery;i++)
+        {
+            paginationImgTabDefault.append('<li class="page-item"><a class="page-link" href="#" onclick="LoadCurrentPageDefaultGallery('+(i+1)+')">'+(i+1)+'</a></li>');
+        }        
+        paginationImgTabDefault.append('<li class="page-item"><a class="page-link" href="#" aria-label="Next" onclick="LoadNextPageDefaultGallery()"><span aria-hidden="true">&raquo;</span><span class="sr-only">Trang sau</span></a></li>');       
+    }    
+    
+    function LoadNextPageDefaultGallery() {
+        if (currentPageDefaultGallery < maxPageDefaultGallery) 
+        {
+            currentPageDefaultGallery = currentPageDefaultGallery + 1;
+            var lstImgTabDefaultShow = lstImgTabDefault.slice((currentPageDefaultGallery-1)*sizePageDefaultGallery, currentPageDefaultGallery*sizePageDefaultGallery);        
+            RefreshGallery(galleryDefaultCtrl,lstImgTabDefaultShow);
+        }
+    }
+
+    function LoadPreviousPageDefaultGallery() {
+        if (currentPageDefaultGallery>1) {
+            currentPageDefaultGallery = currentPageDefaultGallery - 1;
+            var lstImgTabDefaultShow = lstImgTabDefault.slice((currentPageDefaultGallery-1)*sizePageDefaultGallery, currentPageDefaultGallery*sizePageDefaultGallery);
+            RefreshGallery(galleryDefaultCtrl,lstImgTabDefaultShow);
+        }
+    }
+
+    function LoadCurrentPageDefaultGallery(pageNum) {
+        if (pageNum>0 && pageNum<= maxPageDefaultGallery) 
+        {
+            currentPageDefaultGallery = pageNum;
+            var lstImgTabDefaultShow = lstImgTabDefault.slice((pageNum-1)*sizePageDefaultGallery, pageNum*sizePageDefaultGallery);
+            RefreshGallery(galleryDefaultCtrl,lstImgTabDefaultShow);
+        }
+    }
+</script>

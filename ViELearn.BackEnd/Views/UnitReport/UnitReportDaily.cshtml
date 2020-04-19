@@ -1,0 +1,196 @@
+﻿@{
+    ViewBag.Title = "Báo cáo quân số ngày";
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+
+@section actionMenu{
+    <ul class="page-breadcrumb">
+        <li> <i class="icon-home"></i> <a href="/">Trang chủ</a> <i class="fa fa-angle-right"></i> </li>
+        <li> <span>Báo cáo quân số</span> <i class="fa fa-angle-right"></i> </li>
+        <li> <span>@ViewBag.Title</span> </li>
+    </ul>
+    <div class="page-toolbar">
+    </div>
+}
+
+<div class="portlet box green" id="divUnitReportDaily">
+    <div class="portlet-title">
+        <div class="caption">
+            Báo cáo quân số ngày @DateTime.Now.ToString("dd/MM/yyyy")
+        </div>
+    </div>
+    <div class="portlet-body">        
+            <a href="#" data-url="@Url.Action("ShowDetailUnitReport", "UnitReport", new { reportId = 0 })" data-width="80%" class="btn blue" onclick="OpenModalCustom(this)"><i class="fa fa-plus"></i>Thêm</a>
+            <table id="tableUnitReportDaily"
+                   data-id-field="Id"
+                   data-toggle="tableUnitReportDaily"
+                   data-show-refresh="true"
+                   data-show-columns="true"
+                   data-search="true">
+                <thead>
+                    <tr>
+                        <th data-field="state" data-checkbox="true"></th>
+                        <th data-field="Title" data-align="center" data-sortable="true">Tiêu đề</th>
+                        <th data-field="DayReport"  data-formatter="operateDateTime" data-align="center" data-sortable="true">Ngày</th>   
+                        <th data-field="TotalPeople" data-align="center">Tổng số</th>
+                        <th data-field="PeopleInMisson" data-align="center">Công tác</th>
+                        <th data-field="PeopleInStudy" data-align="center">Học tập</th>
+                        <th data-field="PeopleInVacation" data-align="center">Nghỉ phép</th>
+                        <th data-field="PeopleInSick" data-align="center">Nghỉ ốm</th>
+                        <th data-field="PeopleInOtherReason" data-align="center">Lí do khác</th>
+                        <th data-field="ReasonNote" data-align="center" data-width="20%">Chi tiết</th>
+                        <th data-field="Id" data-formatter="operateEdit" data-align="center">Sửa</th>
+                        <th data-field="Id" data-formatter="operatePublish" data-align="center">Duyệt</th>
+                        <th data-field="Id" data-formatter="operateDelete" data-align="center">Xóa</th>
+                    </tr>
+                </thead>
+            </table>        
+    </div>
+</div>
+
+<script type="text/javascript">
+    var tableUnitReportDailyControl = $('#tableUnitReportDaily');
+
+    tableUnitReportDailyControl.bootstrapTable({
+        method: "post",
+        queryParams: "tableURD_postQueryParams",
+        url: "@Url.Action("GetListReportByDay", "UnitReport")",
+        pagination: "true",
+        sidePagination: "client",
+        pageSize: 10,
+        pageList: "[5,10,15]",
+        select: true
+    });
+
+    function tableURD_postQueryParams(params) {
+        params.IPS = 1; // 1 client pagination - 2 server pagination
+        return params;
+    }
+
+    function operateDelete(value, row, index) {
+        return [
+                '<i class="fa fa-trash-o" id="' + value + '_deleteUR" data-id="' + value + '" style="color:orangered;cursor:pointer;" onclick="DeleteUnitReport(this)">',
+                '</i>'
+        ].join('');
+    }
+
+    function operateEdit(value, row, index) {        
+        return [
+                '<i class="fa fa-edit" data-url="@Url.Action("ShowDetailUnitReport", "UnitReport")?reportId=' + value + '" data-width="80%" style="color:green;cursor:pointer;" onclick="EditUnitReport(this)">',
+                '</i>'
+        ].join('');
+    }
+
+    function operatePublish(value, row, index) {
+        var tmpColor = '#e2d2d2';
+        if (row.Status > 0) tmpColor = 'orangered';
+        return [
+                '<i class="fa fa-check-square-o" id="' + value + '_publishUR" data-id="' + value + '" style="color:' + tmpColor + ';cursor:pointer;" onclick="PublishUnitReport(this)">',
+                '</i>'
+        ].join('');
+    }
+
+    function operateDateTime(value, row, index) {
+        if (value != null) {
+            var dateString = value.substr(6);
+            var currentTime = new Date(parseInt(dateString));
+            var month = ('0' + (currentTime.getMonth() + 1)).slice(-2);
+            var day = ('0' + currentTime.getDate()).slice(-2);
+            var year = currentTime.getFullYear();
+            var date = day + "/" + month + "/" + year;
+            return date;
+        }
+        else {
+            return "";
+        }
+    };
+
+    function UnitReportCreateOrSaveAlert(data) {        
+        if (data.Msg == 'Success')
+        {
+            $('#ajaxModalProject').modal('toggle');
+            tableUnitReportDailyControl.bootstrapTable('refresh');
+            if (data.Type == 'Create') bootbox.alert('Thêm mới báo cáo quân số thành công!');
+            else
+                if (data.Type == 'Edit') bootbox.alert('Chỉnh sửa báo cáo quân số thành công!');
+        }
+        else
+            bootbox.alert('Có lỗi xảy ra,vui lòng thử lại!');
+    };
+
+    function EditUnitReport(itm) {
+        OpenModalCustom(itm);
+    };
+
+    function PublishUnitReport(itm) {
+        bootbox.confirm({
+            message: "Bạn chắc chắn muốn phê duyệt báo cáo quân số ?",
+            buttons: {
+                confirm: {
+                    className: 'btn-danger'
+                },
+                cancel: {
+                    className: 'btn-success'
+                }
+            },
+            callback: function (result) {
+                if (result == true) {
+                    $.ajax({
+                        type: 'post',
+                        url: '@Url.Action("PublishUnitReport", "UnitReport")',
+                        ajaxasync: true,
+                        data: { reportId: $(itm).attr('data-id') },
+                        success: function (data) {
+                            if (data.Msg == "Success") {
+                                tableUnitReportDailyControl.bootstrapTable('refresh');
+                                bootbox.alert("Phê duyệt báo cáo thành công!");
+                            }
+                            else {
+                                bootbox.alert(data.Msg);
+                            }
+                        },
+                        error: function (data) {
+                            bootbox.alert("Có lỗi xảy ra!");
+                        }
+                    });
+                }
+            }
+        });
+    };
+
+    function DeleteUnitReport(itm) {
+        bootbox.confirm({
+            message: "Bạn chắc chắn muốn xóa?",
+            buttons: {
+                confirm: {
+                    className: 'btn-danger'
+                },
+                cancel: {
+                    className: 'btn-success'
+                }
+            },
+            callback: function (result) {
+                if (result == true) {
+                    $.ajax({
+                        type: 'post',
+                        url: '@Url.Action("DeleteUnitReport", "UnitReport")',
+                        ajaxasync: true,
+                        data: { reportId: $(itm).attr('data-id') },
+                        success: function (data) {
+                            if (data.Msg == "Success") {
+                                tableUnitReportDailyControl.bootstrapTable('refresh');
+                                bootbox.alert("Xóa dữ liệu thành công!");
+                            }
+                            else {
+                                bootbox.alert(data);
+                            }
+                        },
+                        error: function (data) {
+                            bootbox.alert("Có lỗi xảy ra!");
+                        }
+                    });
+                }
+            }
+        });
+    }
+</script>

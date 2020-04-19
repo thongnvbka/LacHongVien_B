@@ -1,0 +1,57 @@
+﻿@using ViELearn.Models.SystemModels
+@model List<SYS_MENU_ROLE>
+
+<ul class="page-sidebar-menu  page-header-fixed page-sidebar-menu-light page-sidebar-menu-closed" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
+    <li class="sidebar-toggler-wrapper hide">
+        <div class="sidebar-toggler">
+            <span></span>
+        </div>
+    </li>
+    <!-- END SIDEBAR TOGGLER BUTTON -->
+    @foreach (SYS_MENU_ROLE item in Model)
+    {
+        if (item.CAPDO == 0)
+        {
+            if (item.DANHMUCCON == 0)
+            {
+                <li class="@item.CLASS_MAIN">
+                    @if (!string.IsNullOrEmpty(item.Controller.Trim()))
+                    {
+                        <a href="/@Html.Raw(item.Controller.Trim())/@Html.Raw(item.Action)" class="nav-link nav-toggle">@Html.Raw(item.Class == null || item.Class == "" ? "" : "<i class='" + item.Class + "'></i> ")<span class="title">@item.TenDanhMuc</span></a>
+                    }
+                    else
+                    {
+                        <a href="javascript:;">@Html.Raw(item.Class == null || item.Class == "" ? "" : "<i class='" + item.Class + "'></i> ")@item.TenDanhMuc</a>
+                    }
+                </li>
+            }
+            else
+            {
+                <li class="nav-item ">
+                    <a href="javascript:;" class="nav-link nav-toggle"> <i class="@item.Class"></i> <span class="title">@item.TenDanhMuc.Trim()</span> <span class="arrow"></span> </a>
+                    <ul class="sub-menu">
+                        @foreach (SYS_MENU_ROLE itemChild in Model)
+                        {
+                            if (itemChild.CAPDO == 1 && itemChild.DANHMUCCHA == item.ID_SYS_MENU)
+                            {
+                                if (itemChild.DANHMUCCON == 0)
+                                {
+                                    <li class="@itemChild.CLASS_MAIN">
+                                        @*<a class="nav-link" href="@Url.Action(itemChild.Action, itemChild.Controller.Trim() )"><i class="@itemChild.Class"></i> <span class="title">@itemChild.TenDanhMuc.Trim()</span></a>*@
+                                        <a class="nav-link" href="/@Html.Raw(itemChild.Controller.Trim())/@Html.Raw(itemChild.Action)">@Html.Raw(itemChild.Class == null || itemChild.Class == "" ? "" : "<i class='" + itemChild.Class + "'></i> ")<span class="title">@itemChild.TenDanhMuc.Trim()</span></a>
+                                    </li>
+                                }
+                                else
+                                {
+
+                                }
+                            }
+                        }
+                    </ul>
+                </li>
+            }
+        }
+    }
+</ul>
+
+

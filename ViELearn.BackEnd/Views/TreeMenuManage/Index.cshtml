@@ -1,0 +1,133 @@
+﻿@using ViELearn.Models.SystemModels
+
+@{
+    ViewBag.Title = "Khởi tạo cây Danh mục";
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+
+@section stylePageLever
+{
+    <link rel="stylesheet" type="text/css" href="~/UITheme/assets/global/plugins/jstree/dist/themes/default/style.min.css">
+    <link rel="stylesheet" type="text/css" href="~/Scripts/JqueryThemes/jquery-ui.min.css">
+}
+
+<script type="text/javascript" src="~/Scripts/jquery-ui-1.9.2.js"></script>
+<script type="text/javascript" src="~/Scripts/jstree-3.3.2.min.js"></script>
+
+@section actionMenu{
+    <ul class="page-breadcrumb">
+        <li> <i class="icon-home"></i> <a href="/">Trang chủ</a> <i class="fa fa-angle-right"></i> </li>
+        <li> <span>Quản trị hệ thống</span> <i class="fa fa-angle-right"></i> </li>
+        <li> <span>Phân quyền cho nhóm người dùng</span> </li>
+    </ul>
+    <div class="page-toolbar">
+    </div>
+}
+
+@*<div class="table-toolbar">
+    <div class="row">
+    </div>
+</div>*@
+
+<div class="col-lg-4 col-md-6">
+    <div class="portlet green box">
+        <div class="portlet-title">
+            <div class="caption" style="padding-top:20px;">
+                <span> <i class="fa fa-cogs"></i> Cây danh mục chức năng </span>
+            </div>
+            @*<div class="tools">
+                <button type="button" class="btn btn-primary" onclick="LuuQuyenDanhMuc()">Lưu</button>
+            </div>*@
+        </div>
+        <div class="portlet-body">
+            <div id="jsTreeDanhMuc" style="height:100%">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-lg-8 col-md-6">
+    <div class="portlet box green">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-info"></i> Thông tin chi tiết
+            </div>
+            <div class="tools">
+                <a href="javascript:;" class="collapse" data-original-title="" title="">
+                </a>
+            </div>
+        </div>
+        <div class="portlet-body form" id="divThongTinChiTietDanhMuc">
+            @{Html.RenderPartial("~/Views/TreeMenuManage/_ThongTinChiTietDanhMuc.cshtml", new SYS_MENU());}
+        </div>
+    </div>
+    <div class="portlet box green">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-plus"></i> Tạo mục mới
+            </div>
+            <div class="tools">
+                <a href="javascript:;" class="collapse" data-original-title="" title="">
+                </a>
+            </div>
+        </div>
+        <div class="portlet-body form" id="divTaoMoiDanhMuc">
+            @{Html.RenderPartial("~/Views/TreeMenuManage/_TaoMoiDanhMuc.cshtml", new SYS_MENU());}
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="bsModal3" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <div class="modal-body">
+                Lưu quyền nhóm người dùng thành công!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var treeModel = @Html.Raw(Json.Encode(Model));
+   console.log(treeModel);
+    $("#jsTreeDanhMuc").jstree({
+        plugins: ["contextmenu", "dnd", "search","state", "types", "wholerow"],
+        core: {
+            data: treeModel
+        },
+        checkbox: {
+            three_state : true, // to avoid that fact that checking a node also check others
+            whole_node : false,  // to avoid checking the box just clicking the node
+            tie_selection : false // for checking without selecting and selecting without checking
+        }
+    });
+
+    $("#jsTreeDanhMuc").bind("select_node.jstree", function(evt, data){
+        $("#divThongTinChiTietDanhMuc").load('@(Url.Action("ViewThongTinChiTietDanhMuc", "TreeMenuManage", null, Request.Url.Scheme))?IDDanhMuc='+data.node.id);
+      $("#divTaoMoiDanhMuc").load('@(Url.Action("ViewTaoMoiDanhMuc", "TreeMenuManage", null, Request.Url.Scheme))?IDDanhMuc='+data.node.id);
+    });  
+    
+    function CreateOrSaveAlert(msg)
+    {
+        //bootbox.alert({
+        //    message: msg,
+        //    animate: true,
+        //    backdrop: false,
+        //    size: 'small',
+
+        location.reload();
+
+        //});
+        //bootbox.alert(msg, function () {
+        //    // any code you want to happen after the alert is dismissed
+        //    location.reload();
+        //});
+    }
+</script>

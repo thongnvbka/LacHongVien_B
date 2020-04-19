@@ -1,0 +1,217 @@
+﻿@using System.Data
+@using ViELearn.BackEnd.Ultilities
+
+@{
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+
+@section stylePageLever{
+    <link href="/UITheme/assets/global/plugins/morris/morris.css" rel="stylesheet" type="text/css">
+    @*<link href="/UITheme/assets/global/plugins/jqvmap/jqvmap/jqvmap.css" rel="stylesheet" type="text/css">*@
+    <link href="/UITheme/assets/global/plugins/datatables/datatables.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/dropzone/dropzone.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/dropzone/basic.min.css" rel="stylesheet" type="text/css" />
+
+    <link href="/UITheme/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+}
+<style>
+    .table-scrollable > .table > thead > tr > th {
+        white-space: pre-wrap !important;
+    }
+
+    thead > tr > th {
+        vertical-align: middle !important;
+    }
+
+    thead > tr:not(:first-child) > th {
+        font-weight: normal !important;
+        font-size: 85% !important;
+    }
+
+    .note-editable p {
+        margin: 0;
+    }
+
+    .dropzone .note {
+        border-left: 0 !important
+    }
+
+    .dz-preview {
+        display: inline-block;
+        padding: 6px;
+    }
+
+        .dz-preview:hover {
+            background-color: #dedcdc;
+        }
+
+    .btn_remove {
+        color: #7b7a71;
+        background-color: #e4e4e4;
+        border-radius: 50%;
+        position: absolute;
+        cursor: pointer;
+        right: -5px;
+        z-index: 2;
+        top: auto;
+    }
+    /*.dz-image-preview:hover btn_remove {
+         position: absolute;
+         cursor: pointer;
+         right: 8px;
+         z-index: 2;
+         opacity: 1;
+     }*/
+    #cke_editor1 {
+        display: none;
+    }
+
+    .row_img:after, .row_img:before {
+        display: inline;
+    }
+</style>
+
+
+
+@section scriptMainPageLevel{
+    <script src="/UITheme/assets/global/plugins/moment.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/morris/morris.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/morris/raphael-min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/counterup/jquery.waypoints.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/counterup/jquery.counterup.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/fullcalendar/fullcalendar.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/horizontal-timeline/horizontal-timeline.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/scripts/datatable.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/datatables/datatables.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/pages/scripts/table-datatables-editable.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/pages/scripts/components-bootstrap-multiselect.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/dropzone/dropzone.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/pages/scripts/form-dropzone.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/moment.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/pages/scripts/components-date-time-pickers.min.js" type="text/javascript"></script>
+    <script src="~/UITheme/assets/pages/scripts/js-yaml.min.js"></script>
+}
+@section actionMenu{
+    <div class="page-bar">
+        <ul class="page-breadcrumb">
+            <li> <i class="fa fa-plus icon-home"></i> <i class="fa fa-angle-right"></i> </li>
+            <li> <span> <a href="@Url.Action("Index","Links")">Liên kết</a><i class="fa fa-angle-right"></i> </span> </li>
+            <li> <span> <a href="@Url.Action("Create","Links")">@ViewBag.Title</a></span> </li>
+        </ul>
+        <div class="page-toolbar">
+            <div class="btn-group pull-right">
+                <a href="@Url.Action("Index","Links")" class="btn btn-default"><i class="fa fa-angle-double-left"></i> Quay lại</a>
+                <button class="btn btn-info" onclick="submit(1);"><i class="fa fa-save"></i> Lưu xong nhập tiếp</button>
+                <button class="btn btn-primary" onclick="submit(0);"><i class="fa fa-save"></i> Lưu xong đóng</button>
+                @*<button type="button" class="btn btn-fit-height btn-danger dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true"> Công cụ <i class="fa fa-angle-down"></i> </button>
+                    <ul class="dropdown-menu pull-right" role="menu">
+                        <li> <a href="/DanhSachHocSinh/ImportExcel"> <i class="icon-shield"></i> Nhập danh sách giáo viên từ excel</a> </li>
+                        <!-- <li class="divider"> </li> -->
+                    </ul>*@
+            </div>
+        </div>
+    </div>
+}
+
+@section scriptConfigPageLevel{
+    <script type="text/javascript">
+        function submit(type) {
+            //var select = $("#select option:selected").val();
+            //$("#type").val(type);
+            //var radio = $('input[type="radio"]:checked').map(function () {
+            //    return this.value;
+            //}).get();
+            //$("#frm").submit();
+            $.ajax({
+                data: {
+                    _title: $("#title").val(),
+                    _col: $("#col").val(),
+                    _url: $("#url").val(),
+                    _status: $("#status").val()
+                },
+                type: 'POST',
+                datatype: 'json',
+                url: '/Links/Save',
+                success: function (responsive) {
+                    if (responsive.status) {
+                        if (type == 0) {
+                            window.location.replace("/Links");
+                        } else if (type == 1) {
+                            window.location.replace("/Links/Create");
+                        }
+                    } else {
+                        bootbox.alert(responsive.message);
+                    }
+                },
+                error: function (responsive) {
+                    bootbox.alert("Có lỗi xảy ra!");
+                }
+            });
+        }
+
+    </script>
+}
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN FORM-->
+        <!-- <form action="#" id="form_sample_2"> -->
+        <div class="form-body">
+            <div class="col-xs-12">
+                <div class="mt-element-ribbon bg-white" style="margin-bottom: 0px;">
+                    <div class="ribbon ribbon-clip ribbon-shadow ribbon-round ribbon-border-dash-hor ribbon-color-info uppercase">
+                        <div class="ribbon-sub ribbon-clip"></div> Thông tin cơ bản
+                    </div>
+                    <div class="ribbon-content">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6">
+                             
+                           
+                                <div class="form-group col-md-6">
+                                    Tiêu đề:
+                                    <input name="title" id="title" class="form-control"  placeholder="Tên danh mục" />
+                                </div>
+                          
+
+                                @*<div class="col-md-6">
+                                    <label>Ảnh đại diện cho danh mục</label>
+                                    <input name="slug" id="slug" class="form-control" placeholder="Slug" />
+                                </div>*@
+
+                                <div class="form-group col-md-6">
+                                   Cột hiển thị:
+                                    <input name="col" id="col" type="number" class="form-control" placeholder="Số thứ tự" value="0" />
+                                </div>
+                                <div class="form-group col-md-6">
+                                   Trạng thái:
+                                    <select name="status" id="status" class="form-control">
+                                        <option value="0">Không dùng</option>
+                                        <option value="1" selected>Có dùng</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    Link trỏ tới:
+                                    <input name="url" id="url" class="form-control"  placeholder="Tên danh mục" />
+                                </div>
+                        
+                         
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

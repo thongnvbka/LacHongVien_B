@@ -1,0 +1,63 @@
+﻿@using ViELearn.Models.ProjectModels;
+@model SystemParameters
+
+<div id="divDetailSysParameter">
+    @using (Ajax.BeginForm("SaveSysParameter", "SysParameters", new AjaxOptions { HttpMethod = "POST", OnSuccess = "TmpCreateOrSaveAlert" }, new { @class = "form-horizontal" }))
+    {
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>@(Model.Id>0? "Thông tin tham số" : "Tạo mới tham số")</h4>
+            </div>
+            <div class="modal-body">
+                <div class="col sm-12">
+                    <div class="form-body">
+                        @Html.HiddenFor(m => m.Id)                      
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Tên tham số</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="Name" value="@Model.Name">
+                            </div>
+                        </div>                        
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Mã tham số</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="Code" value="@Model.Code">
+                            </div>
+                        </div>                        
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Giá trị</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="Value" value="@Model.Value">
+                            </div>
+                        </div>                        
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Thứ tự</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="OrderView" value="@Model.OrderView">
+                            </div>
+                        </div>                        
+                        <div class="form-actions">
+                            <div class="row" style="text-align:center">                                
+                                <button type="submit" class="btn blue">@(Model.Id != 0?"Lưu thay đổi":"Thêm mới")</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn default" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+}
+</div>
+
+<script type="text/javascript">
+    function TmpCreateOrSaveAlert(data)
+    {
+        CreateOrSaveAlert(data,@Model.Id);
+    }
+</script>

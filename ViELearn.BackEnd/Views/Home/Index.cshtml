@@ -1,0 +1,129 @@
+﻿@{
+    ViewBag.Title = "Trang chủ";
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+<style>
+    .page-title {
+        margin: 25px 0;
+        font-size: 24px;
+    }
+    .page-title {
+        color: #666;
+        margin-bottom: 20px;
+        margin-top: 20px;
+    }
+    .page-title {
+        padding: 0;
+        font-size: 28px;
+        letter-spacing: -1px;
+        display: block;
+        color: #666;
+        margin: 0 0 15px;
+        font-weight: 300;
+    }
+     .page-title small {
+        color: #666;
+    }
+    .page-title small {
+        font-size: 14px;
+        letter-spacing: 0;
+        font-weight: 300;
+        color: #888;
+    }
+   .details .desc {
+        color: #fff;
+        opacity: 1;
+        filter: alpha(opacity=100);
+        margin-top: 20px;
+    }
+   .col-lg-5{
+       width:20%!important;
+   }
+
+</style>
+<h1 class="page-title">
+    Trang quản trị
+    <small>Viện thẩm mỹ Sao Hà Thành</small>
+</h1>
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-lg-5 col-md-3 col-sm-6 col-xs-12">
+            <a class="dashboard-stat dashboard-stat-v2 purple" href="@Url.Action("Index", "QuanLyTinTuc")">
+                <div class="visual">
+                    <i class="fa fa-globe"></i>
+                </div>
+                <div class="details">
+                    <div class="desc"> số lượng bài viết </div>
+                    <div class="number">
+                        +
+                        <span data-counter="counterup" data-value="89">@ViewBag.CountNews</span>
+                    </div>
+                    
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-5 col-md-3 col-sm-6 col-xs-12">
+            <a class="dashboard-stat dashboard-stat-v2 blue" href="@Url.Action("Index", "DanhMucChung",new { t=1})">
+                <div class="visual">
+                    <i class="fa fa-bar-chart-o"></i>
+                </div>
+                <div class="details">
+                    <div class="desc"> Số lượng danh mục</div>
+                    <div class="number">
+
+                        +
+                        <span data-counter="counterup" data-value="1349">@ViewBag.countDm</span>
+                    </div>
+                    
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-5 col-md-3 col-sm-6 col-xs-12">
+            <a class="dashboard-stat dashboard-stat-v2 red" href="@Url.Action("Index", "QuanLyAnh",new { Type=3})">
+                <div class="visual">
+                    <i class="fa fa-file-image-o" ></i>
+                </div>
+                <div class="details">
+                    <div class="desc"> Số lượng ảnh</div>
+                    <div class="number">
+                        +
+                        <span data-counter="counterup" data-value="12,5">@ViewBag.countImages</span>
+                    </div>
+                    
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-5 col-md-3 col-sm-6 col-xs-12">
+            <a class="dashboard-stat dashboard-stat-v2 green" href="@Url.Action("Index", "QuanLyAnh",new { Type=5})">
+                <div class="visual">
+                    <i class="fa fa-video-camera" ></i>
+                </div>
+                <div class="details">
+                    <div class="desc"> Số lượng video </div>
+                    <div class="number">
+                        +
+                        <span data-counter="counterup" data-value="549">@ViewBag.countVideo</span>
+                    </div>
+                 
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-5 col-md-3 col-sm-6 col-xs-12">
+            <a class="dashboard-stat dashboard-stat-v2 yellow" href="@Url.Action("Index", "Users")">
+                <div class="visual">
+                    <i class="fa fa-user" ></i>
+
+                </div>
+                <div class="details">
+                    <div class="desc"> Số lượng tài khoản</div>
+                    <div class="number">
+                        +
+                        <span data-counter="counterup" data-value="549">@ViewBag.countUser</span>
+                    </div>
+                 
+                </div>
+            </a>
+        </div>
+        
+    </div>
+</div>

@@ -1,0 +1,30 @@
+﻿@model ViELearn.BackEnd.Models.RoleViewModel
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h3>Bạn có chắc chắn muốn xóa Nhóm người dùng này? </h3>
+<p>Xóa nhóm người dùng sẽ bỏ tất cả user ra khỏi nhóm này! User thuộc nhóm không bị xóa.</p>
+<div>
+    <h4>Nhóm người dùng</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+    </dl>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Xóa" class="btn btn-danger" /> |
+            @Html.ActionLink("Quay về danh sách", "Index")
+        </div>
+    }
+</div>

@@ -1,0 +1,29 @@
+﻿<div class="col-md-12">
+    <div class="row">
+        <form action="..\PictureManage\UploadDropZone?idAlbum=@ViewBag.idAlbum" method="post" enctype="multipart/form-data" class="dropzone dropzone-file-area" id="dropzoneForm" style="margin-top: 10px;"></form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    Dropzone.autoDiscover = false;
+    var myDropzone = new Dropzone("form#dropzoneForm", {
+        dictDefaultMessage: "Kéo thả ảnh hoặc click để upload ảnh",
+        addRemoveLinks: true,
+        removedfile: function(file) {
+            var name = file.name;
+            //$.ajax({
+            //    type: 'POST',
+            //    url: 'delete.php',
+            //    data: "id="+name,
+            //    dataType: 'html'
+            //});
+        },
+        maxFiles: 5,
+        createImageThumbnails: false
+    });
+    myDropzone.on("success", function (response) {
+        if (myDropzone.getUploadingFiles().length === 0 && myDropzone.getQueuedFiles().length === 0) {
+            OnTabLoadImagesDefault(@ViewBag.idAlbum, "none");
+        }
+    });
+</script>

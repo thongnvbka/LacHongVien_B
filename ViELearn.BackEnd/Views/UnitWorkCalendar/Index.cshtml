@@ -1,0 +1,127 @@
+﻿@{
+    ViewBag.Title = "Quản lý Đơn vị";
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+
+@section actionMenu{
+    <ul class="page-breadcrumb">
+        <li> <i class="icon-home"></i> <a href="/">Trang chủ</a> <i class="fa fa-angle-right"></i> </li>
+        <li> <span>Quản trị hiển thị</span> <i class="fa fa-angle-right"></i> </li>
+        <li> <span>@ViewBag.Title</span> </li>
+    </ul>
+    <div class="page-toolbar">
+    </div>
+}
+
+<div class="portlet">
+    <div class="portlet-header">
+        Danh sách đơn vị
+    </div>
+    <div class="portlet-body">
+        <a href="#" data-url="@Url.Action("ShowDetailUnit", "UnitsManage", new { IdUnit = 0 })" class="btn blue" onclick="OpenModalCustom(this)"><i class="fa fa-plus"></i>Thêm mới</a>
+        <table id="tableUnits"
+               data-id-field="Id"
+               data-toggle="tableUnits"
+               data-show-refresh="true"
+               data-show-columns="true"
+               data-search="true">
+            <thead>
+                <tr>
+                    <th data-field="state" data-checkbox="true"></th>
+                    <th data-field="Name" data-align="left" data-formatter="operateName" data-sortable="true">Tên Đơn Vị</th>
+                    <th data-field="Code" data-align="center">Mã Đơn Vị</th>
+                    <th data-field="Url" data-align="center">Đường dẫn truy cập</th>
+                    <th data-field="MediaUrl" data-align="center">Đường đẫn Media</th>
+                    <th data-field="SecondUrl" data-align="center">Đường dẫn phụ</th>
+                    <th data-field="LogoUrl" data-align="center">Đường dẫn Logo đơn vị</th>
+                    <th data-field="Active" data-formatter="operateActive" data-align="center">Trạng Thái</th>
+                    <th data-field="Id" data-formatter="operateDelete" data-align="center">#</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    var tableViewControl = $('#tableUnits');
+
+    tableViewControl.bootstrapTable({
+        method: "post",
+        queryParams: "postQueryParams",
+        url: "@Url.Action("GetListUnits", "UnitsManage")",
+        pagination: "true",
+        sidePagination: "client",
+        pageSize: 10,
+        pageList: "[5,10,15]",
+        select: true
+    });
+
+    function postQueryParams(params) {
+        params.IPS = 1; // 1 client pagination - 2 server pagination
+        return params;
+    }
+
+    function operateName(value, row, index) {
+        return [
+                '<a href="#" data-url="../UnitsManage/ShowDetailUnit?IdUnit=' + row.Id + '" onclick="OpenModalCustom(this);">' + row.Name + '</a>'
+        ].join('');
+    }
+
+    function operateActive(value, row, index) {
+        if (value == true) return "<span style='color:blue'> Đang hoạt động </span>"
+        else
+            return "<span style='color:red'> Ngưng hoạt động </span>"
+    }
+
+    function operateDelete(value, row, index) {
+        return [
+                '<i class="fa fa-trash-o btn-save" id="' + value + '" data-id="' + value + '" style="color:orangered;cursor:pointer;" onclick="DeleteUnit(this)">',
+                '</i>'
+        ].join('');
+    }
+
+
+    function CreateOrSaveAlert(msg) {
+        $('#ajaxModalProject').modal('toggle');
+        tableViewControl.bootstrapTable('refresh');
+        bootbox.alert(msg);
+    }
+
+    function DeleteUnit(itm) {
+        bootbox.confirm({
+            message: "Bạn chắc chắn muốn xóa?",
+            buttons: {
+                confirm: {
+                    className: 'btn-danger'
+                },
+                cancel: {
+                    className: 'btn-success'
+                }
+            },
+            callback: function (result) {
+                if (result == true) {
+                    $.ajax({
+                        type: 'post',
+                        url: '@Url.Action("DeleteUnit", "UnitsManage")',
+                        ajaxasync: true,
+                        data: { idUnit: $(itm).attr('data-id') },
+                        success: function (data) {
+                            if (data == "Success")
+                            {
+                                tableViewControl.bootstrapTable('refresh');
+                                bootbox.alert("Xóa dữ liệu thành công!");
+                            }
+                            else {
+                                    bootbox.alert(data);
+                            }
+                        },
+                        error: function (data) {
+                            bootbox.alert("Có lỗi xảy ra!");
+                        }
+                    });
+                }
+            }
+        });
+    }
+</script>

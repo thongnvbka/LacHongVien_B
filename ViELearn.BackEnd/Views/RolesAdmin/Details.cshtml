@@ -1,0 +1,123 @@
+﻿@model ViELearn.BackEnd.Models.RoleViewModel
+<div class="modal-header">
+    <h4>Danh sách người dùng thuộc nhóm: @Html.DisplayFor(model => model.Name)</h4>
+</div>
+<div class="modal-body" style="overflow:unset;">    
+    
+        <div class="row">
+            <div class="col-md-4">
+                <a href="#" data-width="100%" class="btn blue" onclick="AddUserInRole()">Thêm người dùng vào nhóm</a>
+            </div>        
+            <div class="col-md-4">
+                @Html.DropDownList("LstUserInUnit", (SelectList)ViewBag.lstAllUser, new { @class = "btn btn-default", @data_width = "100%", @id = "ddlLstUserInUnit", @style = "margin-top:1px" })
+            </div>        
+        </div>
+    
+    <table id="tableUserInRole"
+           data-id-field="Id"
+           data-toggle="tableUserInRole"
+           data-show-refresh="true"
+           data-search="true">
+        <thead>
+            <tr>                
+                <th data-field="UserName" data-align="center" data-sortable="true">Tên đăng nhập</th>
+                <th data-field="DisplayName" data-align="center">Tên người dùng</th>
+                @if (Model.roleType != 3)
+                {
+                    <th data-field="Id" data-formatter="operateDelete" data-align="center">#</th>
+                }
+            </tr>
+        </thead>
+    </table>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn default" data-dismiss="modal">Đóng</button>
+</div>
+
+<script type="text/javascript">
+    var tableUserInRoleControl = $('#tableUserInRole');
+    $("#ddlLstUserInUnit").select2();
+    tableUserInRoleControl.bootstrapTable({
+        method: "post",
+        queryParams: "postQueryParams",
+        url: "@Url.Action("GetListUserInRole", "RolesAdmin")",
+        pagination: "true",
+        sidePagination: "client",
+        pageSize: 10,
+        pageList: "[5,10,15]",
+        select: true
+    });
+
+    function postQueryParams(params) {
+        params.roleId = '@Model.Id'; // 1 client pagination - 2 server pagination
+        return params;
+    }
+
+    function operateDelete(value, row, index) {
+        return [
+                '<i class="fa fa-trash-o btn-save" id="' + value + '" data-id="' + value + '" style="color:orangered;cursor:pointer;" onclick="DeleteUserFromRole(this)">',
+                '</i>'
+        ].join('');
+    }
+
+    function AddUserInRole() {
+        var tmpUserId = $("#ddlLstUserInUnit").val();
+        $.ajax({
+            type: 'post',
+            url: '@Url.Action("AddUserInRole", "RolesAdmin")',
+            ajaxasync: true,
+            data: { userId: tmpUserId, roleId:'@Model.Id'},
+            success: function (data) {
+                console.log(data);
+                if (data == "Success") {
+                    tableUserInRoleControl.bootstrapTable('refresh');
+                    bootbox.alert("Thêm người dùng vào nhóm thành công!");
+                }
+                else
+                {
+                    bootbox.alert(data);
+                }
+            },
+            error: function (data) {
+                bootbox.alert("Có lỗi xảy ra!");
+            }
+        });
+    }
+
+    function DeleteUserFromRole(itm) {
+        bootbox.confirm({
+            message: "Bạn chắc chắn muốn xóa?",
+            buttons: {
+                confirm: {
+                    className: 'btn-danger'
+                },
+                cancel: {
+                    className: 'btn-success'
+                }
+            },
+            callback: function (result) {
+                if (result == true) {
+                    $.ajax({
+                        type: 'post',
+                        url: '@Url.Action("DeleteUserFromRole", "RolesAdmin")',
+                        ajaxasync: true,
+                        data: { userId: $(itm).attr('data-id'), roleId:'@Model.Id' },
+                        success: function (data) {
+                            if (data == "Success")
+                            {
+                                tableUserInRoleControl.bootstrapTable('refresh');
+                                bootbox.alert("Xóa người dùng khỏi nhóm thành công!");
+                            }
+                            else {
+                                bootbox.alert(data);
+                            }
+                        },
+                        error: function (data) {
+                            bootbox.alert("Có lỗi xảy ra!");
+                        }
+                    });
+                }
+            }
+        });
+    }
+</script>

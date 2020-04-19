@@ -1,0 +1,575 @@
+﻿@using System.Data
+@using ViELearn.BackEnd.Ultilities
+@model List<ViELearn.Models.ProjectModels.DanhMucChung>
+
+@{
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+
+@section stylePageLever{
+    <link href="/UITheme/assets/global/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+    @*<link href="/UITheme/assets/global/plugins/jqvmap/jqvmap/jqvmap.css" rel="stylesheet" type="text/css">*@
+    <link href="/UITheme/assets/global/plugins/datatables/datatables.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/dropzone/dropzone.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/dropzone/basic.min.css" rel="stylesheet" type="text/css" />
+}
+<style>
+    .table-scrollable > .table > thead > tr > th {
+        white-space: pre-wrap !important;
+    }
+
+    thead > tr > th {
+        vertical-align: middle !important;
+    }
+
+    thead > tr:not(:first-child) > th {
+        font-weight: normal !important;
+        font-size: 85% !important;
+    }
+
+    .note-editable p {
+        margin: 0;
+    }
+
+    .dropzone .note {
+        border-left: 0 !important
+    }
+
+    .dz-preview {
+        display: inline-block;
+        padding: 6px;
+    }
+
+        .dz-preview:hover {
+            background-color: #dedcdc;
+        }
+
+    .btn_remove {
+        color: #7b7a71;
+        background-color: #e4e4e4;
+        border-radius: 50%;
+        position: absolute;
+        cursor: pointer;
+        right: -5px;
+        z-index: 2;
+        top: auto;
+    }
+    /*.dz-image-preview:hover btn_remove {
+         position: absolute;
+         cursor: pointer;
+         right: 8px;
+         z-index: 2;
+         opacity: 1;
+     }*/
+    #cke_editor1 {
+        display: none;
+    }
+
+    .row_img:after, .row_img:before {
+        display: inline;
+    }
+
+    .select2 {
+        width: 270px;
+    }
+</style>
+
+
+
+@section scriptMainPageLevel{
+    <script src="/UITheme/assets/global/scripts/datatable.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/datatables/datatables.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js" type="text/javascript"></script>
+    @*<script src="/UITheme/assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>*@
+    <script src="/UITheme/assets/global/plugins/dropzone/dropzone.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/pages/scripts/form-dropzone.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/pages/scripts/js-yaml.min.js"></script>
+}
+
+@*@section titlePage{
+        <h3 class="page-title"> @ViewBag.Title </h3>
+    }*@
+
+@section actionMenu{
+    <div class="page-bar">
+        <ul class="page-breadcrumb">
+            <li> <i class="fa fa-plus icon-home"></i> <i class="fa fa-angle-right"></i> </li>
+            <li> <span> <a href="@Url.Action("Index", "DanhMucChung", new { t = Request["t"] })">Danh mục chung</a><i class="fa fa-angle-right"></i> </span> </li>
+            <li> <span> <a href="@Url.Action("Create", "DanhMucChung", new { t = Request["t"] })">@ViewBag.Title</a></span> </li>
+        </ul>
+        <div class="page-toolbar">
+            <div class="btn-group pull-right">
+                <a href="@Url.Action("Index", "DanhMucChung", new { t = Request["t"] })" class="btn btn-default"><i class="fa fa-angle-double-left"></i> Quay lại</a>
+                <button class="btn btn-info" onclick="submit(1);"><i class="fa fa-save"></i> Lưu xong nhập tiếp</button>
+                <button class="btn btn-primary" onclick="submit(0);"><i class="fa fa-save"></i> Lưu xong đóng</button>
+                @*<button type="button" class="btn btn-fit-height btn-danger dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true"> Công cụ <i class="fa fa-angle-down"></i> </button>
+                    <ul class="dropdown-menu pull-right" role="menu">
+                        <li> <a href="/DanhSachHocSinh/ImportExcel"> <i class="icon-shield"></i> Nhập danh sách giáo viên từ excel</a> </li>
+                        <!-- <li class="divider"> </li> -->
+                    </ul>*@
+            </div>
+        </div>
+    </div>
+}
+
+@section scriptConfigPageLevel{
+    <script type="text/javascript">
+
+        function setusethumbnail(itm) {
+            $('#thumb_url').val($(itm).attr('src'));
+            $(itm).addClass('');
+        }
+        function ChangeBakground(itm) {
+            $('table').find('tr').each(function () {
+                $(this).css('background-color', 'white');
+            });
+            $(itm).parents('tr').css('background-color', 'yellow');
+            $(itm).addClass('');
+        }
+        function ClonePath(itm) {
+            // alert(1);
+            $('#txt_Url').val($(itm).attr('src'));
+
+        }
+
+        Dropzone.autoDiscover = false;
+        $("#frm_dropzone").dropzone({
+            url: "/DanhMucChung/UploadFile",
+            acceptedFiles: "image/jpeg,image/png,image/gif",
+            resizeWidth: 1280,
+            resizeHeight: 1280,
+            maxFilesize: 0.5,
+            resizeMethod: 'contain',
+            resizeMimeType: 'image/jpeg,image/png,image/gif',
+            init: function () {
+                this.on("success", function (file, response) {
+
+                    var fileName = response.Message;
+                    var html = '';
+                    html += ' <div class="col-md-3" style="height:80px;padding-top:5px;padding-bottom:5px;margin-top:5px;margin-bottom:5px;">' +
+                        '<div  style="cursor:pointer;position:relative;display: inline!important">' +
+                        '<i onclick="removeImg(this)" class="fa fa-times btn_remove" aria-hidden="true"></i>' +
+                        '<div class="dz-preview dz-processing dz-image-preview dz-success dz-complete">' +
+                        '<img onclick="setusethumbnail(this)" style="max-height:80px;max-width:120px;cursor:pointer;" data-dz-thumbnail="" src="/UserData/0/ImgCat/' + fileName + '" />' +
+                        '</div>' +
+                        '</div>' + '</div>';
+                    $('.modal-body .item-img .row').append(html);
+                    if (this.getUploadingFiles().length === 0 && this.getUploadingFiles().length === 0) {
+                        //doSomething();
+                        //console.log('all file uploaded');
+                    }
+                });
+
+                this.on("error", function (file) {
+                    $(file.previewElement).remove();
+                });
+            }
+        });
+
+        function removeImg(item) {
+            var url = $(item).parent().find('img').attr('src');
+            //console.log(url);
+            $.ajax({
+                data: { fName: url },
+                url: '/DanhMucChung/DeleteFile',
+                success: function (responsive) {
+                    // bootbox.alert("Xóa thành công");
+                    $(item).parent().parent().remove();
+                }
+            });
+        }
+
+        function set_destname(value) {
+            $('#btnSubmitDialog').data('destname', value);
+        }
+        function set_destpath(value) {
+            $('#btnSubmitDialog2').data('destname', value);
+        }
+        function clone_val(src, itm) {
+            var dest = $(itm).data('destname');
+            var path = $('#' + src).val();
+            $.ajax({
+                data: { fName: path },
+                url: '/DanhMucChung/CopyFile',
+                success: function (responsive) {
+                    $('#' + dest).val(responsive.newpath);
+                    // $('#' + dest).val($('#' + src).val());
+                }
+            });
+        }
+        function clone_new_url(src, itm) {
+            var dest = $(itm).data('destname');
+            $('#' + dest).val($('#' + src).val());
+        }
+
+        function submit(type) {
+         //   alert($("#typeShow").val()); return;
+            if ($('#tendanhmuc').val() == '' || $('#tendanhmuc').val() == 'undefined') {
+                bootbox.alert("Tên danh mục không được để trống!");
+                return false;
+            }
+            if ($('#slug').val() == '' || $('#slug').val() == 'undefined') {
+                bootbox.alert("slug không được để trống!");
+                return false;
+            }
+            //var select = $("#select option:selected").val();
+            //$("#type").val(type);
+            //var radio = $('input[type="radio"]:checked').map(function () {
+            //    return this.value;
+            //}).get();
+            //$("#frm").submit();
+            $.ajax({
+                data: {
+                    _loaidanhmuc: $("#loaidanhmuc").val(),
+                    _danhmuccha: $("#danhmuccha").val(),
+                    _tendanhmuc: $("#tendanhmuc").val(),
+                    _Slug: $("#slug").val(),
+                    _sothutu: $("#sothutu").val(),
+                    _trangthai: $("#trangthai").val(),
+                    _path: $("#txt_thumb_url").val(), /*--là đường dẫn đến file ảnh --*/
+                    _type: $("#typeShow").val(),
+                  //  _thumbnail: (radio == 1) ? $("#txt_thum").val() : select,
+                    _url: $('#txt_Url').val(),
+                    _template: $('#template').val()
+                },
+                type: 'POST',
+                datatype: 'json',
+                url: '/DanhMucChung/Save',
+                success: function (responsive) {
+                    if (responsive.status) {
+                        if (type == 0) {
+                            window.location.replace("/DanhMucChung?t=" + $("#loaidanhmuc").val());
+                        } else if (type == 1) {
+                            window.location.replace("/DanhMucChung/Create?t=" + $("#loaidanhmuc").val() + "&p=" + $("#danhmuccha").val());
+                        }
+                    } else {
+                        bootbox.alert(responsive.message);
+                    }
+                },
+                error: function (responsive) {
+                    bootbox.alert("Có lỗi xảy ra!");
+                }
+            });
+        }
+        function update_slug(itm) {
+            $('#slug').val(string_to_slug($(itm).val().trim()));
+        }
+        function string_to_slug(str) {
+            str = str.replace(/^\s+|\s+$/g, ''); // trim
+
+            // remove accents, swap ñ for n, etc
+            var from = "ÁÄÂÀÃÅČÇĆĎÉĚËÈÊẼĔȆÍÌÎÏŇÑÓÖÒÔÕØŘŔŠŤÚŮÜÙÛÝŸŽáäâàãåčçćďéěëèêẽĕȇíìîïňñóöòôõøðřŕšťúůüùûýÿžþÞĐđßÆa·/_,:;";
+            from += "ÁÀẢÃẠáàảãạÂẤẦẨẪẬâấầẩẫậĂẮẰẲẴẶăắằẳẵặĐđÉÈẺẼẸéèẻẽẹÊẾỀỂỄỆêếềểễệÓÒỎÕỌóòỏõọƠỚỜỞỠỢơớờởỡợÔỐỒỔỖỘôốồổỗộÚÙỦŨỤúùủũụƯỨỪỬỮỰưứừửữựÝỲỶỸỴýỳỷỹỵÍÌỈĨỊíìỉĩị";
+            var to = "AAAAAACCCDEEEEEEEEIIIINNOOOOOORRSTUUUUUYYZaaaaaacccdeeeeeeeeiiiinnooooooorrstuuuuuyyzbBDdBAa------";
+            to += "AAAAAaaaaaAAAAAAaaaaaaAAAAAAaaaaaaDdEEEEEeeeeeEEEEEEeeeeeeOOOOOoooooOOOOOOooooooOOOOOOooooooUUUUUuuuuuUUUUUUuuuuuuYYYYYyyyyyIIIIIiiiii";
+            for (var i = 0, l = from.length; i < l; i++) {
+                str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+            }
+            str = str.toLowerCase();
+
+            str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+                .replace(/\s+/g, '-') // collapse whitespace and replace by
+                .replace(/-+/g, '-'); // collapse dashes
+
+            return str;
+        }
+    </script>
+}
+
+@*<div class="table-toolbar">
+        <div class="row">
+            <div class="col-md-12">
+                <a href="@Url.Action("Index","QuanLyGiaoVien")" class="btn btn-default">&lt; Quay lại</a>
+                <button class="btn btn-primary" onclick="submit(1);"><i class="fa fa-save"></i> Lưu xong nhập tiếp</button>
+                <button class="btn btn-info" onclick="submit(0);"><i class="fa fa-save"></i> Lưu xong đóng</button>
+            </div>
+        </div>
+    </div>*@
+
+
+<input type="hidden" id="type" name="type" value="0" />
+<div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN FORM-->
+        <!-- <form action="#" id="form_sample_2"> -->
+        <div class="form-body">
+            <div class="col-xs-12">
+                <div class="mt-element-ribbon bg-white" style="margin-bottom: 0px;">
+                    <div class="ribbon ribbon-clip ribbon-shadow ribbon-round ribbon-border-dash-hor ribbon-color-info uppercase">
+                        <div class="ribbon-sub ribbon-clip"></div> Thông tin cơ bản
+                    </div>
+                    <div class="ribbon-content">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6">
+                                <div class="form-group col-md-6">
+                                    Loại danh mục:
+                                    <select name="loaidanhmuc" id="loaidanhmuc" class="form-control ">
+                                        @foreach (DataRow dr in ViewBag.DsLoaiDanhMuc.Rows)
+                                        {
+                                            <option value="@dr["id"]" @(Request["t"] == @dr["id"].ToString() ? "selected" : "")>@dr["tenLoaiDm"]</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    Danh mục cha:
+                                    <select name="danhmuccha" id="danhmuccha" class="form-control ">
+                                        <option value="0">-- Không có --</option>
+                                        @if (Model != null)
+                                        {
+                                            var items = Model.Where(x => x.idDanhMucCha == 0);
+                                            foreach (var item in items)
+                                            {
+                                                var childCategory = Model.Where(x => x.idDanhMucCha == item.id);
+                                                <option value="@item.id" @(ViewBag.CatId == item.id.MapInt() ? " selected" : "")> @item.TenDanhMuc</option>
+                                                if (childCategory.Count() > 0)
+                                                {
+                                                    foreach (var child in childCategory)
+                                                    {
+                                                        <option value="@child.id" @(ViewBag.CatId == child.id.MapInt() ? " selected" : "")> &nbsp;&nbsp;&nbsp; - @child.TenDanhMuc</option>
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    Tên danh mục:
+                                    <input name="tendanhmuc" id="tendanhmuc" class="form-control" onkeypress="update_slug(this);" placeholder="Tên danh mục" />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    Slug:
+                                    <input name="slug" id="slug" class="form-control" placeholder="Slug" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label>Ảnh đại diện cho danh mục</label>
+                                    <div class="input-group">
+
+                                        <input id="txt_thumb_url" type="text" class="form-control" placeholder="Đường dẫn đến ảnh">
+                                        <span class="input-group-btn">
+                                            <a class="btn btn-success" data-target="#full-width1" data-toggle="modal" onclick="set_destname('txt_thumb_url');"> <i class="fa fa-upload fa-fw"></i> </a>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label> Số thứ tự:</label>
+                                    <input name="sothutu" id="sothutu" type="number" class="form-control" placeholder="Số thứ tự" value="0" />
+                                </div>
+                                @if (Request["t"] == "1")
+                                {
+                                    <div class="form-group col-md-6">
+                                        Hiển thị thanh menu:
+                                        <select name="trangthai" id="trangthai" class="form-control">
+                                            <option value="0">Không dùng</option>
+                                            <option value="1" selected>Có dùng</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        Link trỏ tới:
+                                        <div class="input-group">
+                                            <input name="url" id="txt_Url" class="form-control" placeholder="Đường dẫn" />
+                                            <span class="input-group-btn">
+                                                <a class="btn btn-success" onclick="set_destpath('txt_Url');" data-target="#full-width2" data-toggle="modal"> <i class="fa fa-link"></i> </a>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        Danh sách bài viết hiển thị:
+                                        <select name="type" id="typeShow" class="form-control">
+                                            <option value="0">Dạng lưới</option>
+                                            <option value="1" selected>Chiều dọc</option>
+                                        </select>
+                                    </div>
+
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- full width -->
+<div id="full-width1" class="modal container fade" tabindex="-1">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+        <h4 class="modal-title">Chọn ảnh</h4>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <label>Đường dẫn ảnh vừa chọn</label>
+            <input type="text" id="thumb_url" class="form-control" placeholder="Đường dẫn đến ảnh" value="">
+        </div>
+        <div class="col-sm-6">
+            <b><u>Lưu ý:</u></b> Sau khi upload xong, cần bấm F5 để ảnh hiển thị ở cột bên cạnh
+            <div class="dropzone needsclick dz-clickable" id="frm_dropzone">
+                <div class="dz-message needsclick">
+                    <h3 class="sbold">Thả hình, ảnh vào đây</h3><br>
+                    <span class="note needsclick">Các hình, ảnh chụp về bài viết<br />(dung lượng tối đa: 4MB)</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 item-img ">
+            <div class="row">
+                @if (Directory.Exists(ViewBag.Images))
+                {
+                    foreach (var files in Directory.GetFiles(ViewBag.Images))
+                    {
+                        var info = new FileInfo(files);
+                        <div class=" col-md-3" style="height:80px;padding-top:5px;padding-bottom:5px;margin-top:5px;margin-bottom:5px;">
+                            <div style="height:80px;width:120px; cursor:pointer;position:relative;display: inline!important">
+                                <i onclick="removeImg(this)" class="fa fa-times btn_remove" aria-hidden="true"></i>
+
+                                <div class="dz-preview dz-processing dz-image-preview dz-success dz-complete">
+                                    <img id="img_id_@Path.GetFileName(info.FullName)" onclick="setusethumbnail(this)" style="max-height:80px;max-width:120px;cursor:pointer;" data-dz-thumbnail="" alt="@Path.GetFileName(info.FullName)" src='/UserData/0/ImgCat/@Path.GetFileName(info.FullName)'>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-outline dark">Thôi</button>
+        <button type="button" data-dismiss="modal" class="btn green" id="btnSubmitDialog" data-destname="" onclick="clone_val('thumb_url', this)">Sử dụng hình ảnh</button>
+    </div>
+</div>
+<div id="full-width2" class="modal container fade" tabindex="-1">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+        <h4 class="modal-title">Chọn bài</h4>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div>Chọn chuyên mục:</div>
+                    <select name="cates" id="cboFilter" class="form-control" style="width:100%">
+                        <option value="0">---Tất cả---</option>
+                        @if (Model != null)
+                        {
+                            var items = Model.Where(x => x.idDanhMucCha == 0);
+                            foreach (var item in items)
+                            {
+                                var childCategory = Model.Where(x => x.idDanhMucCha == item.id);
+                                <option value="@item.id" @(ViewBag.CatId == item.id.MapInt() ? " selected" : "")> @item.TenDanhMuc</option>
+                                if (childCategory.Count() > 0)
+                                {
+                                    foreach (var child in childCategory)
+                                    {
+                                        <option value="@child.id" @(ViewBag.CatId == child.id.MapInt() ? " selected" : "")> &nbsp;&nbsp;&nbsp; - @child.TenDanhMuc</option>
+                                    }
+                                }
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        Tiêu đề:
+                        <input id="txTitle" class="form-control " />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    &nbsp;
+                    <div class="form-group">
+                        <button id="btnSearch" class="btn btn-fit-height btn-primary"><i class="fa fa-search" aria-hidden="true"></i> Tìm kiếm </button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="table-scrollable cover-table">
+                <table class="table table-striped table-hover table-bordered" id="dsBaiViet">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 35px;">STT</th>
+                            <th style="width:400px">Tên bài viết(click vào bài viết để lấy đường dẫn)</th>
+                            <th class="text-center" style="width: 150px;">Xem nhanh</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-outline dark">Thôi</button>
+        @*<button type="button" data-dismiss="modal" class="btn green" id="btnSubmitDialog2" data-destname="" onclick="clone_new_url('news_url', this)">Sử dụng bài viết</button>*@
+    </div>
+</div>
+@if (Request["t"] == "1")
+{
+    <script type="text/javascript">
+        $('input[type="radio"]').change(function () {
+            IconMenu();
+        });
+
+        //function IconMenu() {
+        //    var radio = $('input[type="radio"]:checked').map(function () {
+        //        return this.value;
+        //    }).get();
+
+        //    if (radio == 1) {
+        //        $('#img-cat').show();
+        //        $('#icon-cat').hide();
+
+        //    } else {
+        //        $('#img-cat').hide();
+        //        $('#icon-cat').show();
+        //    }
+        //};
+
+        var load = function () {
+
+            var title = $('#txTitle').val();
+            var cat = $('#cboFilter').val();
+
+            var table = $("#dsBaiViet tbody");
+
+            $.ajax({
+                data: {
+                    title: title,
+                    cat: cat
+
+                },
+                type: 'POST',
+                datatype: 'json',
+                url: '/DanhMucChung/Search',
+                success: function (res) {
+                    $('#dsBaiViet tbody').html(res);
+                    table.empty();
+                    $('#dsBaiViet').DataTable().destroy();
+                    table.html(res);
+                    $('#dsBaiViet').DataTable({
+                        language: {
+                            lengthMenu: "Hiển thị _MENU_ bản ghi",
+                            search: "Tìm kiếm",
+                            info: "Đang ở trang _PAGE_ / _PAGES_ trang",
+                            zeroRecords: "Không có bản ghi nào!",
+                            infoEmpty: "Không có bản ghi nào!",
+                        },
+                        searching: false,
+                    });
+
+
+
+                },
+                error: function (responsive) {
+                    bootbox.alert("Có lỗi xảy ra!");
+                }
+            });
+        }
+    </script>
+}

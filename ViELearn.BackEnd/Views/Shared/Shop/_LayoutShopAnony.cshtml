@@ -1,0 +1,581 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Basic page needs -->
+    <meta charset="utf-8">
+    <!--[if IE]>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <![endif]-->
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>@ViewBag.Title</title>
+    <meta name="description" content="best template, template free, responsive Template, fashion store, responsive Template, responsive html Template, Premium website templates, web templates, Multi-Purpose Responsive HTML5 Template">
+    <meta name="keywords" content="bootstrap, ecommerce, fashion, layout, responsive, responsive template, responsive template download, responsive Template, retail, shop, shopping, store, Premium website templates, web templates, Multi-Purpose Responsive HTML5 Template" />
+    <!-- Mobile specific metas  -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Favicons Icon -->
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <!-- CSS Style -->
+    <link rel="stylesheet" href="/HTML/style.css">
+    @RenderSection("styles_page_level", required: false)
+    @RenderSection("scripts_page_level", required: false)
+</head>
+<body class="cms-index-index cms-home-page">
+    <!--[if lt IE 8]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    <!-- mobile menu -->
+    <div id="mobile-menu">
+        @{Html.RenderAction("MobileMenu", "LayoutMenu");}
+    </div>
+    <!-- end mobile menu -->
+    <div id="page">
+        <!-- Header -->
+        <header>
+            <div class="header-container">
+                <div class="header-top">
+                    <div class="container">
+                        <div class="row">
+                            <!-- top links -->
+                            <div class="headerlinkmenu col-md-8 col-sm-8 col-xs-12">
+                                <span class="phone hidden-xs hidden-sm">Đặt hàng ngay: <b>097.868.3986</b></span>
+                                <ul class="links">
+                                    <li><a title="login" href="account_page.html"><span>Đăng nhập</span></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- header inner -->
+                <div class="header-inner">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-3 col-xs-12 jtv-logo-block">
+                                <!-- Header Logo -->
+                                <div class="logo"><a title="e-commerce" href="index.html"><img alt="ShopMart" title="ShopMart" src="/HTML/images/logo.png"></a> </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-8 col-md-9 jtv-top-search">
+                                <!-- Search -->
+                                <div class="top-search">
+                                    <div id="search">
+                                        <form>
+                                            <div class="input-group">
+                                                <select class="cate-dropdown hidden-xs hidden-sm" name="category_id">
+                                                    <option>Tất cả</option>
+                                                    <option>women</option>
+                                                    <option>&nbsp;&nbsp;&nbsp;Chair </option>
+                                                    <option>&nbsp;&nbsp;&nbsp;Decoration</option>
+                                                    <option>&nbsp;&nbsp;&nbsp;Lamp</option>
+                                                    <option>&nbsp;&nbsp;&nbsp;Handbags </option>
+                                                    <option>&nbsp;&nbsp;&nbsp;Sofas </option>
+                                                    <option>&nbsp;&nbsp;&nbsp;Essential </option>
+                                                    <option>Men</option>
+                                                    <option>Electronics</option>
+                                                    <option>&nbsp;&nbsp;&nbsp;Mobiles </option>
+                                                    <option>&nbsp;&nbsp;&nbsp;Music &amp; Audio </option>
+                                                </select>
+                                                <input type="text" class="form-control" placeholder="Bạn muốn mua gì hôm nay?" name="search">
+                                                <button class="btn-search" type="button"><i class="fa fa-search"></i></button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <!-- End Search -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- end header -->
+        <nav>
+            <div class="container">
+                <div class="row">
+                    <div class="mm-toggle-wrap">
+                        <div class="mm-toggle"><i class="fa fa-align-justify"></i> </div>
+                        <span class="mm-label">Toàn bộ</span>
+                    </div>
+                    <div class="col-md-3 col-sm-3 mega-container hidden-xs">
+                        <div class="navleft-container">
+                            <div class="mega-menu-title">
+                                <h3><span>Toàn bộ</span></h3>
+                            </div>
+
+                            <!-- Shop by category -->
+                            <div class="mega-menu-category">
+                                <ul class="nav">
+                                    <li>
+                                        <a href="javascript:void(0)">Home pages </a>
+                                        <div class="wrap-popup column1">
+                                            <div class="popup">
+                                                <ul class="nav">
+                                                    <li><a href="index.html"><span>Home Version 1</span></a></li>
+                                                    <li><a href="version2/index.html"><span>Home Version 2</span></a></li>
+                                                    <li><a href="version3/index.html"><span>Home Version 3</span></a></li>
+                                                    <li><a href="version4/index.html"><span>Home Version 4</span></a></li>
+                                                    <li><a href="version1rtl/index.html"><span>Home Version 1 RTL</span></a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)">Pages</a>
+                                        <div class="wrap-popup">
+                                            <div class="popup">
+                                                <div class="row">
+                                                    <div class="col-md-4 col-sm-6">
+                                                        <ul class="nav">
+                                                            <li><a href="shop_grid.html"><span>Grid View Category Page</span></a></li>
+                                                            <li><a href="shop_grid_full_width.html"><span>Grid View Full Width</span></a></li>
+                                                            <li><a href="shop_list.html"><span>List View Category Page</span></a></li>
+                                                            <li><a href="single_product.html"><span>Full Width Product Page</span> </a></li>
+                                                            <li><a href="single_product_sidebar.html"><span>Product Page With Sidebar</span> </a></li>
+                                                            <li><a href="single_product_magnify_zoom.html"><span>Product Page Magnify Zoom</span> </a></li>
+                                                            <li><a href="shopping_cart.html"><span>Shopping Cart</span></a></li>
+                                                            <li><a href="wishlist.html"><span>Wishlist</span></a></li>
+                                                            <li><a href="compare.html"><span>Compare Products</span></a></li>
+                                                            <li><a href="checkout.html"><span>Checkout</span></a></li>
+                                                            <li><a href="sitemap.html"><span>Sitemap</span></a></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-md-4 col-sm-6 has-sep">
+                                                        <ul class="nav">
+                                                            <li><a href="about_us.html"><span>About Us</span></a></li>
+                                                            <li><a href="contact_us.html"><span>Contact Us</span></a></li>
+                                                            <li><a href="orders_list.html"><span>Orders List</span></a></li>
+                                                            <li><a href="order_details.html"><span>Order Details</span></a></li>
+                                                            <li><a href="404error.html"><span>404 Error</span> </a></li>
+                                                            <li><a href="faq.html"><span>FAQ Page</span></a></li>
+                                                            <li><a href="manufacturers.html"><span>Manufacturers</span></a></li>
+                                                            <li><a href="quick_view.html"><span>Quick View</span></a></li>
+                                                            <li><a href="dashboard.html"><span>Account Dashboard</span></a></li>
+                                                            <li><a href="shortcodes.html"><span>Shortcodes</span> </a></li>
+                                                            <li><a href="typography.html"><span>Typography</span></a></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-md-4 has-sep hidden-sm">
+                                                        <div class="custom-menu-right">
+                                                            <div class="box-banner menu-banner">
+                                                                <div class="add-right"><a href="javascript:void(0)"><img src="/HTML/images/menu-banner-img1.jpg" alt="responsive"></a></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)">TV &amp; Audio</a>
+                                        <div class="wrap-popup">
+                                            <div class="popup">
+                                                <div class="row">
+                                                    <div class="col-md-4 col-sm-6">
+                                                        <h3>Televisions</h3>
+                                                        <ul class="nav">
+                                                            <li><a href="shop_grid.html">LCD Televisions</a></li>
+                                                            <li><a href="shop_grid.html">Projection Televisions</a></li>
+                                                            <li><a href="shop_grid.html">Play Stations</a></li>
+                                                            <li><a href="shop_grid.html">Televisions/Tube</a></li>
+                                                        </ul>
+                                                        <br>
+                                                        <h3>Headphones</h3>
+                                                        <ul class="nav">
+                                                            <li><a href="shop_grid.html">Players &amp; Video</a></li>
+                                                            <li><a href="shop_grid.html">Party Dresses</a></li>
+                                                            <li><a href="shop_grid.html">Midi Dresses</a></li>
+                                                            <li><a href="shop_grid.html">Strapless Dresses</a></li>
+                                                            <li><a href="shop_grid.html">Day Dresses</a></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-md-4 col-sm-6 has-sep">
+                                                        <h3>Appliances</h3>
+                                                        <ul class="nav">
+                                                            <li><a href="shop_grid.html">Kitchen</a></li>
+                                                            <li><a href="shop_grid.html">Refrigerators</a></li>
+                                                            <li><a href="shop_grid.html">Laundry &amp; Garment</a></li>
+                                                            <li><a href="shop_grid.html">Vacuum Cleaners</a></li>
+                                                        </ul>
+                                                        <br>
+                                                        <h3>Video Accessories</h3>
+                                                        <ul class="nav">
+                                                            <li><a href="shop_grid.html">Bags &amp; Cases</a></li>
+                                                            <li><a href="shop_grid.html">Video Tapes</a></li>
+                                                            <li><a href="shop_grid.html">Memory Card</a></li>
+                                                            <li><a href="shop_grid.html">Readers Tripods</a></li>
+                                                            <li><a href="shop_grid.html">Batteries</a></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-md-4 has-sep hidden-sm">
+                                                        <div class="custom-menu-right">
+                                                            <div class="box-banner media">
+                                                                <div class="add-desc">
+                                                                    <h3>
+                                                                        Computer <br>
+                                                                        Services
+                                                                    </h3>
+                                                                    <div class="price-sale">2016</div>
+                                                                    <a href="javascript:void(0)">Shop Now</a>
+                                                                </div>
+                                                                <div class="add-right"><a href="javascript:void(0)"><img src="/HTML/images/menu-banner-img2.jpg" alt="fashion"></a></div>
+                                                            </div>
+                                                            <div class="box-banner media">
+                                                                <div class="add-desc">
+                                                                    <h3>Save up to</h3>
+                                                                    <div class="price-sale">75 <sup>%</sup><sub>off</sub></div>
+                                                                    <a href="javascript:void(0)">Shopping Now</a>
+                                                                </div>
+                                                                <div class="add-right"><a href="javascript:void(0)"><img src="/HTML/images/menu-banner-img3.jpg" alt=" html store"></a></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)">Apple Store </a>
+                                        <div class="wrap-popup">
+                                            <div class="popup">
+                                                <div class="row">
+                                                    <div class="col-md-4 col-sm-6">
+                                                        <h3>Online store</h3>
+                                                        <ul class="nav">
+                                                            <li><a href="shop_grid.html">Mac personal computers</a></li>
+                                                            <li><a href="shop_grid.html">iPhone smartphones</a></li>
+                                                            <li><a href="shop_grid.html">iPad tablet computers</a></li>
+                                                            <li><a href="shop_grid.html">iPod portable</a></li>
+                                                            <li><a href="shop_grid.html">Media players</a></li>
+                                                            <li><a href="shop_grid.html">Smartwatches</a></li>
+                                                            <li><a href="shop_grid.html">Apple TV digital</a></li>
+                                                            <li><a href="shop_grid.html">software</a></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-md-4 col-sm-6 has-sep">
+                                                        <h3>Accessories</h3>
+                                                        <ul class="nav">
+                                                            <li><a href="shop_grid.html"><span>JCables Chargers</span></a></li>
+                                                            <li><a href="shop_grid.html"><span>Cases Backup</span></a></li>
+                                                            <li><a href="shop_grid.html"><span>Battery Packs Screen</span> </a></li>
+                                                            <li><a href="shop_grid.html"><span>Protectors</span> </a></li>
+                                                            <li><a href="shop_grid.html"><span>Holders &amp; Stands</span></a></li>
+                                                            <li><a href="shop_grid.html"><span>Office Wireless</span></a></li>
+                                                            <li><a href="shop_grid.html"><span>Cable Phones</span></a></li>
+                                                            <li><a href="shop_grid.html"><span>Fax Radio Phones</span></a></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-md-4 has-sep hidden-sm">
+                                                        <div class="custom-menu-right">
+                                                            <div class="box-banner menu-banner">
+                                                                <div class="add-right"><a href="javascript:void(0)"><img src="/HTML/images/menu-banner-img4.jpg" alt="responsive"></a></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <a href="shop_grid.html">Photo &amp; Camera</a>
+                                        <div class="wrap-popup column3">
+                                            <div class="popup">
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <h3>Camera Store</h3>
+                                                        <ul class="nav">
+                                                            <li><a href="shop_grid.html"> Canon PowerShot </a></li>
+                                                            <li><a href="shop_grid.html"> Photography </a></li>
+                                                            <li><a href="shop_grid.html"> Action Camcorders </a></li>
+                                                            <li><a href="shop_grid.html"> Film Cameras </a></li>
+                                                            <li><a href="shop_grid.html"> Photo Studio </a></li>
+                                                            <li><a href="shop_grid.html"> Camera Lenses </a></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-sm-6 has-sep">
+                                                        <h3>Accessories</h3>
+                                                        <ul class="nav">
+                                                            <li><a href="shop_grid.html"> Bags &amp; Cases </a></li>
+                                                            <li><a href="shop_grid.html"> Keyboards</a></li>
+                                                            <li><a href="shop_grid.html"> Web Cameras </a></li>
+                                                            <li><a href="shop_grid.html"> Batteries &amp; Chargers </a></li>
+                                                            <li><a href="shop_grid.html"> USB Gadgets </a></li>
+                                                            <li><a href="shop_grid.html"> Cables &amp; Connectors </a></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-sm-12"> <a class="ads1" href="javascript:void(0)"><img class="img-responsive" src="/HTML/images/menu-banner-img5.jpg" alt="bootstrap"></a> </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <a href="shop_grid.html">Smartphone</a>
+                                        <div class="wrap-popup column1">
+                                            <div class="popup">
+                                                <ul class="nav">
+                                                    <li><a href="shop_grid.html"><span>Micromax Canvas</span></a></li>
+                                                    <li><a href="shop_grid.html"><span>Moto G5</span></a></li>
+                                                    <li><a href="shop_grid.html"><span>iPhone 6-32GB</span></a></li>
+                                                    <li><a href="shop_grid.html"><span>OnePlus 5</span></a></li>
+                                                    <li><a href="shop_grid.html"><span>Samsung On7 pro</span></a></li>
+                                                    <li><a href="shop_grid.html"><span>Coolpad Cool</span></a></li>
+                                                    <li><a href="shop_grid.html"><span>Xolo Era</span></a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <a href="shop_grid.html">Laptop</a>
+                                        <div class="wrap-popup column1">
+                                            <div class="popup">
+                                                <ul class="nav">
+                                                    <li><a href="shop_grid.html"><span>Lenovo Ideapad</span></a></li>
+                                                    <li><a href="shop_grid.html"><span>Dell Inspiron</span></a></li>
+                                                    <li><a href="shop_grid.html"><span>Acer One 14</span></a></li>
+                                                    <li><a href="shop_grid.html"><span>Toshiba</span></a></li>
+                                                    <li><a href="shop_grid.html"><span>ASUS VivoBook</span></a></li>
+                                                    <li><a href="shop_grid.html"><span>HP Pavilion</span></a></li>
+                                                    <li><a href="shop_grid.html"><span>iBall CompBook</span></a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="nosub"><a href="javascript:void(0)">Games &amp; Video</a></li>
+                                    <li>
+                                        <a href="blog.html">Blog</a>
+                                        <div class="wrap-popup column1">
+                                            <div class="popup">
+                                                <ul class="nav">
+                                                    <li><a href="blog_right_sidebar.html"> Blog – Right Sidebar </a></li>
+                                                    <li><a href="blog_left_sidebar.html"> Blog – Left Sidebar </a></li>
+                                                    <li><a href="blog_full_width.html"> Blog – Full-Width </a></li>
+                                                    <li><a href="blog_single_post.html"> Single post </a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="nosub"><a href="shop_grid.html">Accessories</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-9 col-sm-9 jtv-megamenu">
+                        <div class="mtmegamenu">
+                            <ul class="hidden-xs">
+                                <li class="mt-root">
+                                    <div class="mt-root-item">
+                                        <a href="about_us.html">
+                                            <div class="title title_font"><span class="title-text">Hàng mới về</span></div>
+                                        </a>
+                                    </div>
+                                </li>
+                                <li class="mt-root">
+                                    <div class="mt-root-item">
+                                        <a href="about_us.html">
+                                            <div class="title title_font"><span class="title-text">Flash Deals</span></div>
+                                        </a>
+                                    </div>
+                                </li>
+                                <li class="mt-root">
+                                    <div class="mt-root-item">
+                                        <a href="about_us.html">
+                                            <div class="title title_font"><span class="title-text">Thương hiệu</span></div>
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- MAIN BODY -->
+        @RenderBody()
+        <!-- END MAIN BODY -->
+
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6 col-md-3 col-xs-12">
+                        <div class="footer-logo"><a href="index.html"><img src="/HTML/images/footer-logo.png" alt="fotter logo"></a> </div>
+                        @*<p>Lorem Ipsum is simply dummy text of the print and typesetting industry. Ut pharetra augue nec augue. Nam elit agna, endrerit sit amet.</p>*@
+                        @*<div class="social">
+                            <ul class="inline-mode">
+                                <li class="social-network fb"><a title="Connect us on Facebook" target="_blank" href="https://www.facebook.com/"><i class="fa fa-facebook"></i></a></li>
+                                <li class="social-network googleplus"><a title="Connect us on Google+" target="_blank" href="https://plus.google.com/"><i class="fa fa-google"></i></a></li>
+                                <li class="social-network tw"><a title="Connect us on Twitter" target="_blank" href="https://twitter.com/"><i class="fa fa-twitter"></i></a></li>
+                                <li class="social-network linkedin"><a title="Connect us on Pinterest" target="_blank" href="https://www.pinterest.com/"><i class="fa fa-pinterest"></i></a></li>
+                                <li class="social-network rss"><a title="Connect us on Instagram" target="_blank" href="https://instagram.com/"><i class="fa fa-instagram"></i></a></li>
+                            </ul>
+                        </div>*@
+                    </div>
+                    <div class="col-sm-6 col-md-2 col-xs-12 collapsed-block">
+                        <div class="footer-links">
+                            <h3 class="links-title">Thông tin thêm<a class="expander visible-xs" href="javascript:void(0)TabBlock-1">+</a></h3>
+                            <div class="tabBlock" id="TabBlock-1">
+                                <ul class="list-links list-unstyled">
+                                    <li><a href="javascript:void(0)">Chính sách vận chuyển</a></li>
+                                    <li><a href="javascript:void(0)">Chính sách đổi trả</a></li>
+                                    <li><a href="javascript:void(0)">Khuyễn mại, giảm giá</a></li>
+                                    <li><a href="javascript:void(0)">Điều khoản</a></li>
+                                    <li><a href="faq.html">Hỏi đáp</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-2 col-xs-12 collapsed-block">
+                        <div class="footer-links">
+                            <h3 class="links-title">Khám phá<a class="expander visible-xs" href="javascript:void(0)TabBlock-3">+</a></h3>
+                            <div class="tabBlock" id="TabBlock-3">
+                                <ul class="list-links list-unstyled">
+                                    <li><a href="sitemap.html">Sites Map</a></li>
+                                    <li><a href="javascript:void(0)">Tin tức</a></li>
+                                    <li><a href="about_us.html">Giới thiệu</a></li>
+                                    <li><a href="contact_us.html">Liên hệ</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-md-2 col-xs-12 collapsed-block">
+                        <div class="footer-links">
+                            <h3 class="links-title">Dịch vụ<a class="expander visible-xs" href="javascript:void(0)TabBlock-4">+</a></h3>
+                            <div class="tabBlock" id="TabBlock-4">
+                                <ul class="list-links list-unstyled">
+                                    <li><a href="account_page.html">Gia công phần mềm</a></li>
+                                    <li><a href="shopping_cart.html">Phần mềm giáo dục</a></li>
+                                    <li><a href="wishlist.html">Thực phẩm làm đẹp</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3 col-xs-12 collapsed-block">
+                        <div class="footer-links">
+                            <h3 class="links-title">Thời gian bán hàng<a class="expander visible-xs" href="javascript:void(0)TabBlock-5">+</a></h3>
+                            <div class="tabBlock" id="TabBlock-5">
+                                @*<div class="footer-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod.</div>*@
+                                <div class="footer-description">
+                                    <b>T2-T7:</b> 8.00 a.m. - 5.30 p.m.<br>
+                                    <b>Chủ nhật:</b> Nghỉ
+                                </div>
+                                <div class="payment">
+                                    <ul>
+                                        <li><a href="javascript:void(0)"><img title="Visa" alt="Visa" src="/HTML/images/visa.png"></a></li>
+                                        <li><a href="javascript:void(0)"><img title="Paypal" alt="Paypal" src="/HTML/images/paypal.png"></a></li>
+                                        <li><a href="javascript:void(0)"><img title="Discover" alt="Discover" src="/HTML/images/discover.png"></a></li>
+                                        <li><a href="javascript:void(0)"><img title="Master Card" alt="Master Card" src="/HTML/images/master-card.png"></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-coppyright">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-6 col-xs-12 coppyright"> Bản quyền © 2018 <a href="javascript:void(0)"> MDC Group </a>. </div>
+                        <div class="col-sm-6 col-xs-12">
+                            <ul class="footer-company-links">
+                                <li> <a href="about_us.html">Giới thiệu MDC Group</a> </li>
+                                <li> <a href="javascript:void(0)">Tuyển dụng</a> </li>
+                                <li> <a href="javascript:void(0)">Chính sách</a> </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <a href="javascript:void(0)" id="back-to-top" title="Lên đầu trang"><i class="fa fa-angle-up"></i></a>
+        <!-- End Footer -->
+    </div>
+    <!-- JS -->
+    <!-- jquery js -->
+    <script type="text/javascript" src="/HTML/js/jquery.min.js"></script>
+    <!-- bootstrap js -->
+    <script type="text/javascript" src="/HTML/js/bootstrap.min.js"></script>
+    <!-- owl.carousel.min js -->
+    <script type="text/javascript" src="/HTML/js/owl.carousel.min.js"></script>
+    <!-- jquery.mobile-menu js -->
+    <script type="text/javascript" src="/HTML/js/mobile-menu.js"></script>
+    <!--jquery-ui.min js -->
+    <script type="text/javascript" src="/HTML/js/jquery-ui.js"></script>
+    <!-- main js -->
+    <script type="text/javascript" src="/HTML/js/main.js"></script>
+    <!-- countdown js -->
+    <script type="text/javascript" src="/HTML/js/countdown.js"></script>
+    <!-- Slider Js -->
+    <script type="text/javascript" src="/HTML/js/revolution-slider.js"></script>
+    <script type='text/javascript'>
+        jQuery(document).ready(function () {
+            jQuery('javascript:void(0)rev_slider_4').show().revolution({
+                dottedOverlay: 'none',
+                delay: 5000,
+                startwidth: 865,
+                startheight: 450,
+
+                hideThumbs: 200,
+                thumbWidth: 200,
+                thumbHeight: 50,
+                thumbAmount: 2,
+
+                navigationType: 'thumb',
+                navigationArrows: 'solo',
+                navigationStyle: 'round',
+
+                touchenabled: 'on',
+                onHoverStop: 'on',
+
+                swipe_velocity: 0.7,
+                swipe_min_touches: 1,
+                swipe_max_touches: 1,
+                drag_block_vertical: false,
+
+                spinner: 'spinner0',
+                keyboardNavigation: 'off',
+
+                navigationHAlign: 'center',
+                navigationVAlign: 'bottom',
+                navigationHOffset: 0,
+                navigationVOffset: 20,
+
+                soloArrowLeftHalign: 'left',
+                soloArrowLeftValign: 'center',
+                soloArrowLeftHOffset: 20,
+                soloArrowLeftVOffset: 0,
+
+                soloArrowRightHalign: 'right',
+                soloArrowRightValign: 'center',
+                soloArrowRightHOffset: 20,
+                soloArrowRightVOffset: 0,
+
+                shadow: 0,
+                fullWidth: 'on',
+                fullScreen: 'off',
+
+                stopLoop: 'off',
+                stopAfterLoops: -1,
+                stopAtSlide: -1,
+
+                shuffle: 'off',
+
+                autoHeight: 'off',
+                forceFullWidth: 'on',
+                fullScreenAlignForce: 'off',
+                minFullScreenHeight: 0,
+                hideNavDelayOnMobile: 1500,
+
+                hideThumbsOnMobile: 'off',
+                hideBulletsOnMobile: 'off',
+                hideArrowsOnMobile: 'off',
+                hideThumbsUnderResolution: 0,
+
+
+                hideSliderAtLimit: 0,
+                hideCaptionAtLimit: 0,
+                hideAllCaptionAtLilmit: 0,
+                startWithSlide: 0,
+                fullScreenOffsetContainer: ''
+            });
+        });
+    </script>
+</body>
+</html>

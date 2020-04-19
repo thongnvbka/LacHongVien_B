@@ -1,0 +1,100 @@
+﻿@using ViELearn.Models.ProjectModels;
+@model UnitReport
+
+@using (Ajax.BeginForm("SaveDetailUnitReport", "UnitReportUnitReport", new AjaxOptions { HttpMethod = "POST", OnSuccess = "UnitReportCreateOrSaveAlert" }, new { @class = "form-horizontal" }))
+{
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4>@(Model.Id>0? "Thông tin chi tiết báo cáo" : "Thêm mới báo cáo quân số")</h4>
+        </div>
+        <div class="modal-body">
+            <div class="col sm-12">
+                <div class="form-body">
+                    @Html.HiddenFor(m => m.Id)
+                    @Html.HiddenFor(m => m.UnitId)
+                    @Html.HiddenFor(m => m.Status)
+                    @Html.HiddenFor(m => m.CreatedBy)
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Ngày</label>
+                        <div class="col-md-6">
+                            @Html.DropDownListFor(m=> m.DayReport, (SelectList)ViewBag.ListDayForSelect, new { @class = "form-control"})
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Phòng-Ban</label>
+                        <div class="col-md-6">
+                            @Html.DropDownList("GroupId", (SelectList)ViewBag.ListGroupRoles, new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Tiêu đề</label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" name="Title" value="@Model.Title">
+                        </div>
+                    </div>                        
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Tổng số</label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" name="TotalPeople" value="@Model.TotalPeople">
+                        </div>
+                    </div>                        
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Đi công tác</label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" name="PeopleInMisson" value="@Model.PeopleInMisson">
+                        </div>
+                    </div>                        
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Đi học</label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" name="PeopleInStudy" value="@Model.PeopleInStudy">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Nghỉ phép</label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" name="PeopleInVacation" value="@Model.PeopleInVacation">
+                        </div>
+                    </div>      
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Nghỉ ốm</label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" name="PeopleInSick" value="@Model.PeopleInSick">
+                        </div>
+                    </div>  
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Lí do khác</label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" name="PeopleInOtherReason" value="@Model.PeopleInOtherReason">
+                        </div>
+                    </div>  
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label"></label>
+                        <div class="col-md-6">                                
+                            <textarea rows="5" class="form-control" name="ReasonNote">@Model.ReasonNote</textarea>
+                        </div>
+                    </div>                        
+
+                    <div class="form-actions">
+                        <div class="row" style="text-align:center">                                
+                            <button type="submit" class="btn blue">@(Model.Id != 0?"Lưu thay đổi":"Thêm mới")</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn default" data-dismiss="modal">Đóng</button>
+        </div>
+    </div>
+}

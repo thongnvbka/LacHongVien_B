@@ -1,0 +1,201 @@
+﻿
+@using System.Data
+@using System.Globalization;
+@using ViELearn.BackEnd.Ultilities
+
+@{
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+
+@section stylePageLever{
+    <link href="/UITheme/assets/global/plugins/morris/morris.css" rel="stylesheet" type="text/css">
+    @*<link href="/UITheme/assets/global/plugins/jqvmap/jqvmap/jqvmap.css" rel="stylesheet" type="text/css">*@
+    <link href="/UITheme/assets/global/plugins/datatables/datatables.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/dropzone/dropzone.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/dropzone/basic.min.css" rel="stylesheet" type="text/css" />
+
+    <link href="/UITheme/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+}
+
+@section scriptMainPageLevel{
+    <script src="/UITheme/assets/global/plugins/moment.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/morris/morris.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/morris/raphael-min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/counterup/jquery.waypoints.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/counterup/jquery.counterup.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/fullcalendar/fullcalendar.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/horizontal-timeline/horizontal-timeline.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/scripts/datatable.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/datatables/datatables.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/pages/scripts/table-datatables-editable.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/pages/scripts/components-bootstrap-multiselect.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/dropzone/dropzone.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/pages/scripts/form-dropzone.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/moment.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/pages/scripts/components-date-time-pickers.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".select2").select2({});
+        });
+    </script>
+}
+
+@section actionMenu{
+    <div class="page-bar">
+        <ul class="page-breadcrumb">
+            <li> <i class="fa fa-plus icon-home"></i> <i class="fa fa-angle-right"></i> </li>
+            <li> <span> <a href="@Url.Action("Index", "TaiKhoan", new { t = Request["t"] })">Tài khoản</a><i class="fa fa-angle-right"></i> </span> </li>
+            <li> <span> <a href="@Url.Action("Create", "TaiKhoan", new { t = Request["t"] })">@ViewBag.Title</a></span> </li>
+        </ul>
+        <div class="page-toolbar">
+            <div class="btn-group pull-right">
+                <a href="@Url.Action("Index", "TaiKhoan", new { t = Request["t"] })" class="btn btn-default"><i class="fa fa-angle-double-left"></i> Quay lại</a>
+                <button class="btn btn-info" onclick="submit(1);"><i class="fa fa-save"></i> Lưu, thêm tiếp</button>
+                <button class="btn btn-primary" onclick="submit(0);"><i class="fa fa-save"></i> Lưu xong đóng</button>
+                @*<button type="button" class="btn btn-fit-height btn-danger dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true"> Công cụ <i class="fa fa-angle-down"></i> </button>
+                    <ul class="dropdown-menu pull-right" role="menu">
+                        <li> <a href="/DanhSachHocSinh/ImportExcel"> <i class="icon-shield"></i> Nhập danh sách giáo viên từ excel</a> </li>
+                        <!-- <li class="divider"> </li> -->
+                    </ul>*@
+            </div>
+        </div>
+    </div>
+}
+
+@section scriptConfigPageLevel{
+    <script type="text/javascript">
+        @*$(document).ready(function () {
+            $.ajax({
+                type: 'GET',
+                datatype: 'json',
+                url: '/QuanLyGiaoVien/SinhMaGiaoVien',
+                success: function (responsive) {
+                    responsive = responsive.toLowerCase();
+                    $('#Ma_gv').val(responsive);
+                    if ($('#Ma_gv').val().includes('@( SysBaseInfor.GetMaTruong().ToLower() )')) {
+                        $('#txtTen_dang_nhap').val(responsive);
+                    } else {
+                        $('#txtTen_dang_nhap').val('@( SysBaseInfor.GetMaTruong().ToLower() )' + responsive);
+                    }
+                },
+                error: function (responsive) {
+                    $('#Ma_gv').val('');
+                    $('#txtTen_dang_nhap').val('');
+                }
+            });
+        })
+
+        function update_tendangnhap() {
+            if ($('#Ma_gv').val().includes('@( SysBaseInfor.GetMaTruong().ToLower() )')) {
+                $('#txtTen_dang_nhap').val($('#Ma_gv').val().toLowerCase());
+            } else {
+                $('#txtTen_dang_nhap').val('@( SysBaseInfor.GetMaTruong().ToLower() )' + $('#Ma_gv').val().toLowerCase());
+            }
+        }*@
+
+        function submit(type) {
+            $("#type").val(type);
+            //$("#frm").submit();
+            $.ajax({
+                data: {
+                    _roleid: $('#loaitaikhoan option:selected').attr('data-roleid'),
+                    _username: $("#username").val(),
+                    _fullname: $("#fullname").val(),
+                    _email: $("#email").val(),
+                    _birthday: $("#birthday").val(),
+                    _phone: $("#phone").val(),
+                    _truong: $("#truong option:selected").val(),
+                    _gender: $("#gender").val(),
+                    _trangthai: $("#trangthai").val(),
+                    _pass: $("#password").val()
+                },
+                type: 'POST',
+                datatype: 'json',
+                url: '/TaiKhoan/Save?id=@ViewBag.IdDm',
+                success: function (responsive) {
+                    if (responsive.status) {
+                        //if (type == 0) {
+                        //    window.location.replace("/TaiKhoan?t=" + $("#loaitaikhoan").val());
+                        //} else if (type == 1) {
+                        //    window.location.replace("/TaiKhoan/Create?t=" + $("#loaitaikhoan").val() + "&s=" + $("#truong option:selected").val());
+                        //}
+                    } else {
+                        bootbox.alert(responsive.message);
+                    }
+                },
+                error: function (responsive) {
+                    bootbox.alert("Có lỗi xảy ra!");
+                }
+            });
+        }
+    </script>
+}
+
+@*<div class="table-toolbar">
+        <div class="row">
+            <div class="col-md-12">
+                <a href="@Url.Action("Index", "QuanLyGiaoVien")" class="btn btn-default">&lt; Quay lại</a>
+                <button class="btn btn-primary" onclick="submit(1);"><i class="fa fa-save"></i> Lưu xong nhập tiếp</button>
+                <button class="btn btn-info" onclick="submit(0);"><i class="fa fa-save"></i> Lưu xong đóng</button>
+            </div>
+        </div>
+    </div>*@
+
+@*@using (Html.BeginForm("Create", "TaiKhoan", FormMethod.Post, new { @role = "form", name = "frm", id = "frm" }))
+    {*@
+@*@Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)*@
+<input type="hidden" id="type" name="type" value="0" />
+<div class="row">
+    <div class="col-sm-10 col-md-8 col-lg-6">
+        <div class="form-group col-sm-4">
+            Tên đăng nhập: <span class="font-red">(*)</span>
+            <input name="username" id="username" class="form-control required-nonestyle" value="" placeholder="Tên đăng nhập" />
+        </div>
+        <div class="form-group col-sm-8">
+            @*Mật khẩu: <span class="font-green pull-right"><small>(để trống nếu không muốn thay)</small></span>*@
+            Mật khẩu: <span class="font-red">(*)</span>
+            <div class="row">
+                <div class="col-sm-6">
+                    <input name="password" id="password" type="password" class="form-control" placeholder="Mật khẩu" />
+                </div>
+                <div class="col-sm-6">
+                    <input name="retypepassword" id="retypepassword" type="password" class="form-control" placeholder="Gõ lại mật khẩu" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-sm-6">
+            Tên hiển thị: <span class="font-red">(*)</span>
+            <input name="fullname" id="fullname" class="form-control required-nonestyle" value="" placeholder="Tên hiển thị" />
+        </div>
+        <div class="form-group col-sm-6">
+            Địa chỉ email:
+            <input name="email" id="email" type="email" class="form-control" placeholder="Địa chỉ email" />
+        </div>
+        <div class="form-group col-sm-6">
+            Điện thoại:
+            <input name="phone" id="phone" class="form-control" value="" placeholder="Điện thoại" />
+        </div>
+        <div class="form-group col-sm-6">
+            Trạng thái:
+            <select name="trangthai" id="trangthai" class="form-control">
+                <option value="0">Không dùng</option>
+                <option value="1" >Có dùng</option>
+            </select>
+        </div>
+    </div>
+</div>
+@*}*@
+
+

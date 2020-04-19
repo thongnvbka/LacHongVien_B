@@ -1,0 +1,387 @@
+﻿@using System.Collections;
+@using ViELearn.BackEnd.Ultilities
+@using System.Configuration;
+
+<!DOCTYPE html>
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]--><!-- BEGIN HEAD -->
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8">
+    <meta charset="utf-8">
+    <title> @{ @ViewBag.Title; } | Hệ thống thông tin giáo dục </title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta content="Hệ thống thông tin liên lạc giáo dục, kết nối gia đình và nhà trường">
+    <meta content="MDC Group" name="author">
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="/UITheme/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css">
+    <link href="/UITheme/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/UITheme/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css">
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    @RenderSection("stylePageLever", required: false)
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN THEME GLOBAL STYLES -->
+    <link href="/UITheme/assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css">
+    <link href="/UITheme/assets/global/css/plugins.min.css" rel="stylesheet" type="text/css">
+    <!-- END THEME GLOBAL STYLES -->
+    <!-- BEGIN THEME LAYOUT STYLES -->
+    <link href="/UITheme/assets/layouts/layout/css/layout.min.css" rel="stylesheet" type="text/css">
+    @*<link href="/UITheme/assets/layouts/layout/css/themes/default.min.css" rel="stylesheet" type="text/css" id="style_color">*@
+    @*<link href="/UITheme/assets/layouts/layout/css/themes/blue.min.css" rel="stylesheet" type="text/css" id="style_color" />*@
+    <link href="/UITheme/assets/layouts/layout/css/themes/red.css" rel="stylesheet" type="text/css" id="style_color" />
+    <link href="/UITheme/assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css">
+    <!-- END THEME LAYOUT STYLES -->
+    <style type="text/css">
+        .jqstooltip {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            visibility: hidden;
+            background: rgb(0, 0, 0) transparent;
+            background-color: rgba(0,0,0,0.6);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
+            -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";
+            color: white;
+            font: 10px arial, san serif;
+            text-align: left;
+            white-space: nowrap;
+            padding: 5px;
+            border: 1px solid white;
+            z-index: 10000;
+        }
+
+        .jqsfield {
+            color: white;
+            font: 10px arial, san serif;
+            text-align: left;
+        }
+
+        /*.divider {
+                height: 1px;
+                width: 100%;
+                margin: 10px 0px !important;
+                overflow: hidden;
+                box-shadow: inset -1px 0 0 0 rgba(0, 0, 0, 0.1);
+                background-color: #d2d3d6 !important;
+            }*/
+        .in small.datetime {
+            font-size: 75% !important;
+            position: absolute;
+            right: 5px;
+            top: 4px;
+        }
+
+        .out small.datetime {
+            font-size: 75% !important;
+            position: absolute;
+            left: 5px;
+            top: 4px;
+        }
+
+        .select2-container--default .select2-results__option[aria-disabled=true],
+        .select2-container--bootstrap .select2-results__option[aria-disabled=true] {
+            display: none;
+        }
+
+        input[type=number] {
+            text-align: right;
+        }
+    </style>
+
+    <link rel="shortcut icon" href="/favicon.ico">
+    <script src="/UITheme/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        function isValidMobile(phone) {
+            if (phone.length < 10 || phone.length > 11) return "SDT sai chiều dài (được phép 10->11 ký tự)";
+            if (phone.indexOf(" ") !== -1) return "SDT không được chứa khoảng trống";
+            if (!/^\d+$/.test(phone)) return "SDT không được chứa chữ cái hoặc ký tự đặc biệt";
+            if (phone.startsWith("01") && phone.length == 10) return "SDT sai chiều dài (bắt đầu bằng 01 mà lại có 10 số)";
+            if ((phone.startsWith("08") || phone.startsWith("09")) && phone.length == 11) return "SDT sai chiều dài (bắt đầu bằng 08,09 mà lại có 11 số)";
+            var start3 = phone.substr(0, 3);
+            var start4 = phone.substr(0, 4);
+            // Vietel: 086, 096, 097, 098, 0162, 0163, 0164, 0165, 0166, 0167, 0168, 0169.
+            if (!(start3 == "086" || start3 == "096" || start3 == "097" || start3 == "098" || start4 == "0162" ||
+                start4 == "0163" || start4 == "0164" || start4 == "0165" || start4 == "0166" || start4 == "0167" ||
+                start4 == "0168" || start4 == "0169") &&
+
+                // mobi: 089, 090, 093, 0120, 0121, 0122, 0126, 0128.
+                !(start3 == "089" || start3 == "090" || start3 == "093" || start4 == "0120" || start4 == "0121" || start4 == "0122" ||
+                    start4 == "0126" || start4 == "0128") &&
+
+                // vina: 088, 091, 094, 0123, 0124, 0125, 0127, 0129.
+                !(start3 == "088" || start3 == "091" || start3 == "094" || start4 == "0123" || start4 == "0124" || start4 == "0125" ||
+                    start4 == "0127" || start4 == "0129") &&
+
+                // htmobile: 092, 0188, 0186.
+                !(start3 == "092" || start4 == "0188" || start4 == "0186") &&
+
+                // gmobile: 099, 0199.
+                !(start3 == "099" || start4 == "0199")) {
+                return "Đầu số chưa được hỗ trợ";
+            }
+
+            return "ok";
+        }
+    </script>
+</head>
+<!-- END HEAD -->
+
+<body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white page-sidebar-closed">
+    <!-- BEGIN HEADER -->
+    <div class="page-header navbar navbar-fixed-top">
+        <!-- BEGIN HEADER INNER -->
+        <div class="page-header-inner">
+            <!-- BEGIN LOGO -->
+            <div class="page-logo">
+                <a href="/"> <img src="/UITheme/assets/layouts/layout2/img/logo-default.png" alt="logo" class="logo-default"> </a>
+                <div class="menu-toggler sidebar-toggler">
+                    <span></span>
+                </div>
+            </div>
+            <div class="page-actions">
+
+            </div>
+            <!-- END PAGE ACTIONS -->
+            <!-- BEGIN PAGE TOP -->
+            <div class="page-top">
+                @{ Html.RenderAction("TopMenu", "LayoutMenu"); }
+            </div>
+            <!-- END PAGE TOP -->
+        </div>
+        <!-- END HEADER INNER -->
+    </div>
+    <div class="clearfix"> </div>
+    <!-- BEGIN CONTAINER -->
+    <div class="page-container">
+        <!-- BEGIN SIDEBAR -->
+        <div class="page-sidebar-wrapper">
+            <!-- BEGIN SIDEBAR -->
+            <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+            <!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+            <div class="page-sidebar navbar-collapse collapse">
+                <!-- BEGIN SIDEBAR MENU -->
+                @Html.Action("LeftMenu", "LayoutMenu")
+                <!-- END SIDEBAR MENU -->
+            </div>
+
+            <!-- END SIDEBAR -->
+        </div>
+        <!-- END SIDEBAR -->
+        <!-- BEGIN CONTENT -->
+        <div class="page-content-wrapper">
+            <div class="page-content" style="min-height: 930px;">
+                @RenderSection("titlePage", required: false)
+                @RenderSection("actionMenu", required: false)
+                <div class="row">
+                    <div id="dlgInfo" class="alert alert-block alert-info fade in" style="display:none;">
+                        <button type="button" class="close" data-dismiss="alert"></button>
+                        <h4 class="alert-heading">Thông báo</h4>
+                        <p id="lblInfoContent"> </p>
+                    </div>
+                    <div id="dlgSuccess" class="alert alert-block alert-success fade in" style="display:none;">
+                        <button type="button" class="close" data-dismiss="alert"></button>
+                        <h4 class="alert-heading">Thông báo</h4>
+                        <p id="lblSuccessContent"> </p>
+                    </div>
+                    <div id="dlgError" class="alert alert-block alert-danger fade in" style="display:none;">
+                        <button type="button" class="close" data-dismiss="alert"></button>
+                        <h4 class="alert-heading">Thông báo</h4>
+                        <p id="lblErrContent"> </p>
+                    </div>
+                    @RenderBody()
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        <!-- END CONTENT -->
+        <!-- BEGIN QUICK SIDEBAR -->
+        <a href="javascript:;" class="page-quick-sidebar-toggler">
+            <i class="icon-login"></i>
+        </a>
+        <div class="page-quick-sidebar-wrapper" data-close-on-body-click="false">
+            <div class="page-quick-sidebar">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a href="javascript:;" data-target="#quick_sidebar_tab_1" data-toggle="tab">
+                            Giáo viên
+                            @*<span class="badge badge-success">2</span>*@
+                        </a>
+                    </li>
+                    @*<li>
+                            <a href="javascript:;" data-target="#quick_sidebar_tab_2" data-toggle="tab">
+                                Phụ<br />huynh
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:;" data-target="#quick_sidebar_tab_3" data-toggle="tab">
+                                Học<br />sinh
+                            </a>
+                        </li>*@
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active page-quick-sidebar-chat" id="sidebar_tab_chatting" data-active-receiver="">
+                        <div id="box_teacher_chatting" class="page-quick-sidebar-chat-users" data-rail-color="#ddd" data-wrapper-class="page-quick-sidebar-list">
+
+                        </div>
+                        <div class="page-quick-sidebar-item">
+                            <div class="page-quick-sidebar-chat-user">
+                                <div class="page-quick-sidebar-nav">
+                                    <a href="javascript:;" class="page-quick-sidebar-back-to-list">
+                                        <i class="icon-arrow-left"></i>Quay lại
+                                    </a>
+                                </div>
+                                <div class="page-quick-sidebar-chat-user-messages" id="current_box_conversation">
+
+                                </div>
+                                <div class="page-quick-sidebar-chat-user-form">
+                                    <div class="typing-sign" style="color:white; display:none;">Đang nhập... </div>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="txt_content_sms" placeholder="Nhập nội dung..." onkeypress="return on_send_sms_keypress(event);">
+                                        <div class="input-group-btn">
+                                            <button type="button" class="btn green" id="btn_send_sms" onclick="on_send_sms();">
+                                                <i class="icon-paper-clip"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @*<div class="tab-pane active page-quick-sidebar-chat" id="quick_sidebar_tab_2">
+                        </div>
+                        <div class="tab-pane active page-quick-sidebar-chat" id="quick_sidebar_tab_3">
+                        </div>*@
+                </div>
+            </div>
+        </div>
+        <!-- END QUICK SIDEBAR -->
+    </div>
+    <!-- END CONTAINER -->
+    <!-- BEGIN FOOTER -->
+    <div class="page-footer">
+        <div class="page-footer-inner">
+            @Html.Action("FooterMenu", "LayoutMenu")
+            <div class="scroll-to-top" style="display: none;"> <i class="icon-arrow-up"></i> </div>
+        </div>
+    </div>
+    <!-- END FOOTER -->
+    <!-- BEGIN CORE PLUGINS -->
+    @*<script src="/UITheme/assets/apps/scripts/socket.io.min.js" type="text/javascript"></script>*@
+    <script src="/UITheme/assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+    <!-- END CORE PLUGINS -->
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script src="/UITheme/assets/global/plugins/moment.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/morris/morris.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/morris/raphael-min.js" type="text/javascript"></script>
+    @RenderSection("scriptMainPageLevel", required: false)
+    <script src="/UITheme/assets/global/plugins/bootbox/bootbox.min.js" type="text/javascript"></script>
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN THEME GLOBAL SCRIPTS -->
+    <script src="/UITheme/assets/global/scripts/app.min.js" type="text/javascript"></script>
+    <!-- END THEME GLOBAL SCRIPTS -->
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    @RenderSection("scriptConfigPageLevel", required: false)
+    <!-- END PAGE LEVEL SCRIPTS -->
+    <!-- BEGIN THEME LAYOUT SCRIPTS -->
+    <script src="/UITheme/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/layouts/global/scripts/quick-nav.min.js" type="text/javascript"></script>
+    @*<script src="/UITheme/assets/global/plugins/dropzone/dropzone.min.js" type="text/javascript"></script>
+        <script src="/UITheme/assets/pages/scripts/form-dropzone.min.js" type="text/javascript"></script>*@
+    <!-- END THEME LAYOUT SCRIPTS -->
+    @RenderSection("scripts", required: false)
+    <script type="text/javascript">
+
+        $('.nav-link').each(function () {
+            var cItm = $(this);
+            var value = cItm.attr('href');
+
+            // TODO: do something with the value
+            //console.log(window.location);
+            if (value.toLowerCase() != 'javascript:;') {
+                var url_not_include_svalue = window.location.pathname.toLowerCase() + window.location.search;
+                url_not_include_svalue = url_not_include_svalue.replace(/&?s=([^&]$|[^&]*)/i, "");
+                url_not_include_svalue = url_not_include_svalue.replace(/&?id=([^&]$|[^&]*)/i, "");
+                url_not_include_svalue = url_not_include_svalue.replace('?&', '?');
+                if (url_not_include_svalue.lastIndexOf('?') == url_not_include_svalue.length - 1) {
+                    url_not_include_svalue = url_not_include_svalue.substr(0, url_not_include_svalue.length - 1);
+                }
+                //console.log('value: ' + value.toLowerCase());
+                //console.log('url_not_include_svalue: ' + url_not_include_svalue);
+                if (url_not_include_svalue.trim() != "/" && ('/' + value.toLowerCase()).replace('//', '/') == url_not_include_svalue) {
+                    //console.log('co tim thay');
+                    cItm.parent().attr('class', 'nav-item start active open');
+
+                    // Kiem tra neu la sub-menu
+                    if (cItm.parent().parent().attr('class').trim().toLowerCase() == 'sub-menu') {
+                        cItm.parent().parent().attr('style', 'display: block;');
+                        cItm.parent().parent().parent().attr('class', 'nav-item start active open');
+                        cItm.parent().parent().parent().children().children('.arrow').attr('class', 'arrow open');
+                    }
+                } else {
+                    cItm.parent().attr('class', 'nav-item');
+                }
+            }
+        });
+
+        $(document).ready(function () {
+            // Xu ly ghi nho Sidebar dong/mo
+            $('.sidebar-toggler').click(function () {
+                if ($('body').attr('class').trim() == 'page-header-fixed page-sidebar-closed-hide-logo page-content-white') {
+                    //console.log('no');
+                    $.ajax({
+                        url: '/CongCu/SetSession',
+                        type: "POST",
+                        data: { name: 'sidebar_status', value: 'no' }
+                    });
+                } else {
+                    //console.log('yes');
+                    $.ajax({
+                        url: '/CongCu/SetSession',
+                        type: "POST",
+                        data: { name: 'sidebar_status', value: 'yes' }
+                    });
+                }
+            });
+
+            // Cho phép search trên combobox
+            $(".select2").select2({})
+        });
+
+        // Xử lý hiển thị thông báo thay cho thông báo mặc định của js
+        function alert(msg) {
+            $('#lblInfoContent').html(msg);
+            $('#dlgInfo').attr('style', 'display:block');
+        }
+        function success(msg) {
+            $('#lblSuccessContent').html(msg);
+            $('#dlgSuccess').attr('style', 'display:block');
+        }
+        function error(msg) {
+            $('#lblErrContent').html(msg);
+            $('#dlgError').attr('style', 'display:block');
+        }
+
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            if (charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
+            return true;
+        }
+
+        // Xử lý nút đóng hướng dẫn/note
+        function close_it(itm) {
+            $(itm).parent().hide();
+        }
+    </script>
+</body>
+</html>

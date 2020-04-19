@@ -1,0 +1,476 @@
+﻿@using System.Data
+@using ViELearn.BackEnd.Ultilities;
+
+@model DataTable
+
+@{
+    ViewBag.Title = "Cập nhật thông tin bài viết";
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+@section stylePageLever{
+    <link href="/UITheme/assets/global/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-summernote/summernote.css" rel="stylesheet" type="text/css" />
+
+    <link href="/UITheme/assets/global/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-tagsinput/bootstrap-tagsinput-typeahead.css" rel="stylesheet" type="text/css" />
+
+    <link href="/UITheme/assets/global/plugins/dropzone/dropzone.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/dropzone/basic.min.css" rel="stylesheet" type="text/css" />
+
+    <style type="text/css">
+        .table-scrollable > .table > thead > tr > th {
+            white-space: pre-wrap !important;
+        }
+
+        thead > tr > th {
+            vertical-align: middle !important;
+        }
+
+        thead > tr:not(:first-child) > th {
+            font-weight: normal !important;
+            font-size: 85% !important;
+        }
+
+        .dropzone .note {
+            border-left: 0 !important
+        }
+        .dz-preview {
+            position: relative;
+            display: inline-block;
+            width: 120px;
+            margin: 0.5em;
+        }
+
+        .modal {
+            width: auto;
+            min-width: 300px;
+            left: 40%;
+            top: 30%;
+        }
+    </style>
+}
+@section scriptMainPageLevel{
+    <script src="/UITheme/assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootbox/bootbox.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-summernote/summernote.min.js" type="text/javascript"></script>
+
+    <script src="/UITheme/assets/global/plugins/bootstrap-tagsinput/bootstrap-tagsinput.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/typeahead/handlebars.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/typeahead/typeahead.bundle.min.js" type="text/javascript"></script>
+
+    <script src="/UITheme/assets/global/plugins/dropzone/dropzone.min.js" type="text/javascript"></script>
+}
+@section scriptConfigPageLevel{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".select2").select2();
+
+            $('.summernote').summernote({ height: 700 });
+
+            $('.mt-multiselect').each(function () {
+                var btn_class = $(this).attr('class');
+                var clickable_groups = ($(this).data('clickable-groups')) ? $(this).data('clickable-groups') : false;
+                var collapse_groups = ($(this).data('collapse-groups')) ? $(this).data('collapse-groups') : false;
+                var drop_right = ($(this).data('drop-right')) ? $(this).data('drop-right') : false;
+                var drop_up = ($(this).data('drop-up')) ? $(this).data('drop-up') : false;
+                var select_all = ($(this).data('select-all')) ? $(this).data('select-all') : false;
+                var width = ($(this).data('width')) ? $(this).data('width') : '';
+                var height = ($(this).data('height')) ? $(this).data('height') : '';
+                var filter = ($(this).data('filter')) ? $(this).data('filter') : false;
+
+                // advanced functions
+                var onchange_function = function (option, checked, select) {
+                    alert('Changed option ' + $(option).val() + '.');
+                }
+                var dropdownshow_function = function (event) {
+                    alert('Dropdown shown.');
+                }
+                var dropdownhide_function = function (event) {
+                    alert('Dropdown Hidden.');
+                }
+
+                // init advanced functions
+                var onchange = ($(this).data('action-onchange') == true) ? onchange_function : '';
+                var dropdownshow = ($(this).data('action-dropdownshow') == true) ? dropdownshow_function : '';
+                var dropdownhide = ($(this).data('action-dropdownhide') == true) ? dropdownhide_function : '';
+
+                // template functions
+                // init variables
+                var li_template;
+                if ($(this).attr('multiple')) {
+                    li_template = '<li class="mt-checkbox-list"><a href="javascript:void(0);"><label class="mt-checkbox"> <span></span></label></a></li>';
+                } else {
+                    li_template = '<li><a href="javascript:void(0);"><label></label></a></li>';
+                }
+
+                // init multiselect
+                $(this).multiselect({
+                    nonSelectedText: ' -- Mời chọn -- ',
+                    nSelectedText: ' được chọn',
+                    showSearch: true,
+                    searchText: 'Tìm, lọc',
+                    enableClickableOptGroups: clickable_groups,
+                    enableCollapsibleOptGroups: collapse_groups,
+                    disableIfEmpty: true,
+                    enableFiltering: filter,
+                    includeSelectAllOption: select_all,
+                    dropRight: drop_right,
+                    buttonWidth: width,
+                    maxHeight: height,
+                    onChange: onchange,
+                    onDropdownShow: dropdownshow,
+                    onDropdownHide: dropdownhide,
+                    buttonClass: btn_class,
+                    //optionClass: function(element) { return "mt-checkbox"; },
+                    //optionLabel: function(element) { console.log(element); return $(element).html() + '<span></span>'; },
+        			/*templates: {
+		                li: li_template,
+		            }*/
+                });
+            });
+
+            var tags = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                prefetch: {
+                    //url: '/UITheme/typeahead_countries.json',
+                    url: '/QuanLyTinTuc/DanhSachTags',
+                    filter: function (list) {
+                        return $.map(list, function (tagname) {
+                            return { name: tagname };
+                        });
+                    }
+                }
+            });
+
+            tags.initialize();
+            $('#typeahead_tags').tagsinput({
+                typeaheadjs: {
+                    name: 'tags',
+                    displayKey: 'name',
+                    valueKey: 'name',
+                    source: tags.ttAdapter()
+                }
+            });
+
+            $('#seo_keywords').tagsinput({});
+
+            Dropzone.autoDiscover = false;
+            $(".dropzone").dropzone({
+                url: "/QuanLyTinTuc/UploadFile?id=@ViewBag.Id",
+                resizeWidth: 1280,
+                resizeHeight: 1280,
+                resizeMimeType: 'image/jpeg,image/png,image/gif',
+                resizeMethod: 'contain',
+                acceptedFiles: "image/jpeg,image/png,image/gif",
+            });
+        });
+
+        function ShowFilter(name, title) {
+            $('.filter').each(function () {
+                $(this).hide();
+            });
+            $('#' + name).show();
+
+            $("#divData").html('');
+            //$('#title').text(title);
+        }
+
+        function filterChilds(itm, childname) {
+            var pid = $(itm).val();
+            $("#" + childname + " > option").each(function () {
+                if (pid == $(this).data("parent")) {
+                    $(this).show();
+                    $(this).prop("disabled", false);
+                } else {
+                    $(this).hide();
+                    $(this).prop("disabled", true);
+                }
+            });
+            $("#" + childname + " > option").first().prop("disabled", false);
+            $("#" + childname).val(0).trigger('change');
+            $("#" + childname).select2("destroy");
+            $("#" + childname).select2({});
+        }
+
+        function submit(type) {
+            $("#type").val(type);
+
+            // Kiem tra du lieu dau vao
+            $(".required-nonestyle").each(function () {
+                var v = $(this).val();
+                var title = $(this).parent().text().trim();
+                if (typeof title != 'undefined') {
+                    title = title.substr(0, title.indexOf(':')).trim();
+                }
+                if (typeof v == 'undefined' || v == '' || v == 0 || v == '0') {
+                    bootbox.alert("Dữ liệu '" + title + "' không được để trống!");
+                    return false;
+                }
+            });
+
+            $.ajax({
+                data: {
+                    _status: (type == 2) ? 1 : 0,
+                    _title: $('#title').val(),
+                    _slug: $('#slug').val(),
+                    _thumbnail: $('#thumb_url').val(),
+                    _sapo: $('#sapo').val(),
+                    _content: $('#noidung').val(),
+                    _related: $('#related_news').val(),
+                    _cates: $('#cates').val(),
+                    _cates_slug: string_to_slug($('#cates').val()),
+                    _tags: $('#typeahead_tags').val(),
+                    _tags_slug: string_to_slug($('#typeahead_tags').val()),
+                    _meta_keywords: $('#seo_keywords').val(),
+                    _meta_description: $('#seo_description').val()
+                },
+                type: 'POST',
+                datatype: 'json',
+                url: '/QuanLyTinTuc/Save?id=@ViewBag.Id',
+                success: function (responsive) {
+                    if (responsive.status) {
+                        if (type == 0) {
+                            window.location.replace("/QuanLyTinTuc");
+                        } else if (type == 1) {
+                            window.location.replace("/QuanLyTinTuc/Create");
+                        } else if (type == 2) {
+                            window.location.replace("/QuanLyTinTuc/Edit/" + responsive.newid);
+                        }
+                    } else {
+                        bootbox.alert(responsive.message);
+                    }
+                },
+                error: function (responsive) {
+                    bootbox.alert("Có lỗi xảy ra!");
+                }
+            });
+        }
+
+        function submit_thumbnail_url() {
+            if ($('#thumb_url').val() == '') {
+                bootbox.confirm({
+                    message: "Bạn chắc chắn muốn xóa thumbnail?",
+                    buttons: {
+                        confirm: {
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            className: 'btn-success'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result == true) {
+                            $.ajax({
+                                data: {
+                                    _thumbnail: $('#thumb_url').val()
+                                },
+                                type: 'POST',
+                                datatype: 'json',
+                                url: '/QuanLyTinTuc/SaveThumb?id=@ViewBag.Id',
+                                success: function (responsive) {
+                                    if (responsive.status)
+                                        bootbox.alert("Đã lưu");
+                                    else
+                                        bootbox.alert(responsive.message);
+                                },
+                                error: function (responsive) {
+                                    bootbox.alert("Có lỗi xảy ra!");
+                                }
+                            });
+                        }
+                    }
+                });
+            } else {
+                $.ajax({
+                    data: {
+                        _thumbnail: $('#thumb_url').val()
+                    },
+                    type: 'POST',
+                    datatype: 'json',
+                    url: '/QuanLyTinTuc/SaveThumb?id=@ViewBag.Id',
+                    success: function (responsive) {
+                        bootbox.alert("Đã lưu");
+                    },
+                    error: function (responsive) {
+                        bootbox.alert("Có lỗi xảy ra!");
+                    }
+                });
+            }
+        }
+
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            if (charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
+            return true;
+        }
+        function update_slug(itm) {
+            $('#slug').val(string_to_slug($(itm).val().trim()));
+        }
+        function string_to_slug(str) {
+            if (str == null || typeof (str) == 'undefined') return '';
+            str = str.toString();
+            str = str.toLowerCase();
+            str = str.replace(/^\s+|\s+$/g, ''); // trim
+
+            // remove accents, swap ñ for n, etc
+            var from = "áàảãạâấầẩẫậăắằẳẵặđéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶĐÉÈẺẼẸÊẾỀỂỄỆÍÌỈĨỊÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÚÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴàáäâèéëêìíïîòóöôùúüûñç·/_:;";
+            var to = "aaaaaaaaaaaaaaaaadeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyyaaaaaaaaaaaaaaaaadeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyyaaaaeeeeiiiioooouuuunc-----";
+            for (var i = 0, l = from.length; i < l; i++) {
+                str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+            }
+
+            str = str.replace(/[^a-z0-9 -,]/g, '') // remove invalid chars
+                .replace(/\s+/g, '-') // collapse whitespace and replace by -
+                .replace(/-+/g, '-') // collapse dashes
+                .replace('"', '');
+
+            return str;
+        }
+
+        function setusethumbnail(itm) {
+            $('#thumb_url').val($(itm).attr('src'));
+            $(itm).addClass('');
+            //bootbox.dialog({
+            //    message: '<img src="' + $(itm).attr('src') + '" style="max-height:800px;max-width:800px" />'
+            //});
+        }
+    </script>
+}
+@section actionMenu{
+    <div class="page-bar">
+        <ul class="page-breadcrumb">
+            <li> <i class="fa fa-plus icon-home"></i> <i class="fa fa-angle-right"></i> </li>
+            <li> <a href="/QuanLyTinTuc">Danh sách</a> <i class="fa fa-angle-right"></i> </li>
+            <li> <span>@ViewBag.Title</span> </li>
+        </ul>
+        <div class="page-toolbar">
+            <div class="btn-group pull-right">
+                <button class="btn btn-info" onclick="submit(1);"><i class="fa fa-save"></i> Lưu, nhập mới</button>
+                <button class="btn btn-primary" onclick="submit(0);"><i class="fa fa-save"></i> Lưu xong đóng</button>
+                <button class="btn btn-danger" onclick="submit(2);"><i class="fa fa-save"></i> Công khai</button>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col-lg-4 col-md-5 col-sm-6 col-lg-push-8 col-md-push-7 col-sm-push-6">
+        <div class="form-group">
+            Chuyên mục, chủ đề:
+            <select name="cates" id="cates" class="form-control select2" multiple style="width:100%">
+                @foreach (DataRow dr in ViewBag.DsTags.Rows)
+                {
+                    <option value="@dr["name"]" @(ViewBag.Infos["Cates"].ToString().Trim() == $"{dr["name"].ToString().Trim()}" || ViewBag.Infos["Cates"].ToString().Trim().Contains($"{dr["name"].ToString().Trim()},") || ViewBag.Infos["Cates"].ToString().Trim().Contains($",{dr["name"].ToString().Trim()}") ? "selected" : "")>@dr["name"]</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Hình ảnh</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        Thumbnail url:
+                        <div class="input-group">
+                            <div class="input-icon">
+                                <i class="fa fa-image fa-fw"></i>
+                                <input name="thumb_url" id="thumb_url" class="form-control" value="@ViewBag.Infos["Thumbnail"]" />
+                            </div>
+                            <span class="input-group-btn">
+                                <button class="btn btn-success" type="button" onclick="submit_thumbnail_url();">
+                                    <i class="fa fa-save fa-fw"></i>
+                                </button>
+                            </span>
+                        </div>
+                        <br/>
+                        <div class="col-sm-6">
+                            <div class="dropzone needsclick dz-clickable" id="frm_dropzone">
+                                <div class="dz-message needsclick">
+                                    <h3 class="sbold">Thả hình, ảnh vào đây</h3><br>
+                                    <span class="note needsclick">Các hình, ảnh chụp về bài viết<br />(dung lượng tối đa: 4MB)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            @if (Directory.Exists(ViewBag.Images))
+                            {
+                                foreach (var files in Directory.GetFiles(ViewBag.Images))
+                                {
+                                    var info = new FileInfo(files);
+                                    <div class="dz-preview dz-processing dz-image-preview dz-success dz-complete">
+                                        <img onclick="setusethumbnail(this)" style="max-height:120px;max-width:120px;cursor:pointer;" data-dz-thumbnail="" alt="@Path.GetFileName(info.FullName)" src='/UserData/@(SysBaseInfor.GetIdNguoiDung())/@(ViewBag.Id)/@Path.GetFileName(info.FullName)'>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            Từ khóa, tags:
+            <input type="text" value="@ViewBag.Infos["Tags"]" id="typeahead_tags">
+        </div>
+        <div class="form-group">
+            Bài viết liên quan:
+            <select name="related_news" id="related_news" class="form-control select2" multiple style="width:100%">
+                @foreach (DataRow dr in ViewBag.DsBaiVietLienQuan.Rows)
+                {
+                    <option value="@dr["id"]" selected>@dr["title"]</option>
+                }
+                @foreach (DataRow dr in ViewBag.DsBaiViet.Rows)
+                {
+                    <option value="@dr["id"]">@dr["title"]</option>
+                }
+            </select>
+        </div>
+        <div class="portlet box green">
+            <div class="portlet-title">
+                <div class="caption">
+                    SEO
+                </div>
+                <div class="tools">
+                    <a href="javascript:;" class="collapse" data-original-title="" title=""> </a>
+                    @*<a href="#portlet-config" data-toggle="modal" class="config" data-original-title="" title=""> </a>*@
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="form-group">
+                    Slug: <span class="font-red">(*)</span>
+                    <input name="slug" id="slug" class="form-control required-nonestyle" value="@ViewBag.Infos["Slug"]" />
+                </div>
+                <div class="form-group">
+                    Meta-keywords:
+                    <input type="text" value="@ViewBag.Infos["meta_keywords"]" id="seo_keywords">
+                </div>
+                <div class="form-group">
+                    Meta-description:
+                    <input type="text" class="form-control" value="@ViewBag.Infos["meta_descriptions"]" id="seo_description">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8 col-md-7 col-sm-6 col-lg-pull-4 col-md-pull-5 col-sm-pull-6">
+        <div class="row">
+            <div class="form-group col-md-12">
+                Tiêu đề: <span class="font-red">(*)</span>
+                <input name="title" id="title" class="form-control required-nonestyle" onkeypress="update_slug(this);" value="@ViewBag.Infos["Title"]" />
+            </div>
+            <div class="form-group col-md-12">
+                Sapo:
+                <textarea name="sapo" id="sapo" class="form-control" rows="4">@ViewBag.Infos["Summary"]</textarea>
+            </div>
+            <div class="form-group col-md-12">
+                Nội dung:
+                <textarea name="noidung" id="noidung" class="form-control summernote" rows="4">@ViewBag.Infos["FullContent"]</textarea>
+            </div>
+        </div>
+    </div>
+</div>

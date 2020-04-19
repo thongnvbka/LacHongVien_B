@@ -1,0 +1,27 @@
+﻿@using System.Data
+@using ViELearn.BackEnd.Ultilities
+
+
+@{int stt = 0;
+}
+
+@if (ViewBag.Data != null)
+{
+    foreach (DataRow dr in ViewBag.Data.Rows)
+    {
+        string path = Common.GetUrlFrontend() + "/" + dr["cate_slug"] + "/" + dr["Slug"] + ".html";
+        stt++;
+        <tr data-id="@dr["id"]" data-cates="@dr["CatesId"]">
+            <td class="text-center">@stt</td>
+            <td>
+                <a  onclick="ChangeBakground(this)">@dr["title"]</a><br /><br />
+            </td>
+            <td class="text-center">
+                <a style="vertical-align:middle" src="@path" onclick="ClonePath(this)"  data-dismiss="modal" class="btn-sm btn-primary"  role="button">Chọn</a>
+            </td>
+        </tr>
+    }
+}
+
+
+

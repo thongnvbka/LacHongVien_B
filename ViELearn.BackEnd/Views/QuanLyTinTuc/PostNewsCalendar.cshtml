@@ -1,0 +1,217 @@
+﻿
+@using System.Data
+@using ViELearn.BackEnd.Ultilities;
+@{
+    ViewBag.Title = "QUẢN LÝ ĐẶT LỊCH";
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+@*<link href="~/Scripts/FullCalendar/css/Calendar.css" rel="stylesheet" />*@
+<link href="~/UITheme/assets/global/css/components.min.css" rel="stylesheet" />
+<link href="~/UITheme/assets/apps/css/clockpicker.css" rel="stylesheet" />
+<link href="~/UITheme/assets/global/plugins/fullcalendar/fullcalendar.min.css" rel="stylesheet" />
+<link href="~/UITheme/assets/global/css/plugins.min.css" rel="stylesheet" />
+
+
+
+<style>
+    .external-event {
+        width: 100%;
+        margin-left: 0;
+        background-color: #337ab7;
+        padding: 10px;
+        text-align: left;
+        font-size: 16px;
+        font-weight: bold;
+        border: 1.1px dotted;
+    }
+
+    #external-events {
+        margin-top: 41px;
+        float: left;
+        margin-bottom: 75px;
+    }
+
+    #event_box img {
+        border-radius: 50% !important;
+        width: 52px;
+        height: 40px;
+    }
+
+    .dropdown-menu {
+        background-color: #f1f1f1 !important;
+    }
+
+        .dropdown-menu .dropdown-item {
+            width: 100%;
+            padding: 6px;
+            display: block;
+        }
+
+    .portlet.calendar .fc-event .fc-content {
+        position: relative;
+    }
+
+        .portlet.calendar .fc-event .fc-content img {
+            border-radius: 50% !important;
+            width: 25px;
+            height: 20px;
+        }
+
+    .portlet.calendar .fc-event .fc-title {
+        float: none;
+    }
+
+    .fc-day-grid-event .fc-content {
+        white-space: inherit;
+    }
+
+    .clear {
+        clear: both;
+    }
+</style>
+@section scriptConfigPageLevel{
+    <script src="~/UITheme/assets/global/plugins/moment.min.js"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
+    <script src="/Scripts/moment-with-locales.js"></script>
+    <script src="/Scripts/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="/Scripts/clockpicker.js"></script>
+    <script src="~/UITheme/assets/global/plugins/fullcalendar/fullcalendar.min.js"></script>
+    <script type="text/javascript">
+        var AppCalendar = function () {
+            return {
+                init: function (data) {
+                    this.initCalendar(data) 
+                },
+                initCalendar: function (eventsData) {
+                    if (jQuery().fullCalendar) { 
+                        App.isRTL() ? $("#calendar").parents(".portlet").width() <= 720 ? ($("#calendar").addClass("mobile"), r = {
+                            right: "title, prev, next",
+                            center: "",
+                            left: "agendaDay, agendaWeek, month, today"
+                        }) : ($("#calendar").removeClass("mobile"), r = {
+                            right: "title",
+                            center: "",
+                            left: "agendaDay, agendaWeek, month, today, prev,next"
+                        }) : $("#calendar").parents(".portlet").width() <= 720 ? ($("#calendar").addClass("mobile"), r = {
+                            left: "title, prev, next",
+                            center: "",
+                            right: "today,month,agendaWeek,agendaDay"
+                        }) : ($("#calendar").removeClass("mobile"), r = {
+                            left: "title",
+                            center: "",
+                            right: "prev,next,today,month"
+                        });
+                        var l = function (e) {
+                            var t = {
+                                title: $.trim(e.text())
+                            };
+                            e.data("eventObject", t), e.draggable({
+                                zIndex: 999,
+                                revert: !0,
+                                revertDuration: 0
+                            })
+                        },
+                            o = function (e) {
+                                e = 0 === e.length ? "Untitled Event" : e;
+                                var t = $('<div class="external-event label label-default">' + e + "</div>");
+                                jQuery("#event_box").append(t), l(t)
+                            };
+                        $("#external-events div.external-event").each(function () {
+                            l($(this))
+                        }), $("#event_add").unbind("click").click(function () {
+                            var e = $("#event_title").val();
+                            o(e)
+                            }), $("#event_box").html(""), o("My Event 1"), $("#calendar").fullCalendar("destroy"), $("#calendar").fullCalendar({
+                            eventAfterRender: function (event, element, view) {
+                                var ele = $(element).attr("data-id", event._id);
+
+                                $(".fc-content").click(function () {
+                                    //alert(ele);
+                                    var id = $(this).parent().data("id");
+                                    window.location.href ="/QuanLyTinTuc/Edit/" + id;
+                                });
+                            },
+                            header: r,
+                            defaultView: "month",
+                            slotMinutes: 15,
+                            events: eventsData
+                        })
+                    }
+                }
+            }
+        }();
+        jQuery(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "/QuanLyTinTuc/CalendarResult",
+                success: function (data) {
+                    var result = jQuery.parseJSON(data);
+                    //console.log(result);
+                    var e = new Date,
+                        t = e.getDate(),
+                        a = e.getMonth(),
+                        n = e.getFullYear(),
+                        r = {};
+                    var events = [];
+                    $.each(jQuery.parseJSON(data), function (i, v) {
+                        var PublishDate = new Date(parseInt(v.PublishDate.substr(6)));
+                      // console.log(PublishDate);
+                       // var avatar = '<img style="padding-bottom:1px" class="col-md-2 img- responsive" src=' + v.Avatar + ' />'
+                        events.push({
+                            id: v.Id,
+                            title: v.Title,
+                            //start: new Date(n, a, t, 10, 30),
+                            //start: new Date(PublishDate.getFullYear(), PublishDate.getMonth(), PublishDate.getDate(), PublishDate.getHours(), PublishDate.getMinutes()),
+                            start: PublishDate
+                        });
+                    });
+                   // console.log(events);
+                    AppCalendar.init(events);
+                    //load edit
+                },
+                error: function (error) {
+                    //alert('failed');
+                }
+            });
+
+    
+
+        });
+    </script>
+}
+
+@section actionMenu{
+    <div class="page-bar">
+        <ul class="page-breadcrumb">
+            <li> <i class="fa fa-plus icon-home"></i> <i class="fa fa-angle-right"></i> </li>
+            <li> <span>@ViewBag.Title</span> </li>
+        </ul>
+    </div>
+}
+<!-- END PAGE TITLE-->
+<!-- END PAGE HEADER-->
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="portlet light portlet-fit bordered calendar">
+            <div class="portlet-title">
+                <div class="caption">
+                    <i class=" icon-layers font-green"></i>
+                    <span class="caption-subject font-green sbold uppercase">@ViewBag.Title</span>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div id="calendar" class="has-toolbar"> </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+

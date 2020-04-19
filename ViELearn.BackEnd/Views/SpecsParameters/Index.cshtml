@@ -1,0 +1,161 @@
+﻿@{
+    ViewBag.Title = "Danh sách danh mục";
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+
+<link href="~/Scripts/bootstrap-table-master/dist/extensions/filter-control/bootstrap-table-filter-control.css" rel="stylesheet" type="text/css">
+<script src="~/Scripts/bootstrap-table-master/dist/extensions/filter-control/bootstrap-table-filter-control.js"></script>
+
+@section actionMenu{
+    <ul class="page-breadcrumb">
+        <li> <i class="icon-home"></i> <a href="/">Trang chủ</a> <i class="fa fa-angle-right"></i> </li>
+        <li> <span>Quản lý tham số</span> <i class="fa fa-angle-right"></i> </li>
+        <li> <span>@ViewBag.Title</span> </li>
+    </ul>
+    <div class="page-toolbar">
+        <a href="#" data-width="60%" data-url="@Url.Action("ShowDetailSpecsParameter", "SpecsParameters", new { IdSpecsParameter = 0 })" class="btn blue" onclick="OpenModalCustom(this)"><i class="fa fa-plus"></i>Thêm mới danh mục</a>
+    </div>
+}
+
+<script type="text/javascript">
+    var jLstMaDanhMuc = @Html.Raw(Json.Encode(ViewBag.lstMaDanhMuc));    
+</script>
+
+<div class="portlet">
+    <div class="portlet-body">        
+        <table id="tableSpecsParameters"
+               data-id-field="Id"
+               data-toggle="tableSpecsParameters"
+               data-show-refresh="true"
+               data-show-columns="true"
+               data-search="true"
+               data-id-table="advancedTable"
+               data-striped="true"
+               data-filter-control="true">            
+            <thead>
+                <tr>
+                    <th data-field="state" data-checkbox="true"></th>
+                    <th data-field="id" data-align="center" data-filter-control="input">Id</th>
+                    <th data-field="MaDanhMuc" data-align="center" data-filter-control="select" data-selector="jLstMaDanhMuc">Mã danh mục</th>
+                    <th data-field="TenDanhMuc" data-align="center" data-formatter="operateName" data-sortable="true" data-filter-control="input">Tên danh mục</th>
+                    <th data-field="idDanhMucCha" data-align="center" data-sortable="true" data-filter-control="input">Id danh mục cha</th>
+                    <th data-field="ThuTu" data-align="center" data-filter-control="input">Thứ tự</th>
+                    <th data-field="TrangThai" data-formatter="operateActive" data-align="center" data-filter-control="input">Trạng thái</th>
+                    <th data-field="" data-formatter="operateDelete" data-align="center"></th>
+                    <th data-field="" data-formatter="operateAddChild" data-align="center"></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#customBsSearch-MaDanhMuc").select2({ width: '100%', dropdownAutoWidth: true });
+        $("#customBsSearch-Id").width(40);
+    });
+
+    var tableSpecsParametersControl = $('#tableSpecsParameters');
+
+    tableSpecsParametersControl.bootstrapTable({
+        method: "post",
+        queryParams: "postQueryParams",
+        url: "@Url.Action("GetListSpecsParameters", "SpecsParameters")",
+        pagination: "true",
+        sidePagination: "client",
+        pageSize: 10,
+        pageList: "[5,10,15]",
+        select: true
+    });
+
+    function postQueryParams(params) {
+        params.IPS = 1; // 1 client pagination - 2 server pagination
+        return params;
+    }
+
+    function operateName(value, row, index) {
+        return [
+            '<a href="#" data-width="60%" data-url="../SpecsParameters/ShowDetailSpecsParameter?IdSpecsParameter=' + row.id + '" onclick="OpenModalCustom(this);">' + row.TenDanhMuc + '</a>'
+        ].join('');
+    }
+
+    function operateActive(value, row, index) {
+        if (value == 0) return "<span style='color:red'> Tắt </span>"
+        else
+            return "<span style='color:blue'> Bật </span>"
+    }
+
+    function operateDelete(value, row, index) {
+        return [
+            '<i class="fa fa-trash-o btn-save" id="' + row.Id + '" data-id="' + row.id + '" style="color:orangered;cursor:pointer;" onclick="DeleteSpecsParameter(this)">',
+            '</i>'                
+        ].join('');
+    }
+
+    function operateAddChild(value, row, index) {        
+        return [            
+            '<a href="#" data-width="60%" data-url="../SpecsParameters/ShowDetailSpecsParameter?IdSpecsParameter=' + 0 + '&idDanhMucCha=' + row.idDanhMucCha + '" onclick="OpenModalCustom(this);">' + '<i class="fa fa-plus btn-save"></i>' + '</a>'
+        ].join('');
+    }
+
+
+    function CreateOrSaveAlert(msg) {
+        $('#ajaxModalProject').modal('toggle');
+        tableSpecsParametersControl.bootstrapTable('refresh');
+        bootbox.alert(msg);
+    }
+
+
+    function CreateOrSaveAlert(msgReturn, id) {
+        msg = msgReturn;
+        if (id != null && id > 0 && msg == "Success") {
+            $('#ajaxModalProject').modal('toggle');
+            tableSpecsParametersControl.bootstrapTable('refresh');
+            msg = "Lưu thay đổi thành công";
+        }
+        else
+            if (id == 0 && msg == "Success") {
+                $('#ajaxModalProject').modal('toggle');
+                tableSpecsParametersControl.bootstrapTable('refresh');
+                msg = "Tạo mới thành công";
+            }
+        bootbox.alert(msg);
+    }
+
+    function DeleteSpecsParameter(itm) {
+        bootbox.confirm({
+            message: "Bạn chắc chắn muốn xóa?",
+            buttons: {
+                confirm: {
+                    className: 'btn-danger'
+                },
+                cancel: {
+                    className: 'btn-success'
+                }
+            },
+            callback: function (result) {
+                if (result == true) {
+                    $.ajax({
+                        type: 'post',
+                        url: '@Url.Action("DeleteSpecsParameter", "SpecsParameters")',
+                        ajaxasync: true,
+                        data: { idSpecsParameter: $(itm).attr('data-id') },
+                        success: function (data) {
+                            if (data == "Success")
+                            {
+                                tableSpecsParametersControl.bootstrapTable('refresh');
+                                bootbox.alert("Xóa dữ liệu thành công!");
+                            }
+                            else {
+                                    bootbox.alert(data);
+                            }
+                        },
+                        error: function (data) {
+                            bootbox.alert("Có lỗi xảy ra!");
+                        }
+                    });
+                }
+            }
+        });
+    }
+</script>

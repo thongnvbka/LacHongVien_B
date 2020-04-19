@@ -1,0 +1,389 @@
+﻿@using System.Data
+@model List<ViELearn.Models.ProjectModels.Customers>
+@using ViELearn.BackEnd.Ultilities
+
+@{
+    ViewBag.Title = "Danh sách khách hàng đăng ký";
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+    string uId = ViewBag.uId;
+}
+<style>
+    .error {
+        font-style: italic;
+        color: #ff0000;
+        font-size: 13px;
+    }
+
+    #DSTraceLogs_wrapper {
+        overflow: hidden;
+    }
+
+    .table-scrollable {
+        overflow-x: hidden;
+        overflow-y: hidden;
+    }
+
+    .cover-table {
+        border: 0;
+    }
+
+    .dataTables_empty {
+        display: none;
+    }
+
+    @@media (max-width:767px) {
+
+        #dsUser tbody td p, .mb-hidden {
+            display: none;
+        }
+
+        .col-md-3, .col-md-2 {
+            margin-bottom: 6px;
+            line-height: 22px;
+        }
+
+        #btnSearch {
+            float: right;
+        }
+
+        #dsDanhMuc {
+            display: none;
+        }
+
+        #dsUser tbody tr td {
+            width: 40px !important;
+            height: 40px !important;
+        }
+
+            #dsUser thead tr th:first-child, #dsUser tbody tr td:first-child {
+                display: none !important;
+            }
+
+        .page-container {
+            padding: 0;
+        }
+
+        .editable-popup {
+            width: auto !important;
+        }
+    }
+
+    @@media (min-width:768px) {
+        #select-option-cat {
+            display: none;
+        }
+
+        #dsUser tbody tr td {
+            background-size: cover;
+            width: 80px;
+            margin: 0px;
+        }
+
+        .editable-popup {
+            width: 600px !important;
+        }
+    }
+
+    #dsUser tbody td p {
+        padding: 0;
+        margin: 0;
+    }
+
+    .cover-table {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .info-other {
+        font-size: 12px;
+        color: #808080;
+    }
+
+    #dsRole > tbody > tr:hover, #dsDanhMuc > tbody > tr:hover > td {
+        background: #f6f6f1;
+    }
+
+    #dsUser > tbody > tr:nth-of-type(odd), #dsUser {
+        background-color: #f6f6f1 !important;
+    }
+        /*#dsUser > tbody > tr:hover, #dsUser > tbody > tr:hover > td {
+        background: #f3f4f6;
+    }*/
+
+        #dsUser > tbody > tr:nth-of-type(odd), #dsUser tbody tr, #dsUser td.sorting_1 {
+            background-color: #f6f6f1 !important;
+        }
+
+    /*table.dataTable.no-footer {
+        border-bottom: none !important;
+    }*/
+
+    .sorting_asc::after {
+        display: none !important;
+    }
+
+    #dsDanhMuc thead > tr > th.sorting_asc {
+        padding: 10px 0;
+    }
+
+    .button-click {
+        width: 105px;
+        margin-bottom: 3px;
+        text-align: left !important;
+    }
+
+    .editable-input, .editable-input input {
+        width: 100% !important;
+        margin: auto;
+    }
+
+    .editableform > .form-group {
+        width: 100%;
+    }
+
+    .editable-input .input-medium {
+        width: 100% !important;
+        height: 30% !important;
+    }
+
+    table.dataTable td.sorting_1 {
+        background: 0 !important;
+    }
+</style>
+
+@section stylePageLever{
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/morris/morris.css" rel="stylesheet" type="text/css">
+    <link href="/UITheme/assets/global/plugins/datatables/datatables.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+}
+@section scriptMainPageLevel{
+    <script src="/UITheme/assets/global/plugins/moment.min.js" type="text/javascript"></script>
+    <script src="/Scripts/moment-with-locales.js"></script>
+    <script src="/UITheme/assets/global/plugins/morris/morris.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/scripts/datatable.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/datatables/datatables.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/pages/scripts/table-datatables-editable.min.js" type="text/javascript"></script>
+
+    <script src="/UITheme/assets/global/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/pages/scripts/components-bootstrap-multiselect.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
+    <script src="/Scripts/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="/Scripts/clockpicker.js"></script>
+    <script src="/Scripts/jquery-ui-1.9.2.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js"></script>
+
+
+}
+<link href="/UITheme/assets/global/plugins/datatables/datatables.min.css" rel="stylesheet" type="text/css" />
+<link href="/UITheme/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css" rel="stylesheet" type="text/css" />
+
+@section scriptConfigPageLevel{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            Search();
+        });
+        $(function () {
+            var dateFormat = "dd/mm/yy",
+                from = $("#fromDate")
+                    .datepicker({
+                        format: 'dd.mm.yyyy'
+                    })
+                    .on("change", function () {
+                        to.datepicker("option", "minDate", getDate(this));
+                    }),
+                to = $("#toDate").datepicker({
+                    format: 'dd.mm.yyyy'
+                })
+                    .on("change", function () {
+                        from.datepicker("option", "maxDate", getDate(this));
+                    });
+
+            function getDate(element) {
+                var date;
+                try {
+                    date = $.datepicker.parseDate(dateFormat, element.value);
+                } catch (error) {
+                    date = null;
+                }
+
+                return date;
+            }
+
+        });
+        function submit_del(itm,id) {
+            bootbox.confirm({
+                message: "Bạn có chắc chắn muốn xóa khách hàng này không?",
+                buttons: {
+                    cancel: {
+                        label: 'Không',
+                        className: 'btn-info'
+                    },
+                    confirm: {
+                        label: 'Có',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: '/Customer/DeleteCus?id=' + id,
+                            success: function (responsive) {
+                                if (responsive.status) {
+                                    $(itm).parent().parent().remove();
+                                    bootbox.alert(responsive.message);
+                                } else {
+                                    bootbox.alert("Có lỗi xảy ra!");
+                                }
+                            },
+                            error: function (responsive) {
+                                bootbox.alert("Có lỗi xảy ra!");
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        $('#btnSearch').click(function () {
+            Search();
+        })
+        var Search = function () {
+            var fromDate = $('#fromDate').datepicker({ dateFormat: 'dd/mm/yy' }).val();
+            var toDate = $('#toDate').datepicker({ dateFormat: 'dd/mm/yy' }).val();
+            var name = $('#txt-name').val();
+            var phone = $('#txt-sdt').val();
+        //   var services = $('#services').val();
+            var table = $('#ds-cus tbody');
+            $.ajax({
+                data: {
+                   
+                    phone: phone,
+                    name: name,
+                    fromDate: fromDate,
+                    toDate: toDate
+
+                },
+                type: 'POST',
+                datatype: 'json',
+                url: '/Customer/ResultSearchCustomer',
+                success: function (res) {
+                    // $('#dsBaiViet').DataTable().destroy();
+                    table.empty();
+                    $("#ds-cus").DataTable().destroy();
+                    table.html(res);
+                    $("#ds-cus").DataTable({
+                        language: {
+                            lengthMenu: "Hiển thị _MENU_ bản ghi",
+                            search: "Tìm kiếm",
+                            info: "Đang ở trang _PAGE_ / _PAGES_ trang",
+                            zeroRecords: "Không có bản ghi nào!",
+                            infoEmpty: "Không có bản ghi nào!",
+                        },
+                        searching: false,
+                    });
+                },
+                error: function (responsive) {
+                    bootbox.alert("Có lỗi xảy ra!");
+                }
+            });
+        }
+    
+    </script>
+}
+
+@section actionMenu{
+    <div class="page-bar">
+        <ul class="page-breadcrumb">
+            <li> <span>@ViewBag.Title</span><i class="fa fa-angle-right"></i> </li>
+            <li> <span></span></li>
+        </ul>
+        @*<div class="page-toolbar">
+            <div id="btn-add-news" class="btn-group">
+                <a onclick="OpenModalCustom(this);" data-url="/QuanLyHoSo/CreateEditTuVanRoom"><span class="btn btn-fit-height btn-primary"><i class="fa fa-plus"></i> Thêm Room</span></a>
+            </div>
+        </div>*@
+    </div>
+}
+    <div class="row">
+
+        <div class="col-md-3">
+            Tên khách hàng:
+            <div class="form-group ">
+                <input id="txt-name" class="form-control " />
+            </div>
+        </div>
+        <div class="col-md-1">
+            Số điện thoại:
+            <div class="form-group ">
+                <input id="txt-sdt" class="form-control " />
+            </div>
+        </div>
+        <div class="col-md-1 input-date">
+            Từ ngày
+            <div class="form-group">
+                <input type="text" class="form-control date-picker" data-date-format="dd/mm/yyyy" value="@(DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy"))" name="from" id="fromDate" />
+            </div>
+        </div>
+        <div class="col-md-1 input-date">
+            Tới ngày
+            <div class="form-group">
+                <input type="text" class="form-control date-picker" data-date-format="dd/mm/yyyy" value="@(DateTime.Now.ToString("dd/MM/yyyy"))" name="to" id="toDate" />
+            </div>
+        </div>
+        <div class="col-md-1">
+            &nbsp;
+            <div class="form-group">
+                <button id="btnSearch" class="btn btn-fit-height btn-primary"><i class="fa fa-search" aria-hidden="true"></i> Tìm kiếm </button>
+            </div>
+        </div>
+
+    </div>
+<div class="row">
+    <div style="margin-top:0px!important;" class="col-md-12 col-xs-12 cover-table" id="list-cus">
+        <table class="table table-striped table-hover table-bordered" id="ds-cus">
+            <thead>
+                <tr>
+                    <th class="text-center mb-hidden" style="width: 10px;">STT</th>
+                    <th style="margin:0px">Tên khách hàng</th>
+                    <th style="margin:0px">Số điện thoại</th>
+                    <th style="margin:0px">Ngày đặt lịch</th>
+                    <th style="margin:0px">Dịch vụ quan tâm</th>
+                    <th class="text-center" style="width:100px">#</th>
+</thead>
+            <tbody>
+                @*@foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="text-center">@(Model.IndexOf(item) + 1)</td>
+                            <td style="cursor:pointer" class="bacsy" data-Id="@item.Id">
+                                <a onclick="OpenModalCustom(this);" data-url="@Url.Action("CreateEditTuVanRoom","QuanLyHoSo",new { id = item.Id })">
+                                    @item.Name
+                                </a>
+                            </td>
+                            <td class="text-left">@item.Link</td>
+                            <td class="text-left">@item.CusName</td>
+                            <td class="text-left">@item.CusPhone</td>
+                            <td class="text-left">@item.StartTime</td>
+                            <td class="text-left">@item.EndTime</td>
+
+                            <td class="text-center">
+                                @if (uId == "a2f3674e-b784-42b3-99d4-edc71ee41cbf")
+                                {
+                                    <a title="Xóa" href="javascript:void(0)" class="btn btn-danger btn-sm button-click"> <span data-id="@item.Id" onclick="DeleteUser('@item.Id','@ViewBag.type')"><i class="fa fa-trash font-white"></i> Xóa</span></a>
+                                }
+                            </td>
+                        </tr>
+                    }*@
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+
+

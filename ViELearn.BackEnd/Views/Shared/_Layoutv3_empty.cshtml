@@ -1,0 +1,204 @@
+﻿<!DOCTYPE html>
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]--><!-- BEGIN HEAD -->
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8">
+    <meta charset="utf-8">
+    <title> @ViewBag.Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta content="Hệ thống thông tin liên lạc giáo dục, kết nối gia đình và nhà trường">
+    <meta content="MDC Group" name="author">
+    <link href="~/Scripts/JqueryThemes/jquery-ui.min.css" rel="stylesheet" type="text/css">
+    <link href="~/UITheme/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="~/UITheme/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css">
+    <link href="~/UITheme/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="~/UITheme/assets/global/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet" type="text/css">
+    <link href="~/Scripts/bootstrap-table-master/dist/bootstrap-editable.css" rel="stylesheet" type="text/css">
+    <link href="~/UITheme/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css">
+    <link href="~/UITheme/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css" rel="stylesheet" type="text/css">
+    <link href="~/UITheme/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" type="text/css">
+    <link href="~/UITheme/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+    <link href="~/UITheme/assets/global/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/UITheme/assets/global/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css">
+    @RenderSection("stylePageLever", required: false)
+
+    <link href="~/UITheme/assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css">
+    <link href="~/UITheme/assets/global/css/plugins.min.css" rel="stylesheet" type="text/css">
+    @*<link href="~/UITheme/assets/layouts/layout/css/layout.min.css" rel="stylesheet" type="text/css">
+        <link href="~/UITheme/assets/layouts/layout/css/themes/blue.min.css" rel="stylesheet" type="text/css" id="style_color">
+        <link href="~/UITheme/assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css">*@
+
+    <link href="~/UITheme/assets/layouts/layout3/css/layout.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/UITheme/assets/layouts/layout3/css/themes/default.min.css" rel="stylesheet" type="text/css" id="style_color" />
+    <link href="~/UITheme/assets/layouts/layout3/css/custom.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        .modal-dialog {
+            width: 100%;
+            margin-right: 0px;
+            margin-bottom: 0px;
+            margin-top: 0px;
+            margin-left: 0px;
+        }
+
+        input[type=number] {
+            text-align: right;
+        }
+
+        .page-breadcrumb {
+            padding: 15px 15px 13px 0;
+            display: inline-block;
+            float: left;
+            margin: 0;
+            list-style: none;
+            border-radius: 0 !important;
+            box-sizing: border-box;
+        }
+        .page-footer-inner {
+            padding-left:15px;
+        }
+        .page-breadcrumb > li {
+            display: inline-block;
+            border-radius: 0 !important;
+            box-sizing: border-box;
+        }
+
+        .select2-container--default .select2-results__option[aria-disabled=true],
+        .select2-container--bootstrap .select2-results__option[aria-disabled=true] {
+            display: none;
+        }
+    </style>
+    <script src="~/Scripts/jquery-2.1.4.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/jquery-ui-1.9.2.js" type="text/javascript"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js" type="text/javascript"></script>
+    <script src="~/UITheme/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/bootstrap-table-master/dist/bootstrap-table.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/bootstrap-table-master/dist/bootstrap-editable.min.js"></script>
+    <script src="~/Scripts/bootstrap-table-master/dist/bootstrap-table-editable.js"></script>
+    <script src="~/Scripts/bootstrap-table-master/dist/locale/bootstrap-table-vi-VN.min.js"></script>
+    <script src="~/UITheme/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js" type="text/javascript"></script>
+    <script src="~/UITheme/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js" type="text/javascript"></script>
+    @Html.DevExpress().GetStyleSheets(
+        new StyleSheet { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
+        new StyleSheet { ExtensionSuite = ExtensionSuite.Spreadsheet },
+        new StyleSheet { ExtensionSuite = ExtensionSuite.GridView }
+    )
+    @Html.DevExpress().GetScripts(
+        new Script { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
+        new Script { ExtensionSuite = ExtensionSuite.Spreadsheet },
+        new Script { ExtensionSuite = ExtensionSuite.GridView }
+    )
+</head>
+
+<body class="page-container-bg-solid">
+    <div class="page-wrapper">
+        <div class="page-wrapper-row full-height">
+            <div class="page-wrapper-middle">
+                <div class="page-container">
+                    <div class="page-content-wrapper">
+                        <div id="ajaxModalProject" style="width:60%" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false" data-attention-animation="false">
+                        </div>
+                        <div class="page-content">
+                            <div class="container-fluid">
+                                <div class="page-content-inner">
+                                    @RenderBody()
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/UITheme/assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+    <script src="~/UITheme/assets/global/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+
+    @RenderSection("scriptMainPageLevel", required: false)
+    <script src="~/UITheme/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+    <script src="~/UITheme/assets/global/plugins/bootbox/bootbox.min.js" type="text/javascript"></script>
+    <script src="~/UITheme/assets/pages/scripts/ui-bootbox.min.js" type="text/javascript"></script>
+
+    @RenderSection("scriptConfigPageLevel", required: false)
+    <script src="~/UITheme/assets/global/scripts/app.min.js" type="text/javascript"></script>
+    @*<script src="~/UITheme/assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>*@
+    <script src="~/UITheme/assets/layouts/layout3/scripts/layout.min.js" type="text/javascript"></script>
+    <script src="~/UITheme/assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+    <script src="~/UITheme/assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+    <script src="~/UITheme/assets/layouts/global/scripts/quick-nav.min.js" type="text/javascript"></script>
+    @RenderSection("scripts", required: false)
+
+    <script type="text/javascript">
+        $('.nav-link').each(function () {
+            var cItm = $(this);
+            var value = cItm.attr('href');
+            // TODO: do something with the value
+            //console.log(window.location);
+            if (value.toLowerCase() != 'javascript:;') {
+                var url_not_include_svalue = window.location.pathname.toLowerCase() + window.location.search;
+                url_not_include_svalue = url_not_include_svalue.replace(/&?s=([^&]$|[^&]*)/i, "");
+                url_not_include_svalue = url_not_include_svalue.replace(/&?id=([^&]$|[^&]*)/i, "");
+                url_not_include_svalue = url_not_include_svalue.replace('?&', '?');
+                if (url_not_include_svalue.lastIndexOf('?') == url_not_include_svalue.length - 1) {
+                    url_not_include_svalue = url_not_include_svalue.substr(0, url_not_include_svalue.length - 1);
+                }
+                //console.log('value: ' + value.toLowerCase());
+                //console.log('url_not_include_svalue: ' + url_not_include_svalue);
+                if (url_not_include_svalue.trim() != "/" && ('/' + value.toLowerCase()).replace('//', '/') == url_not_include_svalue) {
+                    //console.log('co tim thay');
+                    cItm.parent().attr('class', 'nav-item start active open');
+
+                    // Kiem tra neu la sub-menu
+                    if (cItm.parent().parent().attr('class').trim().toLowerCase() == 'sub-menu') {
+                        cItm.parent().parent().attr('style', 'display: block;');
+                        cItm.parent().parent().parent().attr('class', 'nav-item start active open');
+                        cItm.parent().parent().parent().children().children('.arrow').attr('class', 'arrow open');
+                    }
+                } else {
+                    cItm.parent().attr('class', 'nav-item');
+                }
+            }
+        });
+
+        function OpenModalCustom(itm) {
+            var url = $(itm).attr('data-url');
+            if (url != undefined && url != '') {
+                var $modal = $('#ajaxModalProject');
+                $('body').modalmanager('loading');
+                $modal.load(url, '', function () {
+                    var tmpWidth = 'auto';
+                    if ($(itm).attr('data-width') != null) tmpWidth = $(itm).attr('data-width');
+                    $modal.modal({
+                        width: tmpWidth
+                    });
+                });
+            }
+        }
+
+        bootbox.addLocale("vi-VN", { OK: 'Đồng ý', CANCEL: 'Hủy', CONFIRM: 'Xác Nhận' })
+
+        bootbox.setDefaults({
+            locale: "vi-VN",
+            className: "bootboxCustomModal",
+            animate: true,
+            backdrop: false
+        });
+
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            if (charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
+            return true;
+        }
+
+        function numberWithCommas(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
+    </script>
+</body>
+</html>

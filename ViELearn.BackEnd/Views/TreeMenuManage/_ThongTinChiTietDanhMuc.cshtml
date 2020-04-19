@@ -1,0 +1,98 @@
+﻿@using ViELearn.Models.SystemModels;
+@model SYS_MENU
+
+@using (Ajax.BeginForm("SaveThongTinChiTietDanhMuc", "TreeMenuManage", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divThongTinChiTietDanhMuc",OnSuccess= "CreateOrSaveAlert('Lưu thay đổi thành công')" }, new { @class = "form-horizontal" }))
+{
+    <div class="form-body form-group" style="margin-bottom:0">
+        <input type="hidden" name="CLASS_MAIN" value="nav-item"/>
+        <div class="col-md-4">
+            ID danh mục:
+            <input type="text" class="form-control" name="ID_SYS_MENU" readonly value="@Model.ID_SYS_MENU"/>
+        </div>
+        <div class="col-md-8">
+            Tên danh mục:
+            <input type="text" class="form-control" placeholder="Enter text" name="TENDANHMUC" value="@Model.TENDANHMUC"/>
+        </div>
+        <div class="col-md-4">
+            Cấp danh mục:
+            <input type="text" class="form-control" placeholder="Enter text" name="CAPDO" value="@Model.CAPDO"/>
+        </div>
+        <div class="col-md-4">
+            ID danh mục cha:
+            <input type="text" class="form-control" placeholder="Enter text" name="DANHMUCCHA" value="@Model.DANHMUCCHA"/>
+        </div>
+        <div class="col-md-4">
+            Có danh mục con:
+            <select class="form-control" name="DANHMUCCON">
+                <option @(Model.DANHMUCCON.ToString() == "0" ? "selected" : "") value="0">Không</option>
+                <option @(Model.DANHMUCCON.ToString() == "1" ? "selected" : "") value="1">Có</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            Tên controller:
+            <input type="text" class="form-control" placeholder="Enter text" name="CONTROLLER" value="@Model.CONTROLLER"/>
+        </div>
+        <div class="col-md-6">
+            Action:
+            <input type="text" class="form-control" placeholder="Enter text" name="ACTION" value="@Model.ACTION"/>
+        </div>
+        <div class="col-md-4">
+            Icon:
+            <input type="text" class="form-control" placeholder="Enter text" name="CLASS" value="@Model.CLASS"/>
+        </div>
+        <div class="col-md-4">
+            Số thứ tự:
+            <input type="text" class="form-control" placeholder="Enter text" name="ORDERVIEW" value="@Model.ORDERVIEW"/>
+        </div>
+        <div class="col-md-4">
+            Ẩn/hiện:
+            <select class="form-control" name="Status">
+                <option @(Model.Status.ToString() == "False" ? "selected" : "") value="False">Ẩn</option>
+                <option @(Model.Status.ToString() == "True" ? "selected" : "") value="True">Hiện</option>
+            </select>
+        </div>
+
+        @*<div class="form-group">
+            <label class="col-md-3 control-label">Ẩn/Hiện</label>
+            <div class="col-md-4">
+                @Html.CheckBox("Status", @Model.Status)
+            </div>
+        </div>*@
+    </div>
+    <div class="form-actions" style="text-align:center;">
+        <button type="submit" class="btn blue">Lưu thay đổi</button>
+        <span class="btn btn-danger" onclick="delete_menu(@Model.ID_SYS_MENU)">Xóa</span>
+    </div>
+}
+
+<script type="text/javascript">
+    function delete_menu(id_dm) {
+        bootbox.confirm({
+            message: "Bạn chắc chắn muốn xóa?",
+            buttons: {
+                confirm: {
+                    className: 'btn-danger'
+                },
+                cancel: {
+                    className: 'btn-success'
+                }
+            },
+            callback: function (result) {
+                if (result == true) {
+                    $.ajax({
+                        type: 'post',
+                        url: '@Url.Action("DeleteDanhMuc", "TreeMenuManage")',
+                        ajaxasync: true,
+                        data: { id: id_dm },
+                        success: function (data) {
+                            location.reload();
+                        },
+                        error: function (data) {
+                            bootbox.alert("Có lỗi xảy ra!");
+                        }
+                    });
+                }
+            }
+        });
+    }
+</script>

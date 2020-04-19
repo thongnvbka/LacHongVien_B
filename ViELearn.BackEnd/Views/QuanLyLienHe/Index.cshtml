@@ -1,0 +1,501 @@
+﻿@model ViELearn.Models.ViELearnModels.HomeModel
+@using ViELearn.TinTuc.Ultilities
+@using ViELearn.TinTuc.App_Code
+@using BotDetect.Web.Mvc;
+<link href="@BotDetect.Web.CaptchaUrls.Absolute.LayoutStyleSheetUrl"
+      rel="stylesheet" type="text/css" />
+@{ MvcCaptcha registerCapcha = new MvcCaptcha("registerCapcha");}
+
+
+
+@{
+    ViewBag.Title = "TrangChu";
+    Layout = "~/Views/Shared/royalspa/_LayoutHome.cshtml";
+}
+
+@section header{
+    @Html.Action("GetBannerHome", "Home")
+    <!--           end section intro           /-->
+    <!--           ¬ features           /-->
+    @Html.Action("GetImageService", "Home")
+    }
+@section menuheader{
+    @Html.Action("GetMenu", "Home")
+    }
+
+<!--           = gallery           /-->
+<section class="st-row st-row--gray">
+    <div class="container">
+        <a></a>
+        <div class="hr-heading rotate" >
+            <h1>Thư viện ảnh</h1><small>Hãy thư giãn và sử dụng các dịch vụ tốt nhất</small>
+        </div>
+    </div>
+    <div class="gallery">
+        <div class="container">
+            <div class="row">
+                <div class="gallery__row js-grid-masonry">
+                    <!--           * grid-sizer for regular culumns           /-->
+                    <div class="grid-sizer col-xs-3"></div>
+                    <!--         ¬ home-gallery-items         * /-->
+
+
+                    @foreach (var item in Model.ImageGallery)
+                    {
+                        <div class="gallery__item col-rs col-xs-6 col-sm-3">
+                            <a class="gallery__img-wrap js-gallery-link" href="@(ViELearn.TinTuc.App_Code.PLibs.GetAdminUrl()+ @item.main_content)">
+                                <img class="img-responsive" src="@(ViELearn.TinTuc.App_Code.PLibs.GetAdminUrl()+ @item.main_content)" alt="#">
+                                <div class="overlay"></div>
+                            </a>
+                        </div>
+                    }
+
+
+                    <!--         end home-gallery-items         /-->
+                </div>
+            </div>
+            <!--           * button load           /-->
+            @*<div class="btn-wrap"><a class="btn btn--warn" href="gallery-four-column.html">Load more</a></div>*@
+        </div>
+    </div>
+</section>
+<!--           end gallery           /-->
+<!--           ¬ statistic           /-->
+<div class="hm-stat st-row st-row--bg">
+    <div class="bg-pattern">
+        <div class="jarallax prlx" style="background-image:url(/UITheme/assets/images/imgroyalspa/bg-section.png)"></div>
+    </div>
+    <div style="font-family: 'Roboto Slab', 'serif'!important" class="position-relative">
+        <div class="container">
+            <div class="row">
+                @foreach (var item in Model.FeedbackNumber)
+                {
+                    <div class="col-sm-3 hm-stat__item">
+                        <div class="stat-num"><span class="js-counter">@item.alter_content</span></div>
+                        <h3 class="hm-stat__title stat-text">@item.tooltip</h3>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--           end statistic           /-->
+<!--           ¬ our clients           /-->
+<!--           end our clients           /-->
+<!--           = section video           /-->
+<div class="section-video st-row st-row--gray st-row--hr">
+    <div class="container no-gutters-sm">
+        <div class="hr-heading rotate">
+            <h1>Video giới thiệu</h1>
+        </div>
+        <div class="video-contain rounder-right">
+            <!--           * preview screen           /-->
+            <div class="video-contain__preview" style="background-image: url(/UITheme/assets/images/imgroyalspa/upload/intro/preview_1.jpg);">
+                <div class="overlay overlay--light"></div>
+                <div class="flag flag--top-right">Giới thiệu</div>
+            </div>
+            <!--           * iframe           /-->
+            <div class="video-contain__wrapper">
+                <iframe data-id="https://www.youtube.com/embed/@ViELearn.TinTuc.Ultilities.PLibs.TachYoutubeKey(Model.VideoHome.SingleOrDefault().main_content)" src="about:blank" allowfullscreen></iframe>
+            </div>
+            <!--           * controls           /-->
+            <div class="video-controls">
+                <button class="btn-play"></button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--           end section video           /-->
+<!--           = carousel spa-menu           /-->
+<section class="spa-menu st-row">
+    <div class="container">
+        <div style=" position: absolute; margin-top:-40px;" id="menu"></div>
+        <div  class="hr-heading rotate">
+            <h1>Spa menu</h1><small>Khám phá bản thân bên trong của bạn</small>
+          
+        </div>
+        <!--           ¬ carousel           /-->
+        <div class="spa-menu__carousel swiper-container">
+            <div class="swiper-wrapper">
+                <div class="spa-menu__slide swiper-slide">
+                    <h2>Các gói</h2>
+                    <div class="row">
+                        @foreach (var item in Model.TopNews)
+
+                        {
+                            <div class="col-md-4 col-xs-12 col-sm-6">
+                                <div class="images">
+
+                                    <a href="/Home/Details/@item.Id" target="_blank">
+                                        <img class="img-responsive" src="@(ViELearn.TinTuc.App_Code.PLibs.GetAdminUrl()+@item.Thumbnail)" alt="@item.Title">
+                                    </a>
+                                </div>
+
+                                <div class="content">
+                                    <a class="anchor-name"></a>
+                                    <h4>
+
+                                        <a href="/Home/Details/@item.Id" target="_blank">@item.Title</a>
+                                    </h4>
+                                    <p>@item.Summary</p>
+                                   
+
+                                    <a class="link-cta" href="/Home/Details/@item.Id" target="_blank"><span>Chi tiết</span></a>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+               
+            </div>
+        </div>
+        <!--           ¬ control tabs           /-->
+        <div class="control-panel" style="display:none">
+            <button class="control-panel__nav prev js-spa-menu-prev"><i class="fa fa-angle-left"></i></button>
+            <button class="control-panel__nav next js-spa-menu-next"><i class="fa fa-angle-right"></i></button>
+            <div class="spa-menu__nav swiper-container js-spa-menu-nav">
+                <div class="swiper-wrapper">
+                    @*<div class="spa-menu__nav-item swiper-slide">
+                            <h4>Các gói</h4>
+                        </div>
+                        <div class="spa-menu__nav-item swiper-slide">
+                            <h4>massages</h4>
+                        </div>
+                        <div class="spa-menu__nav-item swiper-slide">
+                            <h4>Hương liệu</h4>
+                        </div>
+                        <div class="spa-menu__nav-item swiper-slide">
+                            <h4>Trang điểm</h4>
+                        </div>
+                        <div class="spa-menu__nav-item swiper-slide">
+                            <h4>Tiệc cưới</h4>
+                        </div>*@
+                </div>
+            </div>
+        </div>
+        <!--           end control tabs           /-->
+    </div>
+</section>
+
+
+<!--           = about           /-->
+<div class="hm-about st-row st-row--hr st-row--bg">
+    <div class="bg-pattern">
+        <div class="jarallax prlx" style="background-image: url(/UITheme/assets/images/imgroyalspa/bg-section.png);"></div>
+    </div>
+    <div style=" position: absolute; margin-top:-140px;" id="info"></div>
+    <div  class="position-relative">
+        <div class="container">
+            <div class="hm-about__main">
+                <div class="row">
+                    <div class="col-md-7">
+                        <div  class="hm-about__info">
+                            <section class="hm-about__heading">
+                                <h2>Thông tin về chúng tôi</h2>
+                            </section>
+                            <p>@Model.InfoContact.FirstOrDefault().Description</p>
+                            @*<div class="hm-about__btn">
+                                    <button class="btn btn--darker" data-toggle="modal" data-target="#modal-inquiry">Yêu cầu đặt phòng</button>
+                                </div>*@
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <ul class="hm-about__list-mode">
+                            <li><span>Thứ hai</span><span>9:00 — 21:00</span></li>
+                            <li><span>Thứ ba</span><span>9:00 — 21:00</span></li>
+                            <li><span>Thứ tư</span><span>9:00 — 21:00</span></li>
+                            <li><span>Thứ năm</span><span>8:00 — 23:00</span></li>
+                            <li><span>Thứ sáu</span><span>8:00 — 23:00</span></li>
+                            <li><span>Thứ bảy</span><span>8:00 — 23:00</span></li>
+                            <li><span>Chủ nhật</span><span class="disabled">Ngày nghỉ</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--           end about           /-->
+<!--           = reservation form           /-->
+<section class="st-row" id="reservation">
+    <div class="container">
+  
+        <div  class="hr-heading rotate">
+            <h1>Đặt chỗ</h1><small>đặt thời gian vui vẻ khó quên của bạn</small>
+        </div>
+        <div class="row">
+            <!--           ¬ form           /-->
+            <div  class="col-sm-12 col-md-9 col-md-offset-3 col-lg-offset-2 item-sm">
+                <form id="frmReservation" class="booking-form js-form-booking" action="CreateReservation" method="POST" autocomplete="off">
+                    <div class="row row-sm">
+                        
+                            <div class="form-group col-sm-12 col-md-6 col-xs-12">
+
+                                <label class="label-control">Họ tên <span class="label-warn">*</span></label>
+                                <input id="name" class="form-control" type="text" name="name" required>
+                            </div>
+                            <div class="form-group col-md-6 col-xs-12">
+                                <label class="label-control">Điện thoại <span class="label-warn">*</span></label>
+                                <input id="phone" class="form-control" type="text" name="phone" required>
+                            </div>
+                       
+                        
+                            <div class="form-group col-md-6 col-xs-12">
+                                <label class="label-control">e-mail <span class="label-warn">*</span></label>
+                                <input id="txtEmail" class="form-control" type="email" name="email" required>
+                            </div>
+                            <div class="form-group col-md-6 col-xs-12">
+                                <div class="row row-sm input-daterange">
+                                    <div class="col-xs-6">
+                                        <label class="label-control">từ ngày <span class="label-warn">*</span></label>
+                                        <input id="date_from" class="form-control datepicker" data-date-format="dd/mm/yyyy" name="date_from" required>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <label class="label-control">đến ngày <span class="label-warn">*</span></label>
+                                        <input id="date_to" class="form-control datepicker" data-date-format="dd/mm/yyyy" name="date_to" required>
+                                    </div>
+                                </div>
+                            </div>
+                       
+                        
+                            <div class="form-group col-md-6 col-xs-12">
+                                @Html.Captcha(registerCapcha)
+                                @Html.TextBox("CaptchaCode",null,new { @class= "form-control" })
+                                <div class="form-group col-md-12 col-xs-12" style="padding:0">
+                                    <label class="label-control">Ghi chú</label>
+                                    <textarea id="description" class="form-control" rows="3" name="message"></textarea>
+                                </div>
+                                <div>
+                                    <label class="label-control">Số người <span class="label-warn">*</span></label>
+                                    <div class="select-reserved">
+                                        <div class="row row-sm">
+                                            <div class="form-group col ">
+                                                <select id="people" class="js-select-reserved">
+                                                    <option value="1">1</option>
+                                                    <option value="2">2</option>
+                                                    <option value="3">3</option>
+                                                    <option value="4">4</option>
+                                                    <option value="5">5</option>
+                                                    <option value="6">6</option>
+                                                    <option value="7">7</option>
+                                                </select>
+                                            </div>
+                                            @*<div class="form-group col col-xs-6">
+                                <input class="select-reserved__check js-reserved-check" id="checkReset" type="checkbox">
+                                <label for="checkReset"><i class="fa fa-check"></i><span class="span">Tôi có hơn 6 người</span></label>
+                            </div>*@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="checkService" class="form-group col-md-6 col-xs-12">
+                                <label class="label-control">Chọn gói dịch vụ<span class="label-warn">*</span></label>
+                                <div style="margin-top: 15px;">
+                                    @foreach (var item in Model.TopNews)
+                                    {
+                                        <div class="form-check">
+                                            <label class="label-text">
+                                                <input type="checkbox" value="@item.Id" name="ckService"> <span class="label-text">@item.Title</span>
+                                            </label>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        
+                      
+
+
+                        <!--         datepicker/clockpicker         *-->
+                        <!--           ¬ number-of-reversed           /-->
+                      
+                        <!--           end number-of-reversed           /-->
+
+                    </div>
+
+                    <div  class="col-xs-12">
+                        <div class="booking-form__submit col-auto">
+                            <button id="submit" class="btn btn--darker" type="submit">Đặt ngay</button>
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+            <!--           end form           /-->
+
+        </div>
+        <!--           = contacts           /-->
+        @*<div   style="border-top: 1px solid #c6aa28;margin-top:40px;"   class="col-auto col-sm-6 col-md-12 col-lg-12">
+            <div class="contacts-list">
+                <p   style="font-size:1em;color:#888!important;" class="contacts-list__top">Chúng tôi sẽ vui lòng phục vụ bạn. Nếu bạn có bất kỳ câu hỏi hoặc đề nghị liên quan đến salon Royal Spa, xin vui lòng sử dụng địa chỉ liên lạc của chúng tôi dưới đây..</p>
+                <div class="contacts-list__main">
+
+                    <h3>Người quản lí</h3>
+                    <p><a href="tel:+610883886352">(024) 62.911.588</a></p>
+                    <h3>E-mail</h3>
+                    <p>
+                        <a style="
+    font-family: Lato,Helvetica Neue,Helvetica,Arial,sans-serif;
+    color: #c6aa28;
+    text-transform: uppercase;
+    font-size: .77778rem;
+    font-weight: 700;
+    letter-spacing: .2em;" href="info@mdcgroup.vn">info@mdcgroup.vn</a>
+                    </p>
+                    <h3>Địa chỉ</h3>
+                    <address class="address">Tầng 1, Tòa CT2, Số 583 Nguyễn Trãi, Hà Nội</address>
+                </div>
+            </div>
+            <!--           = share           /-->
+            <div class="contacts-share">
+                <h3>Mạng xã hội</h3>
+                <ul class="social-list">
+                    <li><a class="fa-stack fa-lg" href="#"><i class="fa fa-circle fa-stack-2x"></i><i class="icon fa fa-instagram fa-stack-1x fa-inverse"></i></a></li>
+                    <li><a class="fa-stack fa-lg" href="#"><i class="fa fa-circle fa-stack-2x"></i><i class="icon fa fa-facebook fa-stack-1x fa-inverse"></i></a></li>
+                    <li><a class="fa-stack fa-lg" href="#"><i class="fa fa-circle fa-stack-2x"></i><i class="icon fa fa-twitter fa-stack-1x fa-inverse"></i></a></li>
+                </ul>
+            </div>
+            <!--           end share           /-->
+        </div>*@
+        <!--           end contacts           /-->
+        <div style="     position: relative;
+        text-align: center;
+        font-size: 2.66667rem;
+        line-height: 1;
+            padding: 30px 0;
+        margin-top: 0;
+        margin-bottom: 1.66667rem;
+        font-weight: 700;
+        border-bottom: 1px solid #c6aa28"></div>
+    </div>
+</section>
+<!--           end reservation form           /-->
+
+<div id="contact">
+  @Html.Raw(Model.InfoContact.FirstOrDefault().GoogleMap)
+
+</div>
+
+@section script_footer{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('.navbar__menu .navbar-nav li a').bind('click.smoothscroll', function (e) {
+                e.preventDefault();
+
+                var target = this.hash,
+                    $target = $(target) ;
+
+                $('html, body').stop().animate({
+                    'scrollTop': $target.offset().top
+                }, 900, 'swing', function () {
+                    window.location.hash = target;
+                });
+            });
+            $('.panel-menu-nav .panel-menu-content li a').bind('click.smoothscroll', function (e) {
+                e.preventDefault();
+
+                var target = this.hash,
+                    $target = $(target) ;
+
+                $('html, body').stop().animate({
+                    'scrollTop': $target.offset().top
+                }, 900, 'swing', function () {
+                    window.location.hash = target;
+                });
+            });
+        });
+
+        $('form').submit(function (e) {
+
+
+
+            // this code prevents form from actually being submitted
+            e.preventDefault();
+            e.returnValue = false;
+
+            // some validation code here: if valid, add podkres1 class
+            if ($('input.podkres1').length > 0) {
+                // do nothing
+            } else {
+
+                send();
+            }
+        });
+        function send() {
+
+            //    if (checkboxService.length > 0) {
+            //        checkboxService.each(function () {
+
+            //        })
+            //}
+            //return;
+            var newsIds = $('input[type="checkbox"]:checked').map(function () {
+                return this.value;
+            }).get();
+            console.log(newsIds.join(","));
+            var name = $('#name').val()
+                , email = $('#txtEmail').val()
+                , fromdate = $('#date_from').val()
+                , todate = $('#date_to').val()
+                , people = $('#people').val()
+                , description = $('#description').val()
+                , newsIds = newsIds.join(",");
+
+
+            $.ajax({
+                data: {
+                    name: name
+                    , email: email
+                    , fromdate: fromdate
+                    , todate: todate
+                    , people: people
+                    , description: description
+                    , newsIds: newsIds
+                },
+                type: 'POST',
+                datatype: 'json',
+                url: '/Home/CreateReservation',
+
+                success: function (responsive) {
+
+                    if (responsive.status) {
+                        bootbox.alert({
+                            message: "Bạn đã đặt thành công !",
+
+                        });
+                        window.location = '/Home/Index#services';
+                    }
+                    else {
+                        bootbox.alert(responsive.message);
+                    }
+
+
+                },
+                error: function (responsive) {
+
+                    bootbox.alert({
+                        message: "Bạn đăt không thành công",
+
+                    });
+                }
+
+            })
+        }
+        //$('#btntest').on('click', function () {
+        //    var checkboxService = $('#checkService .form-check .input[type="checkbox"]:checked')
+
+        //    if (checkboxService.length > 0) {
+        //        Console.log(checkboxService);
+        //    }
+
+        //})
+
+
+    </script>
+}
+
+

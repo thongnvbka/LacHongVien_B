@@ -1,0 +1,157 @@
+﻿@using ViELearn.Models.SystemModels
+
+<div class="portlet green box">
+    <div class="portlet-title">
+        <div class="caption" style="padding-top:20px;">
+            <i class="fa fa-cogs"></i> Phân quyền @(ViewBag.RoleType == 3?"người dùng":"nhóm người dùng"): <span>@ViewBag.NhomNguoiDungName</span>
+        </div>
+        <div class="tools">
+            <button type="button" class="btn btn-primary" onclick="LuuQuyenDanhMuc()">Lưu</button>
+        </div>
+    </div>
+    <div class="portlet-body">
+        @if (!String.IsNullOrEmpty(ViewBag.NhomNguoiDungName))
+        {
+            <div id="jsTreeDanhMuc">
+            </div>
+        }
+    </div>
+</div>
+
+<script type="text/javascript">
+    var treeModel = @Html.Raw(Json.Encode(Model));
+    
+    $("#jsTreeDanhMuc").jstree({
+        plugins: ["grid","contextmenu","sort","checkbox"],
+        core: {
+            data: treeModel
+        },
+        checkbox: {
+            three_state : true, // to avoid that fact that checking a node also check others
+            whole_node : false,  // to avoid checking the box just clicking the node
+            tie_selection : false // for checking without selecting and selecting without checking
+        },
+        grid: {
+            columns: [
+                {width: "35%", header: "Name"},
+                {width: "5%", header: "Xem", value: function(node){return ShowCheckBoxJSTree(node,0)}},
+                {width: "5%", header: "Thêm", value: function(node){return ShowCheckBoxJSTree(node,1)}},
+                {width: "5%", header: "Sửa", value: function(node){return ShowCheckBoxJSTree(node,2)}},
+                {width: "5%", header: "Xóa", value: function(node){return ShowCheckBoxJSTree(node,3)}},
+                {width: "5%", header: "Chuyển", value: function(node){return ShowCheckBoxJSTree(node,4)}},
+                {width: "5%", header: "Duyệt", value: function(node){return ShowCheckBoxJSTree(node,5)}},
+                {width: "10%", header: "Xuất Bản", value: function(node){return ShowCheckBoxJSTree(node,6)}}
+            ],
+            resizable: true,
+            draggable: true,
+            contextmenu: true
+        }
+    })
+    .on("uncheck_node.jstree", function(e, data) {
+        OnCheckNodeJSTree(data.node,false);
+        for (i = 0; i < data.node.children.length; i++) {
+            var tmpNode = $('#jsTreeDanhMuc').jstree(true).get_node(data.node.children[i]);
+            OnCheckNodeJSTree(tmpNode,false);
+        }
+    })
+    .on("check_node.jstree", function(e, data) {
+        OnCheckNodeJSTree(data.node,true);
+        for (i = 0; i < data.node.children.length; i++) {
+            var tmpNode = $('#jsTreeDanhMuc').jstree(true).get_node(data.node.children[i]);
+            OnCheckNodeJSTree(tmpNode,true);
+        }
+    });
+
+    function OnCheckNodeJSTree(node,status)
+    {       
+        for (var obj in node.data)
+        {            
+            node.data[obj] = status;
+            $('#chk'+obj+node.id).prop("checked", status);
+        }
+    }
+
+    function ShowCheckBoxJSTree(node,index)
+    {        
+        var quyenTmp = Object.keys(node.data)[index];
+        nodeCheckBoxId = "chk"+quyenTmp+node.id;
+        if (node.data[quyenTmp] == true) return("<input type=\"checkbox\" checked=\"checked\" id=\""+nodeCheckBoxId+"\" onchange=\"ToggleCheckboxJsTreeNode('"+nodeCheckBoxId+"','"+quyenTmp+"',"+node.id+")\"  />");
+        else
+            return("<input type=\"checkbox\" id=\""+nodeCheckBoxId+"\" onchange=\"ToggleCheckboxJsTreeNode('"+nodeCheckBoxId+"','"+quyenTmp+"',"+node.id+")\" />");
+    }
+
+    function ToggleCheckboxJsTreeNode(chkId,rightName,nodeId)
+    {
+        var tmpNode = $('#jsTreeDanhMuc').jstree(true).get_node(nodeId);
+        tmpNode.data[rightName] = $("#"+chkId).prop('checked');
+
+        tmpNode.state.checked = false;
+
+        for (var obj in tmpNode.data)
+        {
+            if (tmpNode.data[obj] == true)
+            {
+                tmpNode.state.checked = true;
+                break;
+            }
+        }
+
+        if (tmpNode.children.length > 0 )
+        {
+            for (i = 0; i < tmpNode.children.length; i++) {
+                tmpChildRight = "chk"+rightName+tmpNode.children[i];
+                ToggleChildNode(tmpChildRight,rightName,tmpNode.children[i],tmpNode.data[rightName]);
+            }
+        }
+        $('#jsTreeDanhMuc').jstree(true).redraw(true);
+    }
+
+    function ToggleChildNode(chkId,rightName,nodeId,chkStatus)
+    {
+        var tmpChildNode = $('#jsTreeDanhMuc').jstree(true).get_node(nodeId);
+        $("#"+chkId).prop('checked',chkStatus);
+        tmpChildNode.data[rightName] = chkStatus;
+
+        tmpChildNode.state.checked = false;
+        for (var obj in tmpChildNode.data)
+        {
+            if (tmpChildNode.data[obj] == true)
+            {
+                tmpChildNode.state.checked = true;
+                break;
+            }
+        }
+    }
+
+    function LuuQuyenDanhMuc(){
+        var parrent_undetermineds = [];
+        $("#jsTreeDanhMuc").find(".jstree-undetermined").each(function (i, element) {
+            parrent_undetermineds.push($(element).closest('.jstree-node').attr("id"));
+        });
+        var nodes = [];
+        var tmpLst = $('#jsTreeDanhMuc').jstree(true).get_json('#', {'flat': true});
+        for (i=0;i<tmpLst.length;i++)
+        {
+            if (tmpLst[i].state.checked == true) nodes.push(tmpLst[i])
+        }
+        var jsonData = JSON.stringify({'NhomNguoiDung':'@ViewBag.NhomNguoiDungKey','DanhSachQuyen':nodes,'DanhSachUndetermineds':parrent_undetermineds});
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            url: "/SysMenuManage/SaveRoleAccessRight",
+            dataType : "json",
+            data: jsonData,
+            success: function (data) {
+                bootbox.alert({
+                    message: "Lưu quyền nhóm người dùng thành công!",
+                    animate: true,
+                    backdrop: false,
+                    size: 'small',
+                });
+            },
+            error: function (xhr) {
+                console.log(xhr);
+            }
+        });
+    }
+</script>

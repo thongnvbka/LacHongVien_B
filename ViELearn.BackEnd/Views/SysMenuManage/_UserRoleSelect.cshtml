@@ -1,0 +1,28 @@
+﻿@using System.Data
+@using ViELearn.BackEnd.Ultilities
+
+<div class="portlet box green" id="divThongTinChiTietDanhMuc">
+    <div class="portlet-title">
+        <div class="caption" style="padding-top:20px;padding-bottom:15px;">
+            <i class="fa fa-gift"></i>Nhóm người dùng
+        </div>
+        <div class="tools">            
+        </div>
+    </div>
+    <div class="portlet-body form">
+        <div class="form-horizontal">
+            @*@Html.DropDownList("ListUnitRoles", (SelectList)ViewBag.SelectLstRoles, "Chọn nhóm người dùng ...", new { @class = "form-control",@id= "ddlListUnitRoles" })*@
+            <select class="form-control" id="ddlListUnitRoles" name="ListUnitRoles">
+                <option value="">-- Mời chọn --</option>
+                <option value="0">Công khai - Frontend</option>
+                @if (SysBaseInfor.GetCurrentUserName().ToLower() == SysBaseInfor.SuperAdmin)
+                {
+                    foreach (DataRow dr in ViewBag.SelectLstRoles.Rows)
+                    {
+                        <option data-type="@dr["RoleType"]" value="@dr["Id"]">@dr["Name"].ToString().Replace("_mdcgroup^&@*#", "")</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+</div>

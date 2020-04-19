@@ -1,0 +1,18 @@
+﻿@using System.Data;
+@model System.Data.DataTable
+
+@foreach (DataRow item in Model.Rows)
+{
+<tr data-id="@item["id"]" data-cates="@item["CatesId"]">
+    <td width="50px">@(Model.Rows.IndexOf(item) + 1)</td>
+    <td>
+        <a onclick="ChangeBakground(this)">@item["Title"]</a>
+       
+    </td>
+    <td class="text-center">
+        <a onclick="ClonePath(this)" data-id="@item["id"]" data-title =" @item["Title"]" data-dismiss="modal" data-index="@(Model.Rows.IndexOf(item) + 1)" class="btn-sm btn-primary" role="button">Chọn</a>
+    </td>
+</tr>
+
+}
+

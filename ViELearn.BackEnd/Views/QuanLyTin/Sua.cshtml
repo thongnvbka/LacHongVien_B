@@ -1,0 +1,79 @@
+﻿@using System.Data
+@{
+    ViewBag.Title = "Sua";
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+@section jsFooter{
+    <script>
+
+        var editor = CKEDITOR.replace('txtContent', {
+            customConfig: '/Scripts/CkeditorMvc/config.js',
+        });
+    </script>
+}
+
+@using (Html.BeginForm("Sua", "QuanLyTin", FormMethod.Post))
+{
+    <div class="form-group">
+        Tiêu đề
+        <input type="text" class="form-control" value="@ViewBag.Infos["Title"]" name="title">
+    </div>
+
+    <div class="form-group">
+        Sapo
+        <input type="text" class="form-control" value="@ViewBag.Infos["FullContent"]" name="sapo">
+    </div>
+
+    <div class="form-group">
+        Nội dung
+        <input type="text" class="form-control" id="txtContent" value="@ViewBag.Infos["Summary"]" name="noidung">
+    </div>
+    <div class="form-group">
+        Thumbnail url
+        <input type="text" class="form-control" value="@ViewBag.Infos["Thumbnail"]" name="url">
+    </div>
+    <div class="form-group">
+        Chuyên mục, chủ đề:
+        <select name="cates" id="cates" class="form-control select2" style="width:100%" onchange="filterChilds(this, 'quanhuyen');">
+            <option value="0">-- Mời chọn --</option>
+            @foreach (DataRow dr in ViewBag.DsTags.Rows)
+            {
+                <option value="@dr["name"]">@dr["name"]</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        Bài viết liên quan:
+        <select name="related_news" id="related_news" class="form-control select2" multiple style="width:100%">
+            @foreach (DataRow dr in ViewBag.DsBaiVietLienQuan.Rows)
+                {
+                <option value="@dr["id"]" selected>@dr["title"]</option>
+            }
+            @foreach (DataRow dr in ViewBag.DsBaiViet.Rows)
+                {
+                <option value="@dr["id"]">@dr["title"]</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        Từ khóa
+        <input type="text" class="form-control" value="@ViewBag.Infos["Tags"]" name="tag">
+    </div>
+    <div class="form-group">
+        Slug
+        <input type="text" class="form-control" value="@ViewBag.Infos["Slug"]" name="slug">
+    </div>
+    <div class="form-group">
+        Meta keyword
+        <input type="text" class="form-control" value="@ViewBag.Infos["meta_keywords"]" name="meta_keywords">
+    </div>
+    <div class="form-group">
+        Meta-description:
+        <input type="text" class="form-control" value="@ViewBag.Infos["meta_descriptions"]" name="meta_descriptions">
+    </div>
+    <input type="submit" value="submit" />
+}
+
+

@@ -1,0 +1,52 @@
+﻿@using ViELearn.Models.ProjectModels;
+@model UnitWorkCalendar
+
+@using (Ajax.BeginForm("SaveDetailWorkCalendar", "UnitWorkCalendar", new AjaxOptions { HttpMethod = "POST", OnSuccess = "UnitWorkCalendarCreateOrSaveAlert" }, new { @class = "form-horizontal" }))
+{
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4>@(Model.Id>0? "Thông tin chi tiết lịch làm việc" : "Thêm mới lịch làm việc")</h4>
+        </div>
+        <div class="modal-body">
+            <div class="col sm-12">
+                <div class="form-body">
+                    @Html.HiddenFor(m => m.Id)
+                    @Html.HiddenFor(m => m.UnitId)
+                    @Html.HiddenFor(m => m.Status)
+                    @Html.HiddenFor(m => m.CreatedBy)
+                    @Html.HiddenFor(m => m.PublishedBy)
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Ngày</label>
+                        <div class="col-md-6">
+                            @Html.DropDownListFor(m=> m.DayWorkCalendar, (SelectList)ViewBag.ListDayForSelect, new { @class = "form-control"})
+                        </div>
+                    </div>  
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Sáng</label>
+                        <div class="col-md-6">                                
+                            <textarea rows="10" class="form-control" name="MorningNote">@Model.MorningNote</textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Chiều</label>
+                        <div class="col-md-6">
+                            <textarea rows="10" class="form-control" name="AfternoonNote">@Model.AfternoonNote</textarea>
+                        </div>
+                    </div>                        
+
+                    <div class="form-actions">
+                        <div class="row" style="text-align:center">                                
+                            <button type="submit" class="btn blue">@(Model.Id != 0?"Lưu thay đổi":"Thêm mới")</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn default" data-dismiss="modal">Đóng</button>
+        </div>
+    </div>
+}

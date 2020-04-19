@@ -1,0 +1,190 @@
+﻿@using System.Data
+@using ViELearn.BackEnd.Ultilities
+
+@{
+    ViewBag.Title = "Danh sách văn bản";
+    Layout = "~/Views/Shared/_Layoutv3_empty.cshtml";
+}
+@section stylePageLever{
+<link href="/UITheme/assets/global/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+<link href="/UITheme/assets/global/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/UITheme/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+}
+@section scriptMainPageLevel{
+    <script src="/UITheme/assets/global/scripts/datatable.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/datatables/datatables.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/pages/scripts/table-datatables-editable.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+}
+@section scriptConfigPageLevel{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".select2").select2();
+        });
+
+        function filter_tags(itm) {
+            var i = 1;
+            var cnt = 0;
+            $('#dsBaiViet > tbody > tr').each(function () {
+                var isContains = false;
+                $(this).find('.tags small').each(function () {
+                    var cellText = $(this).text();
+                    $('#cboFilter option:selected').each(function () {
+                        cnt++;
+                        if ($(this).text().trim().toLowerCase() == cellText.trim().toLowerCase()) isContains = true;
+                    });
+                });
+                if (cnt == 0 || isContains) {
+                    $(this).find("tr").first().text(i);
+                    $(this).show();
+                    i++;
+                }
+                else $(this).hide();
+            });
+        }
+
+        function submit() {
+            window.location.href = '/QuanLyVanBan/Public?coquan=' + $('#coquanbanhanh').val() + '&loaivb=' + $('#loaivanban').val() + '&linhvuc=' + $('#linhvuc').val() + '&tinhtrang=' + $('#tinhtrang').val() + '&trichyeu=' + $('#trichyeu').val() + '&sovb=' + $('#sovanban').val() + '&kyhieu=' + $('#kyhieuvanban').val() + '&nbh_s=' + $('#nbh_tu').val() + '&nbh_e=' + $('#nbh_den').val() + '&thutu=' + $('#thutusapxep').val();
+        }
+    </script>
+}
+
+@* Khu vực bộ lọc *@
+<div class="row">
+    <div class="col-xs-12">
+        <div class="form-group col-xs-3">
+            Cơ quan ban hành:
+            <select name="coquanbanhanh" id="coquanbanhanh" class="form-control select2">
+                <option value="0">-- Tất cả --</option>
+                @foreach (DataRow dr in ViewBag.DsCoQuanBh.Rows)
+                {
+                    <option value="@dr["id"]" @(Request["coquanbanhanh"] == dr["id"].ToString() ? "selected" : "")>@dr["TenDanhMuc"]</option>
+                }
+            </select>
+        </div>
+        <div class="form-group col-xs-3">
+            Loại văn bản:
+            <select name="loaivanban" id="loaivanban" class="form-control select2">
+                <option value="0">-- Tất cả --</option>
+                @foreach (DataRow dr in ViewBag.DsLoaiVanBan.Rows)
+                {
+                    <option value="@dr["id"]" @(Request["loaivanban"] == dr["id"].ToString() ? "selected" : "")>@dr["TenDanhMuc"]</option>
+                }
+            </select>
+        </div>
+        <div class="form-group col-xs-3">
+            Lĩnh vực:
+            <select name="linhvuc" id="linhvuc" class="form-control select2">
+                <option value="0">-- Tất cả --</option>
+                @foreach (DataRow dr in ViewBag.DsLinhVuc.Rows)
+                {
+                    <option value="@dr["id"]" @(Request["linhvuc"] == dr["id"].ToString() ? "selected" : "")>@dr["TenDanhMuc"]</option>
+                }
+            </select>
+        </div>
+        <div class="form-group col-xs-3">
+            Tình trạng văn bản:
+            <select name="tinhtrang" id="tinhtrang" class="form-control select2">
+                <option value="1" @(Request["tinhtrang"] == "1" ? "selected" : "")>Còn hiệu lực</option>
+                <option value="0" @(Request["tinhtrang"] == "0" ? "selected" : "")>Hết hiệu lực</option>
+            </select>
+        </div>
+        <div class="form-group col-xs-6">
+            Trích yếu:
+            <input name="trichyeu" id="trichyeu" class="form-control" placeholder="Trích yếu" value="@Request["trichyeu"]" />
+        </div>
+        <div class="form-group col-xs-3">
+            Số văn bản:
+            <input name="sovanban" id="sovanban" class="form-control" placeholder="Số văn bản" value="@Request["sovanban"]" />
+        </div>
+        <div class="form-group col-xs-3">
+            Ký hiệu văn bản:
+            <input name="kyhieuvanban" id="kyhieuvanban" class="form-control" placeholder="Ký hiệu văn bản" value="@Request["kyhieuvanban"]" />
+        </div>
+        <div class="form-group col-xs-6">
+            Ngày ban hành:
+            <div class="input-group date-picker input-daterange" data-date="10/11/2012" data-date-format="mm/dd/yyyy">
+                <input type="text" class="form-control" name="from" id="nbh_tu" value="@(Request["nbh_s"] == "" ? DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy") : Request["nbh_s"])" />
+                <span class="input-group-addon">&nbsp;đến&nbsp;</span>
+                <input type="text" class="form-control" name="to" id="nbh_den" value="@(Request["nbh_e"] == "" ? DateTime.Now.AddMonths(-1).ToString("dd/MM/yyyy") : Request["nbh_e"])" />
+            </div>
+        </div>
+        <div class="form-group col-xs-3">
+            Thứ tự sắp xếp:
+            <select name="thutusapxep" id="thutusapxep" class="form-control">
+                <option value="0" @(Request["thutusapxep"] == "0" ? "selected" : "")>Ngày xuất bản</option>
+                <option value="1" @(Request["thutusapxep"] == "1" ? "selected" : "")>Ngày ban hành</option>
+                @*<option value="2">Ngày hết hiệu lực</option>*@
+                <option value="3" @(Request["thutusapxep"] == "3" ? "selected" : "")>Trích yếu văn bản</option>
+            </select>
+        </div>
+        <div class="form-group col-xs-3">
+            &nbsp;
+            <span class="btn btn-success form-control" onclick="submit()">Tìm kiếm</span>
+        </div>
+    </div>
+</div>
+
+<hr/>
+
+@if (ViewBag.DsBaiViet == null || ViewBag.DsBaiViet.Rows.Count < 1)
+{
+    @Html.Raw("Chưa có văn bản nào!");
+    return;
+}
+
+
+<div class="table-scrollable">
+    <table class="table table-striped table-hover table-bordered datatable" id="dsBaiViet">
+        <thead>
+            <tr>
+                <th class="text-center" style="width: 35px;">#</th>
+                <th>Trích yếu</th>
+                <th style="width: 350px;">Thông tin khác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (DataRow dr in ViewBag.DsBaiViet.Rows)
+            {
+                <tr data-id="@dr["id"]">
+                    <td class="text-center">@(ViewBag.DsBaiViet.Rows.IndexOf(dr) + 1)</td>
+                    <td>
+                        @dr["title"] <i class="font-grey-mint">(@dr["vb_sovb"] / @dr["vb_kyhieu"])</i>
+                        <small class="pull-right font-green">@(dr["PublishAt"].ToString() == "0" ? "" : CLibs.UnixTimeStampToDateTimeOrgin(double.Parse(dr["PublishAt"].ToString())).ToString("HH:mm:ss dd/MM/yyyy"))</small>
+                        @if (Directory.Exists(Server.MapPath(@"\") + "UserData\\" + SysBaseInfor.GetIdNguoiDung() + "\\" + dr["id"]))
+                        {
+                            <br />
+                            <br />
+                            foreach (var files in Directory.GetFiles(Server.MapPath(@"\") + "UserData\\" + SysBaseInfor.GetIdNguoiDung() + "\\" + dr["id"]))
+                            {
+                                var info = new FileInfo(files);
+                                var ftype = Path.GetExtension(info.FullName);
+                                if (ftype.StartsWith(".")) { ftype = ftype.Substring(1); }
+                                var stype = "download";
+                                if (ftype.ToLower() == "pdf") { stype = "file-pdf-o"; }
+                                else if (ftype.ToLower() == "mp3" || ftype.ToLower() == "wav") { stype = "file-audio-o"; }
+                                else if (ftype.ToLower() == "mp4" || ftype.ToLower() == "wmv") { stype = "file-movie-o"; }
+                                else if (ftype.ToLower() == "xls" || ftype.ToLower() == "xlsx") { stype = "file-excel-o"; }
+                                else if (ftype.ToLower() == "doc" || ftype.ToLower() == "docx") { stype = "file-word-o"; }
+                                else if (ftype.ToLower() == "jpg" || ftype.ToLower() == "jpeg" || ftype.ToLower() == "png" || ftype.ToLower() == "gif") { stype = "file-image-o"; }
+                                else if (ftype.ToLower() == "zip" || ftype.ToLower() == "rar" || ftype.ToLower() == "7z") { stype = "file-zip-o"; }
+
+                                <small><i class="fa fa-@stype"></i> <a target="_blank" href="/UserData/@(SysBaseInfor.GetIdNguoiDung())/@dr["id"]/@Path.GetFileName(info.FullName)">@Path.GetFileName(info.FullName)</a></small><br/>
+                            }
+                        }
+                    </td>
+                    <td style="font-family:'Courier New'">
+                        Số văn bản: <b>@dr["vb_sovb"]</b><br />
+                        Ký hiệu: <b>@dr["vb_kyhieu"]</b><br />
+                        Ngày ban hành: <b>@(CLibs.UnixTimeStampToDateTimeOrgin(double.Parse(dr["vb_ngaybanhanh"].ToString())).ToString("dd/MM/yyyy"))</b><br />
+                        Cơ quan: <b>@dr["title_coquan"]</b><br />
+                        Thể Loại: <b>@dr["title_loaivb"]</b><br />
+                        Lĩnh vực: <b>@dr["title_linhvuc"]</b><br />
+                        Tình trạng: <b>@(dr["vb_tinhtrang"].ToString() == "1" ? "Còn hiệu lực" : "Hết hiệu lực")</b>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

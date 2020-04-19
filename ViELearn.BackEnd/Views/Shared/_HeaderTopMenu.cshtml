@@ -1,0 +1,152 @@
+﻿@using ViELearn.Models.SystemModels
+@using ViELearn.BackEnd.Ultilities
+@model List<SYS_MENU_ROLE>
+
+<style>
+    .page-header .page-header-top {
+        background: #497595;
+        height: 60px;
+    }
+        .page-header .page-header-top, .page-header .page-header-top .top-menu .navbar-nav > li.dropdown > .dropdown-toggle:active, .page-header .page-header-top .top-menu .navbar-nav > li.dropdown > .dropdown-toggle:focus, .page-header .page-header-top .top-menu .navbar-nav > li.dropdown > .dropdown-toggle:hover,
+        .page-header .page-header-top .top-menu .navbar-nav > li.dropdown.open .dropdown-toggle, .page-header .page-header-top .top-menu .navbar-nav > li.dropdown:active .dropdown-toggle, .page-header .page-header-top .top-menu .navbar-nav > li.dropdown:focus .dropdown-toggle {
+            background-color: #497595 !important;
+        }
+    .top-menu .nav > li:nth-child(1) a:hover, .top-menu .nav > li:nth-child(1) > a:focus {
+        text-decoration: none;
+        cursor: pointer;
+        background-color: #497595 !important;
+        color: white;
+    }
+    .navbar-nav li:nth-child(1) .them {
+        color: white !important;
+        background-color: #497595 !important;
+    }
+</style>
+<div class="page-header-top">
+    <div class="container-fluid">
+        <div class="page-logo">
+            @*chỗ này đề logo*@
+        </div>
+        <a href="javascript:;" class="menu-toggler"></a>
+        <div class="top-menu  ">
+            <ul class="nav navbar-nav pull-right">
+                <li>
+                    <a class="them" href="@Url.Action("Create", "QuanLyTinTuc")"><i class="fa fa-plus"></i> Đăng bài mới </a>
+
+                </li>
+                <li class="dropdown dropdown-user">
+                    <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" aria-expanded="false">
+                        <span class="username username-hide-on-mobile hidden-xs" style="color:#fdfdfd">
+                            Xin chào @SysBaseInfor.GetCurrentUserDisplayName()
+                        </span> <i class="fa fa-angle-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-default">
+                        <li> <a href="/Manage/ChangePassword"> <i class="fa fa-refresh" ></i> Đổi mật khẩu</a> </li>
+                        <li> <a href="/Account/LogOff"> <i class="icon-key"></i> Đăng xuất </a> </li>
+                    </ul>
+                </li>
+                @*<li class="dropdown dropdown-quick-sidebar-toggler">
+                    <a href="javascript:;" class="dropdown-toggle">
+                        <i class="fa fa-comments-o"></i>
+                        <span class="badge badge-default" id="sum-all-badges" style="display:none;"> 0 </span>
+                    </a>
+                </li>*@
+            </ul>
+        </div>
+    </div>
+
+</div>
+<div class="page-header-menu">
+    <div class="container-fluid">
+        <div class="hor-menu  ">
+            <ul class="nav navbar-nav">
+                <li class="sidebar-toggler-wrapper hide">
+                    <div class="sidebar-toggler">
+                        <span></span>
+                    </div>
+                </li>
+                @foreach (SYS_MENU_ROLE item in Model)
+                {
+                    if (item.CAPDO == 0)
+                    {
+                        if (item.DANHMUCCON == 0)
+                        {
+                            <li aria-haspopup="true" class="menu-dropdown classic-menu-dropdown">
+                                @if (!string.IsNullOrEmpty(item.Controller.Trim()))
+                                {
+                                    <a href="/@Html.Raw(item.Controller.Trim())/@Html.Raw(item.Action.Trim())"><i class="@item.Class"></i> @item.TenDanhMuc</a>
+                                }
+                                else
+                                {
+                                    <a href="#"><i class="@item.Class"></i> @item.TenDanhMuc</a>
+                                }
+                            </li>
+                        }
+                        else
+                        {
+                            <li aria-haspopup="true" class="menu-dropdown classic-menu-dropdown">
+                                <a href="javascript:;" class="nav-link nav-toggle"> <i class="@item.Class"></i> <span class="title">@item.TenDanhMuc.Trim()</span> <span class="arrow"></span> </a>
+                                <ul class="dropdown-menu pull-left">
+                                    @foreach (SYS_MENU_ROLE itemChild in Model)
+                                    {
+                                        if (itemChild.CAPDO == 1 && itemChild.DANHMUCCHA == item.ID_SYS_MENU)
+                                        {
+                                            if (itemChild.DANHMUCCON == 0)
+                                            {
+                                                <li aria-haspopup="true" class=" ">                                                    
+                                                    <a class="nav-link" href="/@Html.Raw(itemChild.Controller.Trim())/@Html.Raw(itemChild.Action.Trim())"><i class="@itemChild.Class"></i> <span class="title">@itemChild.TenDanhMuc.Trim()</span></a>
+                                                </li>
+                                            }
+                                            else
+                                            {                             
+                                                <li aria-haspopup="true" class="dropdown-submenu">
+                                                    <a href="javascript:;" class="nav-link nav-toggle"> <i class="@itemChild.Class"></i> <span class="title">@itemChild.TenDanhMuc.Trim()</span> <span class="arrow"></span> </a>
+                                                    <ul class="dropdown-menu">
+                                                        @foreach (SYS_MENU_ROLE itemChild1 in Model)
+                                                        {
+                                                            if (itemChild1.CAPDO == 2 && itemChild1.DANHMUCCHA == itemChild.ID_SYS_MENU)
+                                                            {
+                                                                if (itemChild1.DANHMUCCON == 0)
+                                                                {
+                                                                    <li aria-haspopup="true" class=" ">
+                                                                        <a class="nav-link" href="/@Html.Raw(itemChild1.Controller.Trim())/@Html.Raw(itemChild1.Action.Trim())"><i class="@itemChild1.Class"></i> <span class="title">@itemChild1.TenDanhMuc.Trim()</span></a>
+                                                                    </li>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <li aria-haspopup="true" class="dropdown-submenu">
+                                                                        <a href="javascript:;" class="nav-link nav-toggle"> <i class="@itemChild1.Class"></i> <span class="title">@itemChild1.TenDanhMuc.Trim()</span> <span class="arrow"></span> </a>
+                                                                        <ul class="dropdown-menu">
+                                                                            @foreach (SYS_MENU_ROLE itemChild2 in Model)
+                                                                            {
+                                                                                if (itemChild2.CAPDO == 3 && itemChild2.DANHMUCCHA == itemChild1.ID_SYS_MENU)
+                                                                                {
+                                                                                    <li aria-haspopup="true" class=" ">
+                                                                                        <a class="nav-link" href="/@Html.Raw(itemChild2.Controller.Trim())/@Html.Raw(itemChild2.Action.Trim())"><i class="@itemChild2.Class"></i> <span class="title">@itemChild2.TenDanhMuc.Trim()</span></a>
+                                                                                    </li>
+                                                                                }
+                                                                                else
+                                                                                {
+
+                                                                                }
+                                                                            }
+                                                                        </ul>
+                                                                    </li>
+                                                                }
+                                                            }
+                                                        }
+                                                    </ul>
+                                                </li>
+                                            }   
+                                        }
+                                    }
+                                </ul>
+                            </li>
+                        }
+                    }
+                    
+                }
+            </ul>
+        </div>
+    </div>
+</div>

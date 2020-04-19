@@ -1,0 +1,15 @@
+﻿
+@{
+    ViewBag.Title = "ImgQrCode";
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+
+<div style="text-align:center" class="row">
+    <h2 class="font-purple-seance">Xác thực mã google</h2>
+    <h6 class="font-red-thunderbird">@ViewBag.Message</h6>
+    <div class="img_codegg">
+        <img src="@ViewBag.BarcodeImageUrl" />
+    </div>
+</div>
+
+

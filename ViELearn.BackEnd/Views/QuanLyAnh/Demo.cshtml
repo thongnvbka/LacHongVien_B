@@ -1,0 +1,939 @@
+﻿@using System.Data
+@using ViELearn.BackEnd.Ultilities;
+@using System.Linq;
+@{
+    ViewBag.Title = "Demo";
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+
+@section stylePageLever{
+    <link href="/UITheme/assets/global/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+<link href="/UITheme/assets/global/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-summernote/summernote.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css" rel="stylesheet" type="text/css" />
+    <link href="~/UITheme/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css" rel="stylesheet" />
+    <link href="/UITheme/assets/global/plugins/dropzone/dropzone.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/dropzone/basic.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-toastr/toastr.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.contextMenu.min.css">
+    @*<link href="~/UITheme/assets/apps/css/jquery.contextMenu.min.css" rel="stylesheet" />*@
+    <link href="/UITheme/assets/pages/css/StyleWix.css" rel="stylesheet" />
+    <style type="text/css">
+        .note-editable p {
+            margin: 0;
+        }
+
+        .dropzone .note {
+            border-left: 0 !important
+        }
+
+        .dz-preview {
+            display: inline-block;
+            padding: 6px;
+        }
+
+            .dz-preview:hover {
+                background-color: #dedcdc;
+            }
+
+        .btn_remove {
+            color: #7b7a71;
+            background-color: #e4e4e4;
+            border-radius: 50%;
+            position: absolute;
+            cursor: pointer;
+            right: -5px;
+            z-index: 2;
+            top: auto;
+        }
+        /*.dz-image-preview:hover btn_remove {
+            position: absolute;
+            cursor: pointer;
+            right: 8px;
+            z-index: 2;
+            opacity: 1;
+        }*/
+        .row_img:after, .row_img:before {
+            display: inline;
+        }
+
+        .modal {
+            width: 600px;
+            position: fixed;
+            left: 45%;
+        }
+
+        #full-width .item-img {
+            height: 300px;
+            overflow-y: scroll;
+            padding-right: 15px;
+        }
+      
+    </style>
+}
+@section scriptMainPageLevel{
+    <script src="/UITheme/assets/global/scripts/datatable.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/datatables/datatables.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/pages/scripts/table-datatables-editable.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-summernote/summernote.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js" type="text/javascript"></script>
+    <script src="~/UITheme/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js"></script>
+    <script src="/UITheme/assets/global/plugins/dropzone/dropzone.min.js" type="text/javascript"></script>
+   <script src="/UITheme/assets/global/plugins/bootstrap-toastr/toastr.min.js"></script>
+    <script src="/UITheme/assets/global/scripts/jquery.contextMenu.js"></script>
+
+}
+
+@section scriptConfigPageLevel{
+    <script src="/UITheme/assets/pages/scripts/ui-extended-modals.min.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+
+        function setusethumbnail(itm) {
+            $('#thumb_url').val($(itm).attr('src'));
+            $(itm).addClass('');
+        }
+
+        Dropzone.autoDiscover = false;
+        $("#frm_dropzone").dropzone({
+            url: "/QuanLyAnh/UploadFile?type=@(ViewBag.type == null ? "1" : ViewBag.type.ToString())",
+            acceptedFiles: "image/jpeg,image/png,image/gif",
+            resizeWidth: 1280,
+            resizeHeight: 1280,
+            maxFilesize: 0.5,
+            resizeMethod: 'contain',
+            resizeMimeType: 'image/jpeg,image/png,image/gif',
+            init: function () {
+                this.on("complete", function (file) {
+
+                   // console.log('one uploaded');
+                  //  console.log(file.size);
+                    var fileName = file.name;
+                    //console.log(file.resizeWidth)
+                    var html = '';
+                    html += ' <div class="col-md-3" style="height:80px;padding-top:5px;padding-bottom:5px;margin-top:5px;margin-bottom:5px;">' +
+                        '<div  style="cursor:pointer;position:relative;display: inline!important">' +
+                        '<i onclick="removeImg(this)" class="fa fa-times btn_remove" aria-hidden="true"></i>' +
+                        '<div class="dz-preview dz-processing dz-image-preview dz-success dz-complete">' +
+                        '<img onclick="setusethumbnail(this)" style="max-height:80px;max-width:120px;cursor:pointer;" data-dz-thumbnail="" src="/UserData/@(ViewBag.type == null ? "1" : ViewBag.type.ToString())/Images/' + fileName + '" />' +
+                        '</div>' +
+                        '</div>' + '</div>';
+
+                    if (file.type != "image/jpeg" && file.type != "image/png" && file.type != "image/png" && file.type != "image/gif") {
+                        toastr.error("Định dạng ảnh không đúng,xin mời chọn lại đúng file ảnh!");
+                    }
+                    else {
+                        if (file.size < 500000) {
+                            $('.modal-body .item-img .row').prepend(html);
+                        }
+                        else {
+                            toastr.error("Dung lượng ảnh đã vượt quá 500Kb,xin mời chọn ảnh lại ảnh!");
+                        }
+                    }
+
+                    if (this.getUploadingFiles().length === 0 && this.getUploadingFiles().length === 0) {
+                        //doSomething();
+                        //console.log('all file uploaded');
+                    }
+                });
+            }
+        });
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "positionClass": "toast-bottom-right",
+            "onclick": null,
+            "showDuration": "1000",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+        function removeImg(item) {
+            var url = $(item).parent().find('img').attr('src');
+            //console.log(url);
+            $.ajax({
+                data: { fName: url },
+                url: '/QuanLyAnh/DeleteFile',
+                success: function (responsive) {
+                    // bootbox.alert("Xóa thành công");
+                    $(item).parent().parent().remove();
+                }
+            });
+        }
+        function updateImg() {
+            //console.log(url);
+            $.ajax({
+
+                url: '/QuanLyAnh/ReFreshData',
+                success: function (responsive) {
+                   bootbox.alert("Cập nhật thành công");
+                   window.location.reload();
+
+                }
+            });
+        }
+
+        function set_destname(value) {
+            $('#btnSubmitDialog').data('destname', value);
+        }
+
+
+        function clone_val(src, itm) {
+            var dest = $(itm).data('destname');
+            var path = $('#' + src).val();
+            $.ajax({
+                data: { fName: path, type:@(ViewBag.type == null ? "1" : ViewBag.type.ToString())},
+                url: '/QuanLyAnh/CopyFile',
+                success: function (responsive) {
+                    $('#' + dest).val(responsive.newpath);
+                    $('#width').val(responsive.width);
+                    //alert(responsive.width)
+                    $('#height').val(responsive.height);
+                    $('#size').val(responsive.size);
+                }
+            });
+        }
+   
+
+        function set_vals_2edit(itm) {
+            var result = $(itm).data("albumid")
+            var url_img = $(itm).data("mainctn");
+           // console.log(url_img);
+            $('#img_1').attr('src', url_img);
+            var id = $(itm).data('id');
+            var page_kind = $(itm).data('pagekind');  //page_kind_appear
+            var col_kind = $(itm).data('colkind');  // position_inpage
+            var order = $(itm).data('order');
+            var type = $(itm).data('type');
+            var title = $(itm).data('title');
+            var main_content = $(itm).data('mainctn');
+            var alter_content = $(itm).data('alterctn');
+            var url = $(itm).data('url');
+            $('#btn_main_save').attr('data-itmid', id);
+            $('#btn_main_del').attr('data-itmid', id);
+            //$(itm).click(function () {
+            //    $("#cbAlbum").val($(itm).data('albumid'));
+            //});
+            //$('#btn_main_del').data('itmid', id);
+            $("#cboType").val(page_kind).change();
+            $("#cbo_main_col").val(col_kind).change();
+            $("#txt_main_order").val(order);
+            $("#txt_main_title").val(title);
+            $("#txt_main_content").val(main_content);
+            $("#txt_url").val($(itm).data('url'));
+            //$("#cbAlbum").val($(itm).data('albumid'));
+            //console.log(result);
+            if (result.toString().indexOf(",") != -1) {
+                var arrResult = result.split(',');
+                $("#cbAlbum").val(arrResult).trigger("change");;
+            } else {
+                $("#cbAlbum").val(result).trigger("change");
+            }
+           
+
+            //$(itm).click(function () {
+            //    //You need a id for set values
+            //    $.each($("#cbAlbum"), function () {
+            //        $(this).select2('val', arrResult);
+            //    });
+            //});
+
+            $("#txt_main_alter_content").val(alter_content);
+            //$("#txt_main_url").val(url);
+
+            $('table').find('tr').each(function () {
+                $(this).css('background-color', 'white');
+            });
+            $(itm).parents('tr').css('background-color', 'yellow');
+        }
+        function isEmpty(value) {
+            return (value == null || value === '');
+        }
+        function submit(itm) {
+            var title = $('#txt_main_title').val();
+            if (isEmpty(title))
+            {
+                bootbox.alert('Bạn chưa nhập tiêu đề!');
+                return;
+            }
+            var id = $(itm).data('itmid');
+            var albumId = $("#cbAlbum").val();
+            console.log('catids: ' + albumId);
+           //return;
+            bootbox.confirm({
+
+                message: "Có chắc chắn muốn " + (id == 0 ? "thêm mới" : "sửa") + " không?",
+                buttons: {
+                    cancel: {
+                        label: 'Không',
+                        className: 'btn-info'
+                    },
+                    confirm: {
+                        label: 'Có',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.ajax({
+                            data: {
+                                page_kind: $('#cboType').val(),
+                                order: $('#txt_main_order').val(),
+                                title: $('#txt_main_title').val(),
+                                main_content: $('#txt_main_content').val(),
+                                alter_content: $("#txt_main_alter_content").val(),
+                                groupAlbumid: albumId+'',
+                                url: $('#txt_url').val(),
+                                width: $('#width').val(),
+                                height: $('#height').val(),
+                                size: $('#size').val()
+                            },
+                            type: 'POST',
+                            datatype: 'json',
+                            url: '/QuanLyAnh/Save?id=' + id,
+                            success: function (responsive) {
+                                if (responsive.status) {
+                                    window.location.reload();
+                                } else {
+                                    bootbox.alert(responsive.message);
+                                }
+                            },
+                            error: function (responsive) {
+                                bootbox.alert("Có lỗi xảy ra!");
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        function filter_select_album(itm) {
+            //alert(itm);
+            //return;
+            var albumId = $('#cbAlbum1').val();
+            window.location = '/QuanLyAnh/Demo?type=' +@(ViewBag.type == null ? "1" : ViewBag.type.ToString())+'&cat=' + itm;
+
+        }
+
+        function submit_del(id, itm) {
+            var albumId= $(itm).data('albumid');
+            console.log(albumId);
+
+            bootbox.confirm({
+                message: "Có chắc chắn muốn xóa không?",
+                buttons: {
+                    cancel: {
+                        label: 'Không',
+                        className: 'btn-info'
+                    },
+                    confirm: {
+                        label: 'Có',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.ajax({
+                            data: { albumId: albumId},
+                            url: '/QuanLyAnh/Delete?id=' + id,
+                            success: function (responsive) {
+
+                                    $(itm).parent().parent().remove();
+
+                            },
+                            error: function (responsive) {
+                                bootbox.alert("Có lỗi xảy ra!");
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        function onChangeBox() {
+            var value = $('#cboType').val();
+            var rowCnt = 1;
+            // for toan bo tr trong grid
+            $("#List").find("tbody > tr").each(function (index) {
+                var page_kind = $(this).data("kind");
+                if (typeof page_kind == 'undefined') return false;
+                if (value > 0 && page_kind != value) {
+                    // chuyển style thành invisible
+                    $(this).attr("style", "display:none");
+                } else {
+                    $(this).attr("style", "");
+                    //$(this).children().eq(0).text(rowCnt);
+                    rowCnt++;
+                }
+            });
+            var elemt = $('#box-video');
+            elemt.removeClass();
+            switch (value)
+            {
+                case 1:
+                    $('#boxImg').hide();
+                    elemt.addClass('col-sm-6');
+                    break;
+                case 5:
+                    elemt.addClass('col-sm-12');
+                    break;
+                default:
+                    $('#boxImg').show();
+                    elemt.addClass('col-sm-6');
+                    break;
+            }
+            //if (value == 4)
+            //{
+            //    $('#boxImg').hide();
+            //} else
+            //    $('#boxImg').show();
+
+
+        }
+        $('#cbAlbum1').val('@ViewBag.alBumID');
+        $('#cbAlbum').val('@ViewBag.alBumID');
+        onChangeBox();
+
+        //function filter_tags(itm) {
+        //    var i = 1;
+        //    var cmId = $('#cbAlbum1').val();
+        //    if (typeof cmId === 'undefined')
+        //        return;
+
+        //    $('#List > tbody > tr').each(function () {
+        //        var isContains = false;
+        //        var value = $(this).attr('data-cat');
+        //        if (cmId == value) isContains = true;
+
+        //        if (cmId==0 || isContains) {
+        //            $(this).find("tr").first().text(i);
+        //            $(this).show();
+        //            i++;
+        //        }
+        //        else $(this).hide();
+        //    });
+        //}
+        function sortable() {
+            $("#sortable").sortable({
+                axis: 'y',
+                update: function (event, ui) {
+                    // POST to server using $.post or $.ajax
+                    saveSort();
+                }
+            })
+        }
+        function saveSort() {
+            var values = '';
+            $("#sortable li a").each(function (index) {
+                var id = $(this).data('albumid');
+                values += id + ": " + index + ';';
+
+            });
+            console.log(values);
+            alert(values);
+            $.ajax({
+                data: {
+                    values: values
+                },
+                type: 'POST',
+                datatype: 'json',
+                url: '/QuanLyAnh/SaveSort',
+                success: function () {
+                    bootbox.alert("Cập nhật thành công!");
+                },
+                error: function (responsive) {
+                    bootbox.alert("Có lỗi xảy ra!");
+                }
+            });
+
+        };
+        sortable();
+        function UpdateTenDanhMuc() {
+            $(".ten_danhmuc").editable({
+                showbuttons: "bottom",
+                emptytext: '....',
+                success: function (response, newValue) {
+                    var id = $(this).data('albumid'); // Lay ra ID cua gia tri thay doi
+                    if (newValue != null && newValue != '') {
+                        $.ajax({
+                            type: 'post',
+                            datatype: 'json',
+                            url: '/QuanLyAnh/UpdateTenDanhMuc',
+                            data: {
+                                id: id,
+                                tenDm: newValue
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        $(".tooltip-ud").editable({
+            showbuttons: "bottom",
+            emptytext: '....',
+            success: function (response, newValue) {
+                var id = $(this).data('id'); // Lay ra ID cua gia tri thay doi
+                if (newValue != null && newValue != '') {
+                    $.ajax({
+                        type: 'post',
+                        datatype: 'json',
+                        url: '/QuanLyAnh/UpdateTooltip',
+                        data: {
+                            id: id,
+                            tooltip: newValue
+                        }
+                    });
+                }
+            }
+        });
+        $(".ten_danhmuc").editable({
+            showbuttons: "bottom",
+            emptytext: '....',
+            success: function (response, newValue) {
+                // var id = $(this).data('albumid'); // Lay ra ID cua gia tri thay doi
+                if (newValue != null && newValue != '') {
+                    $.ajax({
+                        type: 'post',
+                        datatype: 'json',
+                        url: '/QuanLyAnh/UpdateTenDanhMuc',
+                        data: {
+                            id: id,
+                            tenDm: newValue
+                        }
+                    });
+                }
+            }
+        });
+        //saveSort()
+        $(document).ready(function () {
+            $('#cbAlbum').select2();
+            $(function (e) {
+               
+                $.contextMenu({
+                    selector: '.context-menu-one',
+                    //callback: function (key, options,id) {
+                    //    console.log("key:" + key)
+                    //    console.log(options)
+                    //    console.log(id)
+                    //    var m = "clicked: " + key;
+                    //    window.console && console.log(m) || alert(m);
+                    //},
+                    items: {
+                        Edit: {
+                            name: "Sửa", icon: "edit", callback: function (key, opt) {
+                                var id = $(this).attr('data-id')
+                                $(this).each(function (e) {
+                                    //e.preventDefault();
+                           
+                                })
+                           
+                            }
+                        },
+                        Delete: {
+                            name: "Xóa", icon: "delete", callback: function (key, opt) {
+                                var id = $(this).attr('data-id')
+
+                                bootbox.confirm({
+                                    message: "Có chắc chắn muốn xóa không?",
+                                    buttons: {
+                                        cancel: {
+                                            label: 'Không',
+                                            className: 'btn-info'
+                                        },
+                                        confirm: {
+                                            label: 'Có',
+                                            className: 'btn-danger'
+                                        }
+                                    },
+                                    callback: function (result) {
+                                        if (result) {
+                                            $.ajax({
+                                                data: { id: id },
+                                                url: '/QuanLyAnh/DeleteAlbum',
+                                                success: function (responsive) {
+                                                    if (responsive.status) {
+                                                        //$(this).parent().parent().remove();
+                                                        window.location.reload();
+                                                    }
+                                                    else {
+                                                        bootbox.alert(responsive.message);
+                                                    }
+                                                },
+                                                error: function (responsive) {
+                                                    bootbox.alert("Có lỗi xảy ra!");
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    
+                    }
+                });
+
+                $('.context-menu-one').on('click', function (e) {
+                    console.log('clicked', this);
+                    var id = $(this).data("id");
+                   // alert(id);
+                })
+            });
+        
+            $(".dropdown-menu-album li").each(function () {
+                var cat = $(this).find("a").data("albumid")
+               // console.log(cat);
+              var requet = '@ViewBag.cat';
+              if (requet == cat) {
+                 $(this).addClass("load");
+                }
+            });
+        });
+      
+    </script>
+}
+@{
+    string title = string.Empty, type = string.Empty;
+    if (ViewBag.Type != null)
+    {
+        type = ViewBag.Type.ToString();
+    } }
+@switch (type)
+{
+    case "1":
+        title = "Slide ảnh";
+        break;
+    case "2":
+        title = "Dịch vụ";
+        break;
+    case "3":
+        title = "Ảnh";
+        break;
+    case "4":
+        title = "Thông tin";
+        break;
+    case "5":
+        title = "Video";
+        break;
+}
+@{
+    ViewBag.Title = "Quản lý " + title;
+}
+<style>
+    .portlet > .portlet-title > .caption {
+        font-size: 16px;
+    }
+</style>
+<div class="row">
+    <ul class="page-breadcrumb">
+        <li> <i class="fa fa-plus icon-home"></i> <i class="fa fa-angle-right"></i> </li>
+        <li> <span>Quản lý @title</span></li>
+    </ul>
+</div>
+@Html.Hidden("cboType", type)
+<div class="row">
+    <div class="col-lg-2 col-md-2">
+         @if (type =="3")
+         {
+           if (ViewBag.dsAlbum != null) {
+                  <ul  id="sortable" class="dropdown-menu-album">
+                      <li><a onclick="filter_select_album($(this).data('albumid'))" data-albumid="0" href="javascript:void(0)">Tất cả Album<span style="display:none" class="glyphicon glyphicon-cog pull-right"></span></a></li>
+                      <li class="divider"></li>
+                      @foreach (DataRow dr in ViewBag.dsAlbum.Rows)
+                      {
+                        <li><a onclick="filter_select_album($(this).data('albumid'))" target="_blank"  class="ten_danhmuc" data-albumid="@dr["id"]" href="javascript:void(0)">@dr["TenDanhMuc"]<span  data-id="@dr["id"]"  class="context-menu-one btn btn-neutral glyphicon glyphicon-cog pull-right"></span></a></li>
+                        <li class="divider"></li>
+                      }
+                  </ul>
+                <div class="clearfix"></div>
+               
+                
+             }
+         }
+     
+            @if (type == "5")
+            {
+                if (ViewBag.dsVideo != null)
+                {
+                    <ul id="sortable" class="dropdown-menu-album">
+                        <li><a onclick="filter_select_album($(this).data('albumid'))" data-albumid="0" href="javascript:void(0)">Tất cả<span  style="display:none" class=" glyphicon glyphicon-cog pull-right"></span></a></li>
+                        <li class="divider"></li>
+                        @foreach (DataRow dr in ViewBag.dsAlbum.Rows)
+                        {
+                            <li><a onclick="filter_select_album($(this).data('albumid'))" data-albumid="@dr["id"]" href="javascript:void(0)">@dr["TenDanhMuc"]<span class="glyphicon glyphicon-cog pull-right"></span></a></li>
+                                    <li class="divider"></li>
+                        }
+                    </ul>
+        
+                }
+            }
+        <span style="margin-top:226px;" class="btn btn-success" id="btn-add-edit" data-itmid="0">thêm mới</span>
+    </div>
+    
+    <div class="col-lg-6 col-md-6">
+        <div class="portlet">
+            @*<div class="portlet-title">
+                    <div class="caption">
+                        Danh sách @title
+                    </div>
+                    <div class="tools">
+                        <a href="javascript:;" class="collapse" data-original-title="" title=""> </a>
+                    </div>
+                </div>*@
+            <div class="portlet-body">
+                <div class="table-scrollable">
+                  
+                    <table id="List" class="table table-bordered table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 35px;"> STT</th>
+                                <th width="50px">Ảnh</th>
+                                <th>Tên @title</th>
+                                <th style="width:80px;">Dung lượng(Kb)</th>
+                                <th style="width:80px;">Width(px)</th>
+                                <th style="width:80px;">Height(px)</th>
+                                @if (type == "3" || type == "5")
+                                {
+                                    <th style="width:200px">Tên Album</th>
+
+                                }
+                                <th width="80px" class="text-center">#</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (ViewBag.dsImg != null)
+                            {
+                                foreach (DataRow dr in ViewBag.dsImg.Rows)
+                                {
+                                    //if (dr["id"].ToString() == if; }
+                                    <tr data-id="@dr["id"]" data-kind="@dr["page_kind_appear"]" data-cat="@dr["AlbumId"]">
+                                        <td class="text-center">@(ViewBag.dsImg.Rows.IndexOf(dr) + 1)</td>
+                                        <td><a href="#" class="pop"><img src="@dr["main_content"]" width="30" /></a> </td>
+                                        <td><a data-id="@dr["id"]" class="tooltip-ud">@dr["tooltip"]</a></td>
+                                        <td class="text-center">@dr["size"].MapInt().ToString("N0")</td>
+                                        <td class="text-center">@dr["width"]</td>
+                                        <td class="text-center">@dr["height"]</td>
+                                        @if (type == "3" || type == "5")
+                                        {
+                                            <td width="60">@dr["TenDanhmuc"]</td>
+                                        }
+                                        <td class="text-center">
+                                            <span class="fa fa-edit font-blue" style="cursor:pointer"
+                                                  data-id="@dr["id"]"
+                                                  data-pagekind="@dr["page_kind_appear"]"
+                                                  data-colkind="@dr["position_inpage"]"
+                                                  data-order="@dr["order_inpage"]"
+                                                  data-type="@dr["type"]"
+                                                  data-size="@dr["size"]"
+                                                  data-width="@dr["width"]"
+                                                  data-height="@dr["height"]"
+                                                  data-title="@dr["tooltip"]"
+                                                  data-mainctn="@dr["main_content"]"
+                                                  data-alterctn="@dr["alter_content"]"
+                                                  data-url="@dr["url"]"
+                                                  data-albumid="@dr["GroupAlbumID"]"
+                                                  onclick="set_vals_2edit(this);"></span>
+                                            <a href="javascript:void(0)" data-albumid="@dr["albumId"]" onclick="submit_del(@dr["id"],this)"><i class="fa fa-trash font-red"></i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                    @*<span class="btn btn-success" data-itmid="0" onclick="updateImg()"> Cập nhật</span>*@
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 col-md-4">
+        @if (type == "3")
+        {
+            <div class="col-sm-5">
+                <div class="form-group">
+                    <label>Chọn album</label>
+                    <select id="cbAlbum" class="form-control select2" multiple="multiple" style="width:100%">
+                       
+                        @if (ViewBag.DsAlbum != null)
+                        {
+                            foreach (DataRow dr in ViewBag.DsAlbum.Rows)
+                            {
+                                <option value="@dr["id"]">@dr["TenDanhMuc"]</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+        }
+        <div class="col-sm-7">
+            <div class="form-group">
+                <label>Tên @title</label>
+                <input type="text" class="form-control" id="txt_main_title" placeholder="" value="">
+            </div>
+        </div>
+        @if (type == "4")
+        {
+            <div class="col-sm-5">
+                <div class="form-group">
+                    <label>Số lượng</label>
+                    <input type="text" class="form-control" id="txt_main_alter_content" placeholder="" value="">
+                </div>
+            </div>
+        }
+        <div></div>
+        @if (type == "5")
+        {
+            <div class="col-sm-5">
+                <div class="form-group">
+                    <label>Chọn album</label>
+                    <select id="cbAlbum" class="form-control select2" multiple="multiple" style="width:100%">
+                      
+                        @if (ViewBag.DsVideo != null)
+                        {
+                            foreach (DataRow dr in ViewBag.DsVideo.Rows)
+                            {
+                                <option value="@dr["id"]">@dr["TenDanhMuc"]</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+                    <div class="form-group">
+                        <label>Đường dẫn ảnh</label>
+                        <div class="input-group">
+                            <input id="txt_main_content" type="text" class="form-control" placeholder="Đường dẫn đến ảnh">
+                            <span class="input-group-btn">
+                                <a class="btn btn-success" data-target="#full-width" data-toggle="modal" onclick="set_destname('txt_main_content');"> <i class="fa fa-upload fa-fw"></i> </a>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Url Video</label>
+                        <textarea rows="8" class="form-control" id="txt_url" placeholder="" value=""></textarea>
+                    </div>
+        }
+        else
+        {
+
+            <div class="form-group col-sm-12">
+                <label>Link trỏ tới</label>
+                <input type="text" class="form-control" id="txt_url" placeholder="" value="">
+            </div>
+                    <div class="form-group col-sm-12">
+                        <label>Đường dẫn ảnh </label>
+                        <div class="input-group">
+                            <input id="txt_main_content" type="text" class="form-control" placeholder="Đường dẫn đến ảnh">
+                            <span class="input-group-btn">
+                                <a class="btn btn-success" data-target="#full-width" data-toggle="modal" onclick="set_destname('txt_main_content');"> <i class="fa fa-upload fa-fw"></i> </a>
+                            </span>
+
+                        </div>
+                    </div>
+        }
+        @if (type == "3")
+        {
+            <div class="col-sm-12" style="margin-top: 2px;"><span>Kích thước ảnh (1280 x 850)</span></div>
+        }
+        <div class="col-sm-12">
+            <div class="">
+                <span class="btn btn-success" data-itmid="0" onclick="submit(this)"><i class="fa fa-plus"></i> Thêm mới</span>
+                <span class="btn btn-primary" id="btn_main_save" data-itmid="0" onclick="submit(this)"><i class="fa fa-save"></i> Lưu</span>
+            </div>
+        </div>
+    </div>
+</div>
+<input id="width" type="hidden" value="" />
+<input id="height" type="hidden" value="" />
+<input id="size" type="hidden" value="" />
+
+<!-- full width -->
+<div id="full-width" class="modal container fade" tabindex="-1">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+        <h4 class="modal-title">Chọn ảnh</h4>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <label>Đường dẫn ảnh vừa chọn</label>
+            <input type="text" id="thumb_url" class="form-control" placeholder="Đường dẫn đến ảnh" value="">
+        </div>
+        <div class="col-sm-6">
+            <b><u>Lưu ý:</u></b> Sau khi upload xong, cần bấm F5 để ảnh hiển thị ở cột bên cạnh
+            <div class="dropzone needsclick dz-clickable" id="frm_dropzone">
+                <div class="dz-message needsclick">
+                    <h3 class="sbold">Thả hình, ảnh vào đây</h3><br>
+                    <span class="note needsclick">Các hình, ảnh chụp về bài viết<br />(dung lượng tối đa: 4MB)</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 item-img ">
+            <div class="row">
+                @if (Directory.Exists(ViewBag.Images))
+            {
+                foreach (var files in Directory.GetFiles(ViewBag.Images))
+                {
+                    var info = new FileInfo(files);
+                        <div class=" col-md-3" style="height:80px;padding-top:5px;padding-bottom:5px;margin-top:5px;margin-bottom:5px;">
+                            <div style="height:80px;width:120px; cursor:pointer;position:relative;display: inline!important">
+                                <i onclick="removeImg(this)" class="fa fa-times btn_remove" aria-hidden="true"></i>
+
+                                <div class="dz-preview dz-processing dz-image-preview dz-success dz-complete">
+                                    <img id="img_id_@Path.GetFileName(info.FullName)" onclick="setusethumbnail(this)" style="max-height:80px;max-width:120px;cursor:pointer;" data-dz-thumbnail="" alt="@Path.GetFileName(info.FullName)" src='/UserData/@(ViewBag.type==null?"1": ViewBag.type.ToString())/Images/@Path.GetFileName(info.FullName)'>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-outline dark">Thôi</button>
+        <button type="button" data-dismiss="modal" class="btn green" id="btnSubmitDialog" data-destname="" onclick="clone_val('thumb_url', this)">Sử dụng hình ảnh</button>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <img src="" class="imagepreview" style="width: 100%;">
+            </div>
+        </div>
+    </div>
+</div>
+@Html.Action("AddEditDanhMucChungPartial", "QuanLyAnh")
+@*@Html.Partial("~/Views/QuanLyAnh/AddEditDanhMucChungPartal.cshtml")*@
+
+<script>
+    $('#btn-add-edit').off('click').on('click', function () {
+        alert(1);
+        $('#modal-add-edit').modal('show');
+    });
+    $(function () {
+        $('.pop').on('click', function () {
+            $('.imagepreview').attr('src', $(this).find('img').attr('src'));
+            $('#imagemodal').modal('show');
+        });
+
+        //$('#List').dataTable({
+        //    "paging": false,
+        //    "ordering": true,
+        //    "info": false,
+        //    "searching": false
+        //});
+
+
+
+    });
+</script>

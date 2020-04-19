@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.Title = "Khởi tạo cây Danh mục";
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+
+@section stylePageLever
+{
+    <link rel="stylesheet" type="text/css" href="~/UITheme/assets/global/plugins/jstree/dist/themes/default/style.min.css">
+}
+
+<script type="text/javascript" src="~/Scripts/jstree-3.3.2.min.js"></script>
+<script type="text/javascript" src="~/Scripts/jstreegrid.js"></script>
+
+@section actionMenu{
+    <ul class="page-breadcrumb">
+        <li> <i class="icon-home"></i> <a href="/">Trang chủ</a> <i class="fa fa-angle-right"></i> </li>
+        <li> <span>Quản trị hệ thống</span> <i class="fa fa-angle-right"></i> </li>
+        <li> <span>Phân quyền cho nhóm người dùng</span> </li>
+    </ul>
+}
+
+<div class="col-lg-4 col-md-12">
+    @Html.Partial("~/Views/SysMenuManage/_UserRoleSelect.cshtml")
+</div>
+
+<div class="col-lg-8 col-md-12">
+    <div id="divTreeRightSelect">
+    </div>
+</div>
+
+<script type="text/javascript">
+    $('#ddlListUnitRoles').on('change', function (e) {
+        var selected = $('#ddlListUnitRoles').val();
+        $("#divTreeRightSelect").load('@(Url.Action("GetRoleAccessRight", "SysMenuManage", null, Request.Url.Scheme))?roleId=' + selected);
+    });
+</script>

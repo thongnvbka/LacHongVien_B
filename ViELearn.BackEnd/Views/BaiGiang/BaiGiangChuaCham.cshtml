@@ -1,0 +1,171 @@
+﻿@using System.Data
+@using System.Globalization;
+@using ViELearn.BackEnd.Ultilities
+
+@model DataTable
+@{
+    ViewBag.Title = "Danh sách bài giảng chờ chấm điểm";
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+@section stylePageLever{
+    <style type="text/css">
+        .input-group-addon {
+            padding: 6px 12px;
+        }
+    </style>
+}
+
+@section scriptMainPageLevel{
+    <script src="/UITheme/assets/global/plugins/moment.min.js" type="text/javascript"></script>
+    <!-- <script src="/UITheme/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js" type="text/javascript"></script>  -->
+    <script src="/UITheme/assets/global/plugins/morris/morris.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/morris/raphael-min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/counterup/jquery.waypoints.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/counterup/jquery.counterup.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/fullcalendar/fullcalendar.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/horizontal-timeline/horizontal-timeline.js" type="text/javascript"></script>
+
+    <script src="/UITheme/assets/global/scripts/datatable.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/datatables/datatables.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/pages/scripts/table-datatables-editable.min.js" type="text/javascript"></script>
+
+    <script src="/UITheme/assets/global/plugins/bootbox/bootbox.min.js" type="text/javascript"></script>
+}
+
+@section scriptConfigPageLevel{
+    <script type="text/javascript">
+        function ChamBaiGiang(idBaiGiang) {
+            var diem = $("#diem_id_" + idBaiGiang).val();
+            bootbox.confirm({
+                message: "Có chắc chắn muốn chấm " + (diem/10) + " điểm cho bài giảng không?",
+                buttons: {
+                    cancel: {
+                        label: 'Không',
+                        className: 'btn-info'
+                    },
+                    confirm: {
+                        label: 'Có',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.ajax({
+                            data: {
+                                _idbg: idBaiGiang,
+                                _diem: diem
+                            },
+                            type: 'POST',
+                            datatype: 'json',
+                            url: '/BaiGiang/ChamBaiGiang',
+                            success: function (responsive) {
+                                if (!responsive.status) {
+                                    bootbox.alert(responsive.message);
+                                }
+                            },
+                            error: function (responsive) {
+                                bootbox.alert("Có lỗi xảy ra!");
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    </script>
+}
+@*@section titlePage{
+    <h3 class="page-title"> @ViewBag.Title </h3>
+}*@
+
+@section actionMenu{
+    <div class="page-bar">
+        <ul class="page-breadcrumb">
+            <li>
+            <li> <i class="fa fa-plus icon-home"></i> <i class="fa fa-angle-right"></i> </li>
+            <li> <span>@ViewBag.Title</span> </li>
+        </ul>
+        <div class="page-toolbar">
+            @*<div class="btn-group">
+                <a href="@Url.Action("Create", "BaiGiang")"><span class="btn btn-fit-height btn-primary"><i class="fa fa-plus"></i> Thêm bài giảng</span></a>
+            </div>
+            <div class="btn-group pull-right">
+                <button type="button" class="btn btn-fit-height btn-danger dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000" data-close-others="true"> Công cụ <i class="fa fa-angle-down"></i> </button>
+                <ul class="dropdown-menu pull-right" role="menu">
+                    <li> <a href="@Url.Action("ImportExcel", "DanhSachHocSinh")?type=2"> <i class="fa fa-file-excel-o"></i> Nhập từ Excel </a> </li>
+                    <li> <a href="javascript:void(0)" onclick="exportExcel();"> <i class="fa fa-download"></i> Xuất ra Excel </a> </li>
+                    <!-- <li class="divider"> </li> -->
+                </ul>
+            </div>*@
+        </div>
+    </div>
+}
+
+@if (ViewBag.DsBaiGiang == null || ViewBag.DsBaiGiang.Rows.Count < 1)
+{
+    @Html.Raw("Chưa có bài giảng nào!");
+    return;
+}
+<div class="table-scrollable">
+    <table class="table table-striped table-hover table-bordered datatable" id="dsBaiGiang">
+        <thead>
+            <tr>
+                <th class="text-center" style="width: 35px;">STT</th>
+                <th class="text-center" style="width: 80px;">Ngày nộp</th>
+                <th>Tên đợt thi</th>
+                <th>Tên bài giảng</th>
+                <th class="text-center" style="min-width: 80px;">Tải về</th>
+                <th class="text-center" style="width: 200px;">Điểm</th>
+                <th class="text-center" style="width: 120px;">Ngày chấm</th>
+                @*<th class="text-center" style="width: 35px;">
+                    <a href="javascript:void(0)" onclick="deleteAll();"> <i class="fa fa-trash font-red" title="Xóa toàn bộ"></i> </a>
+                </th>*@
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (DataRow item in ViewBag.DsBaiGiang.Rows)
+            {
+                <tr data-id="@item["id"]">
+                    <td class="text-center">@(ViewBag.DsBaiGiang.Rows.IndexOf(item) + 1)</td>
+                    <td class="text-center">@(item["submit_at"].ToString() == "" ? "" : CLibs.UnixTimeStampToDateTimeOrgin(item["submit_at"].MapDouble()).ToString("dd/MM/yyyy"))</td>
+                    <td>@(item["TenDotThi"] == null ? "" : item["TenDotThi"])</td>
+                    <td>@item["TenBaiGiang"]</td>
+                    <td class="text-center">
+                        @if (item["FilePathBaiGiang"].ToString().Trim().Contains(";"))
+                        {
+                            foreach (string fname in item["FilePathBaiGiang"].ToString().Split(';'))
+                            {
+                                <a class="fa fa-download" href="/UserUpload/BaiGiangDienTu/@SysBaseInfor.GetIdNguoiDung()/@item["id"]/@fname.Trim()"></a>
+                            }
+                        }
+                        else if (item["FilePathBaiGiang"].ToString().Trim() != "")
+                        {
+                            <a class="fa fa-download" href="/UserUpload/BaiGiangDienTu/@SysBaseInfor.GetIdNguoiDung()/@item["id"]/@item["FilePathBaiGiang"].ToString().Trim()"></a>
+                        }
+                    </td>
+                    <td class="text-center" style="padding:0;">
+                        <div class="input-group" style="font-weight:bold;">
+                            <span class="input-group-addon bg-yellow" title="Thang điểm từ 0 đến 100">
+                                <i class="fa fa-warning font-white"></i>
+                            </span>
+                            <input type="number" id="diem_id_@item["id"]" class="form-control" style="height:35px;" min="0" max="100" step="10" data-id="@item["id"]" value="@item["Diem"]" />
+                            <span class="input-group-btn">
+                                <button class="btn btn-success" type="button" style="height:35px;" onclick="ChamBaiGiang(@item["id"]);">
+                                    <i class="fa fa-send"></i> Chấm
+                                </button>
+                            </span>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        @(item["NgayChamDiem"].ToString() == "" ? "--" : CLibs.UnixTimeStampToDateTimeOrgin(double.Parse(item["NgayChamDiem"].ToString())).ToString("dd/MM/yyyy"))
+                    </td>
+                    @*
+                    <td class="text-center">@Html.Raw(item["TrangThai"].MapBool() ? "<i class='fa fa-check font-green'></i>" : "<i class='fa fa-close font-red'></i>")</td>
+                    <td class="text-center">
+                        <a href="#" class="btn-xoa" data-id="@item["id"]" title="Xóa" onclick="delete_dm(this);"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                    </td>*@
+                </tr>
+             }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,30 @@
+﻿@using ViELearn.BackEnd.Ultilities
+
+<div class="nav pull-left hidden-xs" style="width: 30%;text-align:center">
+    <div class="col-md-12">
+        <div class="pull-left">
+            <h4 style="color:white; margin-top:17px; font-weight:bold;"><span>@SysBaseInfor.GetCurrentUnitName()</span></h4>
+        </div>
+    </div>
+</div>
+<div class="top-menu">
+    <ul class="nav navbar-nav pull-right">
+        <li class="dropdown dropdown-user">
+            <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" aria-expanded="false">
+                <span class="username username-hide-on-mobile">
+                    Xin chào @SysBaseInfor.GetCurrentUserDisplayName()
+                </span> <i class="fa fa-angle-down"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-default">
+                <li> <a href="#"> <i class="icon-user"></i> Xem chi tiết </a> </li>
+                <li> <a href="/Account/LogOff"> <i class="icon-key"></i> Đăng xuất </a> </li>
+            </ul>
+        </li>
+        @*<li class="dropdown dropdown-quick-sidebar-toggler">
+            <a href="javascript:;" class="dropdown-toggle">
+                <i class="fa fa-comments-o"></i> 
+                <span class="badge badge-default" id="sum-all-badges" style="display:none;"> 0 </span>
+            </a>
+        </li>*@
+    </ul>
+</div>

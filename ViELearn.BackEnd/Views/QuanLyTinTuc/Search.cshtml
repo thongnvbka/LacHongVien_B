@@ -1,0 +1,110 @@
+﻿@using System.Data
+@using ViELearn.BackEnd.Ultilities
+
+
+@{int stt = 0;
+}
+
+@if (ViewBag.Data != null)
+{
+    foreach (DataRow dr in ViewBag.Data.Rows)
+    {
+        stt++;
+<tr data-id="@dr["id"]" data-cates="@dr["CatesId"]">
+    @*<td class="text-center ">@stt</td>*@
+    <td class="text-center"><div href="@Url.Action("Edit", "QuanLyTinTuc", new { id = dr["id"] })" style="background-image: url('@(dr["Thumbnail"])');background-size:cover;width:80px;height:80px;margin:0px;"></div></td>
+    <td>
+        @if (dr["Status"].ToString() == "1")
+        {
+            <a href="@Url.Action("Edit", "QuanLyTinTuc", new { id = dr["id"] })">@dr["title"]</a>
+            <a title="sửa nhanh tiêu đề" data-id="@dr["id"]" class="title-up"><span class="title-edi">@dr["title"]</span><i class="fa fa-edit font-purple-medium"></i></a>
+            @Html.Raw(dr["top_hot"].MapBool() ? "   <span class=\"badge badge-danger badge-roundless\"> Bài hot </span>" : "")
+
+            <br />
+        }
+        else
+        {
+            if (DateTime.Parse(dr["PublishDate"].ToString()) > DateTime.Now)
+            {
+                <a href="@Url.Action("Edit", "QuanLyTinTuc", new { id = dr["id"] })">@dr["title"]</a>
+                <a title="sửa nhanh tiêu đề" data-id="@dr["id"]" class="title-up"><span class="title-edi">@dr["title"]</span><i class="fa fa-edit font-purple-medium"></i></a><br />
+                <i style="color:pink;" class="fa fa-clock-o" aria-hidden="true"></i><span class="info-other"> Đăng bài viết lúc:@DateTime.Parse(dr["PublishDate"].ToString()).ToString("HH:mm dd/MM/yyyy")</span>
+                @Html.Raw(dr["top_hot"].MapBool() ? "   <span class=\"badge badge-danger badge-roundless\"> Bài hot </span>" : "")
+
+                <br />
+            }
+            else
+            {
+                <a href="@Url.Action("Edit", "QuanLyTinTuc", new { id = dr["id"] })">@dr["title"]</a>
+                <a title="sửa nhanh tiêu đề" data-id="@dr["id"]" class="title-up"><span class="title-edi">@dr["title"]</span> <i class="fa fa-edit font-purple-medium"></i></a>
+                @Html.Raw(dr["top_hot"].MapBool() ? "   <span class=\"badge badge-danger badge-roundless\"> Bài hot </span>" : "")
+
+                <br />
+            }
+
+        }
+        <span class="info-other">
+            <b>
+                Người tạo:
+                @(dr["CreatedBy"].ToString() == "0" ? "Quản trị viên" : dr["DisplayName"].ToString()),
+                Ngày tạo: @Html.Raw(dr["CreatedAt"] != null ? (CLibs.UnixTimeStampToDateTimeOrgin(double.Parse(dr["CreatedAt"].ToString())).ToString("HH:mm:ss dd/MM/yyyy")) : "")
+            </b>
+        </span>
+        <p>@(Common.Sapo(dr["Summary"].MapStr(), 30))</p>
+    </td>
+
+    @* <td class="text-center"><input class="col-sm-8 pull-right" data-value="@dr["SoThuTu"]" onchange="capnhatstt(this,@dr["id"])" onkeyup="capnhatstt(this,@dr["id"])" type="number" id="stt" value="@dr["SoThuTu"]" /></td>*@
+
+
+    <td class="text-center">
+        @if (dr["Status"].ToString() == "2")
+        {
+            <a title="Sửa bài" href="@Url.Action("Edit", "QuanLyTinTuc", new { id = dr["id"] })" class="text-left btn btn-primary btn-sm button-click"><span><i class="fa fa-edit font-white"></i> Sửa bài viết</span></a><br />
+            <a title="Lên hot" class="btn btn-success btn-sm button-click">
+                <span id="status" href="javascript:void(0)" class="btn-active" onclick="ChangeStatus_btn(this,@dr["id"])">
+                    @*<input style="cursor:pointer" type="checkbox" name="checkbox" value="checkbox" @Html.Raw(dr["top_hot"].MapBool() ? "checked" : "")> Bài viết hot*@
+                    <i class="fa fa-@Html.Raw(dr["top_hot"].MapBool() ? "check-" : "")square-o" data-checked="@Html.Raw(dr["top_hot"].MapBool() ? "1" : "false")"></i> Lên hot
+                </span>
+            </a><br />
+            <a title="Xem trước" target="_blank" href="@(Common.GetUrlFrontend()+"/"+ dr["cate_slug"]+"/"+dr["Slug"]+".html" )" class="btn btn-info btn-sm button-click"> <span><i class="fa fa-eye" aria-hidden="true"></i> Xem trước</span></a><br />
+            <a title="Hạ bài" class="btn btn-warning btn-sm button-click"><span href="javascript:void(0)" data-id="@dr["id"]" onclick="doitrangthai(@dr["id"])"><i class="fa fa-ban"></i> Hạ bài</span></a>
+
+        }
+        else if (dr["Status"].ToString() == "1")
+        {
+            <a title="Sửa bài" href="@Url.Action("Edit", "QuanLyTinTuc", new { id = dr["id"] })" class="btn btn-primary btn-sm button-click"><span><i class="fa fa-edit font-white"></i> Sửa bài viết</span></a><br />
+            <a title="Xóa bài" href="javascript:void(0)" class="btn btn-danger btn-sm button-click"> <span data-id="@dr["id"]" onclick="submit_del(@dr["id"])"><i class="fa fa-trash font-white"></i> Xóa bài viết</span></a>
+        }
+
+    </td>
+</tr>
+    }
+}
+<script>
+    $(".title-up").editable({
+        title: 'Thay đổi tiêu đề bài viết',
+        placement: 'right',
+        inputclass: "form-control input-medium",
+        showbuttons: "bottom",
+        emptytext: '....',
+        tpl: "<textarea name='awesome'  style='width: 400px'></textarea>",
+        success: function (response, newValue) {
+            var id = $(this).data('id'); // Lay ra ID cua gia tri thay doi
+            if (newValue != null && newValue != '') {
+                $.ajax({
+                    type: 'post',
+                    datatype: 'json',
+                    url: '/QuanLyTinTuc/UpdateTitle',
+                    data: {
+                        id: id,
+                        title: newValue
+                    }, success: function () {
+                        $('.editable-unsaved').css("display", "none")
+                        window.location.reload();
+                    }
+                });
+            }
+        }
+    });
+</script>
+

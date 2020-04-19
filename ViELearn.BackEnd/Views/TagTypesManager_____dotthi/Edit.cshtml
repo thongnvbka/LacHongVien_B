@@ -1,0 +1,204 @@
+﻿@using System.Data
+@using System.Globalization;
+@using ViELearn.BackEnd.Ultilities
+
+@{
+    ViewBag.Title = "Sửa đợt thi";
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+@section stylePageLever{
+    <link href="/UITheme/assets/global/plugins/morris/morris.css" rel="stylesheet" type="text/css">
+    <link href="/UITheme/assets/global/plugins/datatables/datatables.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css" rel="stylesheet" type="text/css" />
+
+    <link href="/UITheme/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+
+    <link href="/UITheme/assets/global/plugins/bootstrap-summernote/summernote.css" rel="stylesheet" type="text/css" />
+}
+@section scriptMainPageLevel{
+    <script src="/UITheme/assets/global/plugins/moment.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/morris/morris.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/morris/raphael-min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/counterup/jquery.waypoints.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/counterup/jquery.counterup.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/fullcalendar/fullcalendar.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/scripts/datatable.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/datatables/datatables.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/pages/scripts/table-datatables-editable.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/dropzone/dropzone.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/pages/scripts/form-dropzone.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/moment.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/pages/scripts/components-date-time-pickers.min.js" type="text/javascript"></script>
+
+    <script src="/UITheme/assets/global/plugins/bootstrap-summernote/summernote.min.js" type="text/javascript"></script>
+}
+
+@*@section titlePage{
+    <h3 class="page-title"> @ViewBag.Title </h3>
+}*@
+
+@section actionMenu{
+    <div class="page-bar">
+        <ul class="page-breadcrumb">
+            <li> <i class="fa fa-plus icon-home"></i> <i class="fa fa-angle-right"></i> </li>
+            <li> <span> <a href="@Url.Action("Index", "DotThi")">Danh sách đợt thi</a><i class="fa fa-angle-right"></i> </span> </li>
+            <li> <span> <a href="@Url.Action("Create", "DotThi")">@ViewBag.Title</a></span> </li>
+        </ul>
+        <div class="page-toolbar">
+            <div class="btn-group pull-right">
+                <a href="@Url.Action("Index", "DotThi")" class="btn btn-default"><i class="fa fa-angle-double-left"></i> Quay lại</a>
+                <button class="btn btn-primary" onclick="submit(0);"><i class="fa fa-save"></i> Lưu</button>
+            </div>
+        </div>
+    </div>
+}
+
+@section scriptConfigPageLevel{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            @*$.ajax({
+                type: 'GET',
+                datatype: 'json',
+                url: '/QuanLyGiaoVien/SinhMaGiaoVien',
+                success: function (responsive) {
+                    responsive = responsive.toLowerCase();
+                    $('#Ma_gv').val(responsive);
+                    if ($('#Ma_gv').val().includes('@( SysBaseInfor.GetMaTruong().ToLower() )')) {
+                        $('#txtTen_dang_nhap').val(responsive);
+                    } else {
+                        $('#txtTen_dang_nhap').val('@( SysBaseInfor.GetMaTruong().ToLower() )' + responsive);
+                    }
+                },
+                error: function (responsive) {
+                    $('#Ma_gv').val('');
+                    $('#txtTen_dang_nhap').val('');
+                }
+            });*@
+            $(".select2, .select2-multiple").select2({
+                placeholder: 'Mời chọn',
+                width: '100%'
+            });
+            $('.summernote').summernote({ height: 150 });
+        })
+
+        function submit(type) {
+            $("#type").val(type);
+
+            // Kiem tra du lieu dau vao
+            $(".required-nonestyle").each(function () {
+                var v = $(this).val();
+                var title = $(this).parent().text().trim();
+                if (typeof title != 'undefined') {
+                    title = title.substr(0, title.indexOf(':')).trim();
+                }
+                if (typeof v == 'undefined' || v == '' || v == 0 || v == '0') {
+                    bootbox.alert("Dữ liệu '" + title + "' không được để trống!");
+                    return false;
+                }
+            });
+
+            $.ajax({
+                data: {
+                    _tendotthi: $("#tendotthi").val(),
+                    _thoihannop: $("#thoihannop").val(),
+                    _thoihancham: $("#thoihancham").val(),
+                    _cacmonthi: $("#cacmonthi").val(),
+                    _diemchenhlech: $("#diemchenhlech").val(),
+                    _thele: $("#thele").val(),
+                    _gioithieu: $("#gioithieu").val()
+                },
+                type: 'POST',
+                datatype: 'json',
+                url: '/DotThi/Save?id=@ViewBag.IdDm',
+                success: function (responsive) {
+                    if (responsive.status) {
+                        if (type == 0) {
+                            window.location.replace("/DotThi");
+                        } else if (type == 1) {
+                            window.location.replace("/DotThi/Create");
+                        }
+                    } else {
+                        bootbox.alert(responsive.message);
+                    }
+                },
+                error: function (responsive) {
+                    bootbox.alert("Có lỗi xảy ra!");
+                }
+            });
+        }
+    </script>
+}
+
+@*<div class="table-toolbar">
+    <div class="row">
+        <div class="col-md-12">
+            <a href="@Url.Action("Index", "QuanLyGiaoVien")" class="btn btn-default">&lt; Quay lại</a>
+            <button class="btn btn-primary" onclick="submit(1);"><i class="fa fa-save"></i> Lưu xong nhập tiếp</button>
+            <button class="btn btn-info" onclick="submit(0);"><i class="fa fa-save"></i> Lưu xong đóng</button>
+        </div>
+    </div>
+</div>*@
+
+
+<input type="hidden" id="type" name="type" value="0" />
+<!-- BEGIN FORM-->
+<div class="form-body">
+    <div class="row">
+        <div class="col-md-6 col-sm-4">
+            <div class="form-group">
+                Tên đợt thi: <span class="font-red">(*)</span>
+                <input name="tendotthi" id="tendotthi" class="form-control required-nonestyle" placeholder="Tên đợt thi" value="@ViewBag.Infos["TenDotThi"]" />
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    Thời hạn nộp: <span class="font-red">(*)</span><span class="font-green pull-right" style="font-size:85%">(dd/mm/yyyy)</span>
+                    <input name="thoihannop" id="thoihannop" class="form-control form-control-inline date-picker required-nonestyle" @*disabled="disabled"*@ value="@(DateTime.ParseExact(ViewBag.Infos["ThoiHanNop"].ToString().Substring(0, ViewBag.Infos["ThoiHanNop"].ToString().IndexOf(" ")), "M/d/yyyy", CultureInfo.InvariantCulture).ToString("dd/MM/yyyy"))" />
+                </div>
+                <div class="form-group col-md-6">
+                    Thời hạn chấm: <span class="font-red">(*)</span><span class="font-green pull-right" style="font-size:85%">(dd/mm/yyyy)</span>
+                    <input name="thoihancham" id="thoihancham" class="form-control form-control-inline date-picker required-nonestyle" @*disabled="disabled"*@ value="@(DateTime.ParseExact(ViewBag.Infos["ThoiHanCham"].ToString().Substring(0, ViewBag.Infos["ThoiHanCham"].ToString().IndexOf(" ")), "M/d/yyyy", CultureInfo.InvariantCulture).ToString("dd/MM/yyyy"))" />
+                </div>
+            </div>
+            <div class="form-group">
+                Các môn thi: <span class="font-red">(*)</span>
+                <select name="cacmonthi" id="cacmonthi" class="form-control multi-append required-nonestyle select2" multiple>
+                    <option value="TO" @(ViewBag.Infos["CacMonThi"].ToString().Contains(";TO;") ? "selected" : "")>Toán</option>
+                    <option value="LY" @(ViewBag.Infos["CacMonThi"].ToString().Contains(";LY;") ? "selected" : "")>Vật lí</option>
+                    <option value="HO" @(ViewBag.Infos["CacMonThi"].ToString().Contains(";HO;") ? "selected" : "")>Hóa</option>
+                    <option value="NV" @(ViewBag.Infos["CacMonThi"].ToString().Contains(";NV;") ? "selected" : "")>Ngữ văn</option>
+                    <option value="SH" @(ViewBag.Infos["CacMonThi"].ToString().Contains(";SH;") ? "selected" : "")>Sinh</option>
+                    <option value="SU" @(ViewBag.Infos["CacMonThi"].ToString().Contains(";SU;") ? "selected" : "")>Lịch sử</option>
+                    <option value="DI" @(ViewBag.Infos["CacMonThi"].ToString().Contains(";DI;") ? "selected" : "")>Địa lí</option>
+                    <option value="NN" @(ViewBag.Infos["CacMonThi"].ToString().Contains(";NN;") ? "selected" : "")>Ngoại ngữ</option>
+                    <option value="GD" @(ViewBag.Infos["CacMonThi"].ToString().Contains(";GD;") ? "selected" : "")>GDCD</option>
+                    <option value="TD" @(ViewBag.Infos["CacMonThi"].ToString().Contains(";TD;") ? "selected" : "")>Thể dục</option>
+                    <option value="MT" @(ViewBag.Infos["CacMonThi"].ToString().Contains(";MT;") ? "selected" : "")>Mỹ thuật</option>
+                    <option value="KT" @(ViewBag.Infos["CacMonThi"].ToString().Contains(";KT;") ? "selected" : "")>Kỹ thuật</option>
+                    <option value="TH" @(ViewBag.Infos["CacMonThi"].ToString().Contains(";TH;") ? "selected" : "")>Tin học</option>
+                    <option value="AN" @(ViewBag.Infos["CacMonThi"].ToString().Contains(";AN;") ? "selected" : "")>Âm nhạc</option>
+                    <option value="TR" @(ViewBag.Infos["CacMonThi"].ToString().Contains(";TR;") ? "selected" : "")>Triết học</option>
+                </select>
+            </div>
+            <div class="row">
+                <div class="form-group col-sm-4">
+                    Điểm chênh:
+                    <input name="diemchenhlech" id="diemchenhlech" class="form-control" value="@(ViewBag.Infos["DiemChenh"])" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-8">
+            Thể lệ:
+            <textarea name="thele" id="thele" rows="3" class="form-control summernote" placeholder="Thông tin thêm">@(ViewBag.Infos["TheLe"])</textarea>
+            Giới thiệu:
+            <textarea name="gioithieu" id="gioithieu" rows="3" class="form-control summernote" placeholder="Thông tin thêm">@(ViewBag.Infos["GioiThieu"])</textarea>
+        </div>
+    </div>
+</div>

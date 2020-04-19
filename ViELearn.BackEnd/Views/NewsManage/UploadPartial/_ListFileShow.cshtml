@@ -1,0 +1,8 @@
+﻿@model IEnumerable<ViELearn.Models.ProjectModels.FileUploadView>
+
+@foreach (var file in Model)
+{
+    <a href="#" onclick="ReturnImage(this)" data-url="@Request.Url.GetLeftPart(UriPartial.Authority)@file.Url">
+        @file.Name <br/>
+    </a>
+}

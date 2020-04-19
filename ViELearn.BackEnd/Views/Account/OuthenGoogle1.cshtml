@@ -1,0 +1,34 @@
+﻿<div class="modal-body" style="overflow:unset;">
+    <div class="content">
+        <h2>Xác thực mã google</h2>
+        <h5>@ViewBag.Message</h5>
+        <div>
+            <img src="@ViewBag.BarcodeImageUrl" />
+        </div>
+        <div>
+            @using (Ajax.BeginForm("Verify2Fa", "Account", new AjaxOptions { HttpMethod = "POST", OnSuccess = "CreateRoleAlert" }, new { @class = "form-google" }))
+            {
+                <p>Vui lòng nhập mã google:</p>
+                <input type="text" name="passcode" />
+                <input type="submit" class="btn btn-success" />
+            }
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button style="margin-top:3px;" type="button" class="btn default pull-right" id="btnClose" data-dismiss="modal">Đóng</button>
+    </div>
+</div>
+<script>
+    var count = 1;
+    function CreateRoleAlert(data) {
+
+        if (data == "Success") {
+            window.location = "/Home/Index";
+        }
+        else {
+            count++;
+            console.log(data);
+            bootbox.alert(data);
+        }
+    }
+</script>

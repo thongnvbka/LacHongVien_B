@@ -1,0 +1,23 @@
+﻿@using System.Data
+@using ViELearn.BackEnd.Ultilities
+
+
+@foreach (DataRow item in ViewBag.Data.Rows)
+            {
+                {
+                    var type = "";
+                    if (item["col_athome"].ToString() == "1") { type = "L"; }
+                    else if (item["col_athome"].ToString() == "2") { type = "C"; }
+                    else if (item["col_athome"].ToString() == "3") { type = "R"; }
+
+                    <tr id="@item["id"]">
+                        <td class="text-center"><a href="/TagsManager/Edit?t=@ViewBag.Type&id=@item["id"]">@(ViewBag.Data.Rows.IndexOf(item) + 1)</a></td>
+                        @*<td class="text-left">@item["tenCha"]</td>*@
+                        <td class="text-left">@(item["show_athome"].ToString() == "True" ? Html.Raw("<i class='fa fa-check font-green'></i>") : Html.Raw("")) @(item["show_athome"].ToString() == "True" ? Html.Raw("(" + type + ": " + item["index_athome"] + ")") : Html.Raw(""))</td>
+                        <td class="text-left"><a href="/TagsManager/Edit?t=@ViewBag.Type&id=@item["id"]">@item["name"]</a></td>
+                        <td class="text-center">@item["Tong so tin"]</td>
+                        <td class="text-center"><a href="javascript:void(0)" data-sotin="@item["Tong so tin"]" title="Xóa Tag" data-id="@item["id"]" onclick="submit_del($(this).data('id'), this,$(this).data('sotin'))"><i class="fa fa-trash font-red"></i></a></td>
+                    </tr>
+                    //<input type="hidden" value="@item["Tong so tin"]" id="tong-so-tin" />
+    }
+}

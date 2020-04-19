@@ -1,0 +1,60 @@
+﻿
+<link href="~/UITheme/assets/global/plugins/jcrop/css/jquery.Jcrop.min.css" rel="stylesheet" />
+<link href="~/UITheme/assets/pages/css/image-crop.min.css" rel="stylesheet" />
+<div class="row">
+    <div class="img-crop responsive-1024" style="width:560px;">
+        <!-- This is the image we're attaching Jcrop to -->
+        <img src="@ViewBag.Src" id="img-crop1" alt="Jcrop Example" />
+    </div>
+    <div style="float: right;" class="responsive-1024">
+        <!-- This is the form that our event handler fills -->
+        <form style="display:none" action="/QuanLyTinTuc/SaveImageCrop" target="_blank" method="post" id="demo8_form">
+            <input type="hidden" id="crop_x" name="x" />
+            <input type="hidden" id="crop_y" name="y" />
+            <input type="hidden" id="crop_w" name="w" />
+            <input type="hidden" id="crop_h" name="h" />
+            <input type="hidden" id="crop_Path" name="path" />
+            <input type="submit" value="Crop Image" class="btn btn-large green" />
+        </form>
+        @*<a onclick="CropImages" class="btn green">
+                <i class="fa fa-cogs"></i> Cắt
+            </a>*@
+        <button data-dismiss="modal" class="btn btn-info" onclick="CropImages()"><i class="fa fa-scissors"></i> Cắt</button>
+    </div>
+
+    @*<div id="preview-pane">
+            <div class="preview-container">
+
+            </div>
+        </div>*@
+</div>
+
+<script src="~/UITheme/assets/global/plugins/jcrop/js/jquery.Jcrop.min.js"></script>
+<script type="text/javascript">
+    var FormImageCrop = function () {
+
+        r = function () {
+            function t(t) {
+                $("#crop_x").val(t.x),
+                    $("#crop_y").val(t.y),
+                    $("#crop_w").val(t.w),
+                    $("#crop_h").val(t.h),
+                    $("#crop_Path").val($('#img-crop1').attr('src'))
+
+            }
+            $("#img-crop1").Jcrop({
+                aspectRatio: 1.7,
+                onSelect: t
+            });
+
+        }
+        return {
+            init: function () {
+                jQuery().Jcrop && (
+                    r()
+                )
+            }
+        }
+    }();
+        FormImageCrop.init()
+</script>

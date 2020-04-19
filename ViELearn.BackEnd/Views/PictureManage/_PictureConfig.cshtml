@@ -1,0 +1,147 @@
+﻿<div id="toolbartableConfigPictureAlbum">
+    <div class="form-body">
+        <div class="form-group col-md-12">
+            <a href="#" class="btn btn-default" onclick="AddConfigPictureAlbum()">Thêm mới</a>
+        </div>
+        <div class="form-group col-md-12">
+            <label class="col-md-1 control-label" style="text-align:right;padding-top: 5px;">Thứ tự</label>
+            <div class="col-md-1">
+                <input type="text" id="txtOrderView" class="form-control" value="">
+            </div>
+            <label class="col-md-2 control-label" style="text-align:right;padding-top: 5px;">Tên Album</label>
+            <div class="col-md-4">
+                <input type="text" id="txtName" class="form-control" value="">
+            </div>
+        </div>
+        <div class="form-group col-md-12">
+            <button id="remove" class="btn btn-danger" disabled>
+                <i class="glyphicon glyphicon-remove"></i> Xóa
+            </button>
+        </div>
+    </div>
+</div>
+<table id="tableConfigPictureAlbum"
+        data-toolbar="#toolbartableConfigPictureAlbum"
+        data-height="auto">
+    <thead>
+        <tr>
+            <th data-field="state" data-checkbox="true" data-align="center" data-valign="middle"></th>
+            <th data-field="Id" data-visible="false"></th>
+            <th data-field="OrderView" data-editable="true" data-editable-type="text" data-editable-mode="inline">Thứ tự</th>
+            <th data-field="Name" data-editable="true" data-editable-type="text" data-editable-mode="inline">Tên Album</th>
+        </tr>
+    </thead>
+</table>
+<div class="form-actions col-md-12">
+    <div class="row" style="text-align:center">
+        <br>
+        <button type="button" class="btn blue" onclick="SaveConfigPictureAlbum()">Lưu cấu hình</button>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    var tableConfigPictureAlbum = $('#tableConfigPictureAlbum');
+    var $remove = $('#remove');
+
+    tableConfigPictureAlbum.bootstrapTable({
+        method: "post",
+        queryParams: "postQueryParams",
+        url: "@Url.Action("GetListAlum", "PictureManage")",
+        pagination: "true",
+        sidePagination: "client",
+        pageSize: 10,
+        pageList: "[5,10,15]",
+        select: true
+    });
+
+    tableConfigPictureAlbum.on('check.bs.table uncheck.bs.table ' +
+        'check-all.bs.table uncheck-all.bs.table', function () {
+            $remove.prop('disabled', !tableConfigPictureAlbum.bootstrapTable('getSelections').length);
+            selections = getIdSelections();
+        });
+
+    $remove.click(function () {
+        bootbox.confirm({
+            message: "Bạn chắc chắn muốn xóa?",
+            buttons: {
+                confirm: {
+                    className: 'btn-danger'
+                },
+                cancel: {
+                    className: 'btn-success'
+                }
+            },
+            callback: function (result) {
+                if (result == true) {
+                    var ids = getIdSelections();                    
+                    var dataPostDelete = JSON.stringify({ 'lstListDetele': ids });
+                    $.ajax({
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        type: 'POST',
+                        url: "../PictureManage/DeleteListAlbum",
+                        data: dataPostDelete,
+                        success: function (resultData) {
+                            if (resultData == "Success") {
+                                tableConfigPictureAlbum.bootstrapTable('remove', {
+                                    field: 'Id',
+                                    values: ids
+                                });
+                                $remove.prop('disabled', true);
+                                RefreshAllTab();
+                            }
+                            else
+                                bootbox.alert("Có lỗi xảy ra,vui lòng thử lại");
+                        },
+                        failure: function (response) {
+                            bootbox.alert("Có lỗi xảy ra,vui lòng thử lại");
+                        }
+                    });
+                }
+            }
+        });
+    });
+
+    function getIdSelections() {
+        return $.map(tableConfigPictureAlbum.bootstrapTable('getSelections'), function (row) {
+            return row.Id
+        });
+    }
+
+    function postQueryParams(params) {
+        return params;
+    }
+
+    function AddConfigPictureAlbum() {
+        tableConfigPictureAlbum.bootstrapTable('insertRow', {
+            index: 1,
+            row: {
+                OrderView: $('#txtOrderView').val(),
+                Name: $('#txtName').val()
+            }
+        });
+    };
+
+    function SaveConfigPictureAlbum() {
+        var dataPost = JSON.stringify({ 'lstListAlbum': tableConfigPictureAlbum.bootstrapTable('getData') });
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            type: 'POST',
+            url: "../PictureManage/SaveListAlbum",
+            data: dataPost,
+            success: function (resultData) {
+                if (resultData == "Success") {
+                    RefreshAllTab();
+                    bootbox.alert("Lưu thông tin thành công");
+                }
+                else
+                    bootbox.alert("Có lỗi xảy ra,vui lòng thử lại");
+            },
+            failure: function (response) {
+                bootbox.alert("Có lỗi xảy ra,vui lòng thử lại");
+            }
+        });
+    };
+</script>

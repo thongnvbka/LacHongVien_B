@@ -1,0 +1,200 @@
+﻿@using System.Data
+
+@{
+    ViewBag.Title = "Lịch công tác đơn vị";
+    double time = 0;
+    if (Request["t"] != null && Request["t"] != "" && double.TryParse(Request["t"], out time))
+    {
+        var monday = CLibs.UnixTimeStampToDateTimeOrgin(time);
+        ViewBag.Title += $" - Tuần từ {monday.ToString("dd/MM/yyyy")} đến {monday.AddDays(6).ToString("dd/MM/yyyy")}";
+    }
+    else
+    {
+        int diff = (7 + (DateTime.Now.DayOfWeek - DayOfWeek.Monday)) % 7;
+        var monday = DateTime.Now.AddDays(-1 * diff).Date;
+        Response.Redirect("/LichCongTac?t=" + CLibs.DatetimeToTimestampOrgin(monday));
+        //ViewBag.Title += $" - Tuần từ {monday.ToString("dd/MM/yyyy")} đến {monday.AddDays(7).AddSeconds(-1).ToString("dd/MM/yyyy")}";
+    }
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+@section stylePageLever{
+<link href="/UITheme/assets/global/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+<link href="/UITheme/assets/global/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/UITheme/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+<link href="/UITheme/assets/global/plugins/bootstrap-summernote/summernote.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        .note-editable p {
+            margin: 0;
+        }
+    </style>
+}
+@section scriptMainPageLevel{
+<script src="/UITheme/assets/global/scripts/datatable.js" type="text/javascript"></script>
+<script src="/UITheme/assets/global/plugins/datatables/datatables.min.js" type="text/javascript"></script>
+<script src="/UITheme/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js" type="text/javascript"></script>
+<script src="/UITheme/assets/pages/scripts/table-datatables-editable.min.js" type="text/javascript"></script>
+<script src="/UITheme/assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+<script src="/UITheme/assets/global/plugins/bootstrap-summernote/summernote.min.js" type="text/javascript"></script>
+}
+@section scriptConfigPageLevel{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".select2").select2();
+            $('.summernote').summernote({ height: 100 });
+        });
+
+        function save_calendar(time) {
+            //console.log($('#_sang_t2').html());
+            //console.log($('#noidung_sang_t2').val());
+            //console.log(typeof ($('#noidung_sang_t2').val()));
+            $.ajax({
+                data: {
+                    _t2sang: typeof ($('#noidung_sang_t2').val()) == 'undefined' ? $('#_sang_t2').html() : $('#noidung_sang_t2').val(),
+                    _t2chieu: typeof ($('#noidung_chieu_t2').val()) == 'undefined' ? $('#_chieu_t2').html() : $('#noidung_chieu_t2').val(),
+                    _t3sang: typeof ($('#noidung_sang_t3').val()) == 'undefined' ? $('#_sang_t3').html() : $('#noidung_sang_t3').val(),
+                    _t3chieu: typeof ($('#noidung_chieu_t3').val()) == 'undefined' ? $('#_chieu_t3').html() : $('#noidung_chieu_t3').val(),
+                    _t4sang: typeof ($('#noidung_sang_t4').val()) == 'undefined' ? $('#_sang_t4').html() : $('#noidung_sang_t4').val(),
+                    _t4chieu: typeof ($('#noidung_chieu_t4').val()) == 'undefined' ? $('#_chieu_t4').html() : $('#noidung_chieu_t4').val(),
+                    _t5sang: typeof ($('#noidung_sang_t5').val()) == 'undefined' ? $('#_sang_t5').html() : $('#noidung_sang_t5').val(),
+                    _t5chieu: typeof ($('#noidung_chieu_t5').val()) == 'undefined' ? $('#_chieu_t5').html() : $('#noidung_chieu_t5').val(),
+                    _t6sang: typeof ($('#noidung_sang_t6').val()) == 'undefined' ? $('#_sang_t6').html() : $('#noidung_sang_t6').val(),
+                    _t6chieu: typeof ($('#noidung_chieu_t6').val()) == 'undefined' ? $('#_chieu_t6').html() : $('#noidung_chieu_t6').val(),
+                    _t7sang: typeof ($('#noidung_sang_t7').val()) == 'undefined' ? $('#_sang_t7').html() : $('#noidung_sang_t7').val(),
+                    _t7chieu: typeof ($('#noidung_chieu_t7').val()) == 'undefined' ? $('#_chieu_t7').html() : $('#noidung_chieu_t7').val(),
+                    _cnsang: typeof ($('#noidung_sang_cn').val()) == 'undefined' ? $('#_sang_cn').html() : $('#noidung_sang_cn').val(),
+                    _cnchieu: typeof ($('#noidung_chieu_cn').val()) == 'undefined' ? $('#_chieu_cn').html() : $('#noidung_chieu_cn').val()
+                },
+                type: 'POST',
+                datatype: 'json',
+                url: '/LichCongTac/Save?t2dautuan=' + time,
+                success: function (responsive) {
+                    window.location.reload();
+                },
+                error: function (responsive) {
+                    bootbox.alert("Có lỗi xảy ra!");
+                }
+            });
+        }
+    </script>
+}
+@section actionMenu{ }
+
+@{ 
+    int diff_ = (7 + (DateTime.Now.DayOfWeek - DayOfWeek.Monday)) % 7;
+    var current_monday = DateTime.Now.AddDays(-1 * diff_).Date;
+
+    var start_of_today = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+
+<div class="btn-group">
+    <a href="/LichCongTac?t=@(int.Parse(Request["t"]) - 604800)" class="btn btn-fit-height btn-primary"><i class="fa fa-angle-double-left"></i> Tuần trước</a>
+    <a href="/LichCongTac?t=@CLibs.DatetimeToTimestampOrgin(current_monday)" class="btn btn-fit-height btn-success"><i class="fa fa-pause"></i> Tuần hiện tại</a>
+    <a href="/LichCongTac?t=@(int.Parse(Request["t"]) + 604800)" class="btn btn-fit-height btn-primary">Tuần sau <i class="fa fa-angle-double-right"></i></a>
+</div>
+<span class="btn btn-fit-height btn-danger" onclick="save_calendar(@time)"><i class="fa fa-save"></i> Lưu dữ liệu</span>
+}
+<br />
+<br />
+<h3>@ViewBag.Title</h3>
+<br />
+<table class="table table-striped table-hover table-bordered datatable" id="dsBaiViet">
+    <thead>
+        <tr>
+            <th class="text-center" style="width: 35px;">Thứ</th>
+            <th>Nội dung sáng</th>
+            <th>Nội dung chiều</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-center">Thứ 2 (@CLibs.UnixTimeStampToDateTimeOrgin(time).ToString("dd/MM"))</td>
+            @if (CLibs.DatetimeToTimestampOrgin(start_of_today) > time)
+            {
+                <td name="_sang_t2" id="_sang_t2">@Html.Raw(ViewBag.CalInfo != null ? ViewBag.CalInfo["T2Sang"] : "")</td>
+                <td name="_chieu_t2" id="_chieu_t2">@Html.Raw(ViewBag.CalInfo != null ? ViewBag.CalInfo["T2Chieu"] : "")</td>
+            }
+            else
+            {
+                <td><textarea name="noidung_sang_t2" id="noidung_sang_t2" class="form-control summernote" rows="3">@(ViewBag.CalInfo != null ? ViewBag.CalInfo["T2Sang"] : "")</textarea></td>
+                <td><textarea name="noidung_chieu_t2" id="noidung_chieu_t2" class="form-control summernote" rows="3">@(ViewBag.CalInfo != null ? ViewBag.CalInfo["T2Chieu"] : "")</textarea></td>
+            }
+        </tr>
+        <tr>
+            <td class="text-center">Thứ 3 (@CLibs.UnixTimeStampToDateTimeOrgin(time).AddDays(1).ToString("dd/MM"))</td>
+            @if (CLibs.DatetimeToTimestampOrgin(start_of_today) > time + 86400)
+            {
+                <td name="_sang_t3" id="_sang_t3">@Html.Raw(ViewBag.CalInfo != null ? ViewBag.CalInfo["T3Sang"] : "")</td>
+                <td name="_chieu_t3" id="_chieu_t3">@Html.Raw(ViewBag.CalInfo != null ? ViewBag.CalInfo["T3Chieu"] : "")</td>
+            }
+            else
+            {
+                <td><textarea name="noidung_sang_t3" id="noidung_sang_t3" class="form-control summernote" rows="3">@(ViewBag.CalInfo != null ? ViewBag.CalInfo["T3Sang"] : "")</textarea></td>
+                <td><textarea name="noidung_chieu_t3" id="noidung_chieu_t3" class="form-control summernote" rows="3">@(ViewBag.CalInfo != null ? ViewBag.CalInfo["T3Chieu"] : "")</textarea></td>
+            }
+        </tr>
+        <tr>
+            <td class="text-center">Thứ 4 (@CLibs.UnixTimeStampToDateTimeOrgin(time).AddDays(2).ToString("dd/MM"))</td>
+            @if (CLibs.DatetimeToTimestampOrgin(start_of_today) > time + 86400 * 2)
+            {
+                <td name="_sang_t4" id="_sang_t4">@Html.Raw(ViewBag.CalInfo != null ? ViewBag.CalInfo["T4Sang"] : "")</td>
+                <td name="_chieu_t4" id="_chieu_t4">@Html.Raw(ViewBag.CalInfo != null ? ViewBag.CalInfo["T4Chieu"] : "")</td>
+            }
+            else
+            {
+                <td><textarea name="noidung_sang_t4" id="noidung_sang_t4" class="form-control summernote" rows="3">@(ViewBag.CalInfo != null ? ViewBag.CalInfo["T4Sang"] : "")</textarea></td>
+                <td><textarea name="noidung_chieu_t4" id="noidung_chieu_t4" class="form-control summernote" rows="3">@(ViewBag.CalInfo != null ? ViewBag.CalInfo["T4Chieu"] : "")</textarea></td>
+            }
+        </tr>
+        <tr>
+            <td class="text-center">Thứ 5 (@CLibs.UnixTimeStampToDateTimeOrgin(time).AddDays(3).ToString("dd/MM"))</td>
+            @if (CLibs.DatetimeToTimestampOrgin(start_of_today) > time + 86400 * 3)
+            {
+                <td name="_sang_t5" id="_sang_t5">@Html.Raw(ViewBag.CalInfo != null ? ViewBag.CalInfo["T5Sang"] : "")</td>
+                <td name="_chieu_t5" id="_chieu_5">@Html.Raw(ViewBag.CalInfo != null ? ViewBag.CalInfo["T5Chieu"] : "")</td>
+            }
+            else
+            {
+                <td><textarea name="noidung_sang_t5" id="noidung_sang_t5" class="form-control summernote" rows="3">@(ViewBag.CalInfo != null ? ViewBag.CalInfo["T5Sang"] : "")</textarea></td>
+                <td><textarea name="noidung_chieu_t5" id="noidung_chieu_t5" class="form-control summernote" rows="3">@(ViewBag.CalInfo != null ? ViewBag.CalInfo["T5Chieu"] : "")</textarea></td>
+            }
+        </tr>
+        <tr>
+            <td class="text-center">Thứ 6 (@CLibs.UnixTimeStampToDateTimeOrgin(time).AddDays(4).ToString("dd/MM"))</td>
+            @if (CLibs.DatetimeToTimestampOrgin(start_of_today) > time + 86400 * 4)
+            {
+                <td name="_sang_t6" id="_sang_t6">@Html.Raw(ViewBag.CalInfo != null ? ViewBag.CalInfo["T6Sang"] : "")</td>
+                <td name="_chieu_t6" id="_chieu_t6">@Html.Raw(ViewBag.CalInfo != null ? ViewBag.CalInfo["T6Chieu"] : "")</td>
+            }
+            else
+            {
+                <td><textarea name="noidung_sang_t6" id="noidung_sang_t6" class="form-control summernote" rows="3">@(ViewBag.CalInfo != null ? ViewBag.CalInfo["T6Sang"] : "")</textarea></td>
+                <td><textarea name="noidung_chieu_t6" id="noidung_chieu_t6" class="form-control summernote" rows="3">@(ViewBag.CalInfo != null ? ViewBag.CalInfo["T6Chieu"] : "")</textarea></td>
+            }
+        </tr>
+        <tr>
+            <td class="text-center">Thứ 7 (@CLibs.UnixTimeStampToDateTimeOrgin(time).AddDays(5).ToString("dd/MM"))</td>
+            @if (CLibs.DatetimeToTimestampOrgin(start_of_today) > time + 86400 * 5)
+            {
+                <td name="_sang_t7" id="_sang_t7">@Html.Raw(ViewBag.CalInfo != null ? ViewBag.CalInfo["T7Sang"] : "")</td>
+                <td name="_chieu_t7" id="_chieu_t7">@Html.Raw(ViewBag.CalInfo != null ? ViewBag.CalInfo["T7Chieu"] : "")</td>
+            }
+            else
+            {
+                <td><textarea name="noidung_sang_t7" id="noidung_sang_t7" class="form-control summernote" rows="3">@(ViewBag.CalInfo != null ? ViewBag.CalInfo["T7Sang"] : "")</textarea></td>
+                <td><textarea name="noidung_chieu_t7" id="noidung_chieu_t7" class="form-control summernote" rows="3">@(ViewBag.CalInfo != null ? ViewBag.CalInfo["T7Chieu"] : "")</textarea></td>
+            }
+        </tr>
+        <tr>
+            <td class="text-center">Chủ nhật (@CLibs.UnixTimeStampToDateTimeOrgin(time).AddDays(6).ToString("dd/MM"))</td>
+            @if (CLibs.DatetimeToTimestampOrgin(start_of_today) > time + 86400 * 6)
+            {
+                <td name="_sang_cn" id="_sang_cn">@Html.Raw(ViewBag.CalInfo != null ? ViewBag.CalInfo["CnSang"] : "")</td>
+                <td name="_chieu_cn" id="_chieu_cn">@Html.Raw(ViewBag.CalInfo != null ? ViewBag.CalInfo["CnChieu"] : "")</td>
+            }
+            else
+            {
+                <td><textarea name="noidung_sang_cn" id="noidung_sang_cn" class="form-control summernote" rows="3">@(ViewBag.CalInfo != null ? ViewBag.CalInfo["CnSang"] : "")</textarea></td>
+                <td><textarea name="noidung_chieu_cn" id="noidung_chieu_cn" class="form-control summernote" rows="3">@(ViewBag.CalInfo != null ? ViewBag.CalInfo["CnChieu"] : "")</textarea></td>
+            }
+        </tr>
+    </tbody>
+</table>

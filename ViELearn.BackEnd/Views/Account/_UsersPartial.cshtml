@@ -1,0 +1,24 @@
+﻿@using System.Data
+@using ViELearn.BackEnd.Ultilities
+
+@if (ViewBag.User != null)
+{
+    int stt = 0;
+    foreach (DataRow dr in ViewBag.User.Rows)
+    {
+        stt++;
+
+        <tr data-id="@dr["id"]">
+            <td class="text-center">@stt</td>
+            <td class="text-left"><a href="@Url.Action("EditUser","Account",new { id= dr["id"] })">@dr["UserName"]</a></td>
+            <td class="text-left">@dr["DisplayName"]</td>
+            <td class="text-left">@dr["Email"]</td>
+            <td>#</td>
+            <td class="text-left"></td>
+            <td class="text-center">
+                <a href="javascript:void(0)" onclick="submit_del('@dr["id"].ToString()')"><i class="fa fa-trash font-red"></i></a>
+            </td>
+        </tr>
+    }
+}
+

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<counter>
+  <countToday>
+    <hits>0</hits>
+  </countToday>
+  <countLastday>
+    <hits>0</hits>
+  </countLastday>
+  <countThisMonth>
+    <hits>0</hits>
+  </countThisMonth>
+  <countLastMonth>
+    <hits>0</hits>
+  </countLastMonth>
+  <countLastMonth>
+    <hits>0</hits>
+  </countLastMonth>
+  <countTotal>
+    <hits>0</hits>
+  </countTotal>
+</counter>

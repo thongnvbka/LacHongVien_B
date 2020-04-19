@@ -1,0 +1,84 @@
+﻿@using ViELearn.Models.ProjectModels;
+@model NewsCategories
+
+@using (Ajax.BeginForm("SaveCategory", "CategoriesManage", new AjaxOptions { HttpMethod = "POST", OnSuccess = "TmpCreateOrSaveAlert" }, new { @class = "form-horizontal" }))
+{
+    <div class="form-body">
+        <input type="hidden" name="ID" value="@Model.Id">
+        <input type="hidden" name="CreatedAt" value="@Model.CreatedAt">
+        <div class="form-group">
+            <label class="col-md-4 control-label">Tên Chuyên Mục</label>
+            <div class="col-md-6">
+                <input type="text" class="form-control" name="Name" value="@Model.Name">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-4 control-label">Thứ tự hiển thị</label>
+            <div class="col-md-6">
+                <input type="text" class="form-control" placeholder="Enter text" name="OrderView" value="@Model.OrderView">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-4 control-label">Loại Chuyên Mục</label>
+            <div class="col-md-6">
+                @Html.DropDownList("Type", (SelectList)ViewBag.lstCategoryType, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-4 control-label">Trạng Thái</label>
+            <div class="col-md-6">
+                <input type="checkbox" class="make-switch" data-size="mini" id="ckSetActive" @(Model.Active == true ? "checked" : "") data-on-text="Kích hoạt" data-off-text="Ngừng Kích Hoạt" name="ChkActive" value="true" />
+            </div>
+        </div>
+        @if (Model.Id > 0)
+        {
+            <div class="form-group">
+                <label class="col-md-4 control-label">Quyền thao tác</label>
+                <div class="col-md-8">
+                    @Html.DropDownList("AccessType", (SelectList)ViewBag.lstCategoryAccessType, new { @class = "btn btn-default", @data_width = "100%", @onchange = "SetAccessRole()", @id = "ddlAccessType" })
+                </div>
+            </div>
+
+            <div class="form-group" id="divListBox">
+                <label class="col-md-4 control-label">Nhóm người dùng được thao tác</label>
+                <div class="col-md-8">
+                    @Html.ListBox("lstAccessRole", (MultiSelectList)ViewBag.SelectLstRoles, new { @class = "mt-multiselect btn btn-default", @multiple = "multiple", @data_label = "left", @data_width = "100%", @data_filter = "true",@id= "ddlLstAccessRole" })
+                </div>
+            </div>
+        }
+        <div class="form-actions">
+            <div class="row">
+                <div class="col" style="text-align:center">
+                    <button type="submit" class="btn blue"> @(Model.Id > 0 ? "Lưu thay đổi" : "Thêm mới")</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $().bootstrapSwitch && $(".make-switch").bootstrapSwitch()
+    $("#ddlAccessType").select2();
+
+    function SetAccessRole()
+    {
+        var accessType = $('#ddlAccessType').val();
+        if (accessType == 0)
+        {
+            $('#divListBox').hide();
+        }
+        else
+        {
+            $('#divListBox').show();
+        }
+    }
+    SetAccessRole();
+    
+
+    function TmpCreateOrSaveAlert(data)
+    {
+        CreateOrSaveAlert(data,@Model.Id);
+    }
+
+    $("#ddlLstAccessRole").select2();
+</script>

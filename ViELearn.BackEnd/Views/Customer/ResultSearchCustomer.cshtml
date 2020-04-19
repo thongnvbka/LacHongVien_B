@@ -1,0 +1,17 @@
+﻿
+@using System.Data
+@model List<ViELearn.Models.ProjectModels.Customers>
+@using ViELearn.BackEnd.Ultilities
+@foreach (var item in Model)
+{
+<tr>
+    <td class="text-center">@(Model.IndexOf(item) + 1)</td>
+    <td class="text-left">@Common.Obj2String(item.Name)</td>
+    <td class="text-left">@Common.Obj2String(item.Phone)</td>
+    <td class="text-left">@Common.Long2DateTimeToString(CLibs.UnixTimeStampToDateTimeOrgin(double.Parse(item.CreatedAt.ToString())))</td>
+    <td class="text-left">@Common.Obj2String(item.Service)</td>
+    <td class="text-center">
+        <a style="font-size: 25px" href="javascript:void(0)" onclick="submit_del(this,@item.Id)"><i class="fa fa-trash font-red"></i></a>
+    </td>
+</tr>
+}

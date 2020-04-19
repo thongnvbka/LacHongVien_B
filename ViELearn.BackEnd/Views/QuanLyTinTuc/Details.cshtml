@@ -1,0 +1,83 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Details</title>
+    <link href="~/UITheme/assets/Front-end/css/styleroyalspa.css" rel="stylesheet" />
+    <link href="~/UITheme/assets/Front-end/css/custom.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="breadcrumbs-wrapper p-detail" id="breadcrumbs">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="active"><span><a href="#">Trang chủ</a></span></li>
+                @*<li class="active"><span><a href="/@(Model.DetailNews.cate_slug).html">@Model.DetailNews.TenDanhMuc</a></span></li>*@
+                @*<li class="active"><span>@Model.DetailNews.Title</span></li>*@
+            </ol>
+        </div>
+    </div>
+    <div class="content-grid  p-detail container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h2 class="room-gallery__title">@ViewBag.dt["Title"]</h2>
+                <h3>@ViewBag.dt["Summary"]</h3>
+
+                <div class="detail-content">
+                    @Html.Raw(
+                            ViewBag.dt["FullContent"]
+                            .Replace("\\", "/")
+                            .Replace("; font-size: 16px;margin: auto; line - height: 20px !important;", "")
+                            )
+                </div>
+                <div class="list-type">
+                    @*<h2 style="text-transform:uppercase">Dịch vụ khác</h2>
+                        <ul>
+                            @foreach (var item in listrelated)
+                            {
+                                var url = "/" + item.cate_slug + "/" + item.Slug + ".html";
+                                <li><i class="icon-bullet"></i><a href="@url">@item.Title</a></li>
+                            }
+                        </ul>*@
+                </div>
+
+
+                @*@if (Model.listtagbyId.Count > 0)
+                {
+                    <div class="block_tag width_common">
+                        <div class="txt_tag"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;Tags</div>
+                        @foreach (var item in Model.listtagbyId)
+                        {
+                            var link = "/tag/" + item.slug + ".html";
+                            <h5>
+                                <a href="@link" title="@item.name" class="tag_item">
+                                    @item.name
+                                </a>
+                            </h5>
+                        }
+
+                    </div>
+                }*@
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div style=" position: relative;
+        text-align: center;
+        font-size: 2.66667rem;
+        line-height: 1;
+            padding: 30px 0;
+        margin-top: 0;
+        margin-bottom: 1.66667rem;
+        font-weight: 700;
+        border-bottom: 1px solid #c6aa28"></div>
+</body>
+</html>

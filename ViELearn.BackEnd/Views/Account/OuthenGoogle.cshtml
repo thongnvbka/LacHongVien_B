@@ -1,0 +1,118 @@
+﻿@using ViELearn.BackEnd.Models
+@model LoginViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Đăng nhập hệ thống</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="Đăng nhập hệ thống thông tin liên lạc" name="description" />
+    <meta content="MDC Group" name="author" />
+    <link rel="shortcut icon" href="/icon.png" />
+
+    <link href="~/UITheme/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/UITheme/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/UITheme/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/UITheme/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/UITheme/assets/global/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/UITheme/assets/global/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/UITheme/assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
+    <link href="~/UITheme/assets/global/css/plugins.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/UITheme/assets/layouts/layout/css/layout.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/UITheme/assets/layouts/layout/css/themes/blue.min.css" rel="stylesheet" type="text/css" id="style_color" />
+    <link href="~/UITheme/assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/UITheme/assets/pages/css/login.min.css" rel="stylesheet" type="text/css" />
+</head>
+<style>
+    @@media (max-width: 440px){
+    .logo img {
+    width: 80px
+        }
+    }
+    .login .logo {
+        width: 400px;
+        padding-left: 0;
+        margin: 120px auto 0;
+    }
+
+        .login .logo a {
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 27px;
+        }
+
+    .login .content {
+        text-align: center!important;
+        margin: 2px auto 10px;
+    }
+    .img_codegg img{
+        max-width: 100%;
+    }
+    #passcode-error {
+        color: #D91E18;
+    }
+</style>
+<body class="login">
+    <div class="logo">
+        <a href="/">
+            <img src="~/UITheme/logo/logo.png" alt="" />
+        </a>
+    </div>
+    <div class="content">
+        <h2 class="font-purple-seance">Xác thực mã google</h2>
+        @*<h6  class="font-red-thunderbird">@ViewBag.Message</h6>*@
+        @*<div class="img_codegg">
+            <img src="@ViewBag.BarcodeImageUrl" />
+        </div>*@
+        <div>
+            @using (Html.BeginForm("Verify2Fa", "Account", new { returnUrl = ViewBag.returnUrl, model = Model }, FormMethod.Post, new { @class = "form-google form-horizontal" }))
+            {
+                @Html.AntiForgeryToken()
+                <p >Vui lòng nhập mã google gửi về:</p>
+                <input type="text" name="passcode" required  />
+                <input type="submit" class="btn btn-success" /><br />
+            }
+        </div>
+        @if (ViewBag.messError != null)
+        {
+            <h5 class="font-red">@ViewBag.messError</h5>
+        }
+    </div>
+    <div class="copyright"> 2018 © MDC Group. </div>
+
+    <script src="~/UITheme/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+    <script src="~/UITheme/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="~/UITheme/assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+    <script src="~/UITheme/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+    <script src="~/UITheme/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+    <script src="~/UITheme/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+    <script src="~/UITheme/assets/global/plugins/jquery-validation/js/jquery.validate.min.js" type="text/javascript"></script>
+    <script src="~/UITheme/assets/global/plugins/jquery-validation/js/additional-methods.min.js" type="text/javascript"></script>
+    <script src="~/UITheme/assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+    <script src="~/UITheme/assets/pages/scripts/login.min.js" type="text/javascript"></script>
+    <script src="~/UITheme/assets/global/plugins/jquery-validation/js/jquery.validate.min.js"></script>
+    @*<script>
+        $(".form-google").validate({
+            // Specify validation rules
+            rules: {
+                passcode: "required"
+
+
+            },
+            messages: {
+                passcode: {
+                    required: " Xin vui lòng nhập mã code",
+                }
+            }
+
+        });
+    </script>*@
+</body>
+</html>
+
+

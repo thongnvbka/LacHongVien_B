@@ -1,0 +1,115 @@
+﻿@using System.Data
+<div id="modal-add-edit" class="bootbox modal fade modal-darkorange in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Add edit product</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group col-md-6">
+                    Loại danh mục:
+                    <select name="loaidanhmuc" id="loaidanhmuc" class="form-control ">
+                        @if (ViewBag.DsLoaiDanhMuc != null)
+                        {
+                            foreach (DataRow dr in ViewBag.DsLoaiDanhMuc.Rows)
+                            {
+                                <option value="@dr["id"]" @(Request["t"] == @dr["id"].ToString() ? "selected" : "")>@dr["tenLoaiDm"]</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    Danh mục cha:
+                    <select name="danhmuccha" id="danhmuccha" class="form-control ">
+                        <option value="0">-- Không có --</option>
+                        @if (ViewBag.DsDanhMucCha != null)
+                        {
+                            foreach (DataRow dr in ViewBag.DsDanhMucCha.Rows)
+                            {
+                                <option >@dr["TenDanhMuc"]</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    Tên danh mục:
+                    <input name="tendanhmuc" id="tendanhmuc" class="form-control" placeholder="Tên danh mục" onkeyup="update_slug(this);"  />
+                </div>
+
+                <div class="form-group col-md-6">
+                    Slug:
+                    <input name="slug" id="slug" class="form-control" placeholder="slug"  />
+                </div>
+
+                <div class=" col-md-6">
+                    <label>Ảnh đại diện cho danh mục</label>
+                    <div class="input-group">
+
+                        <input id="txt_thumb_url" type="text" class="form-control"  placeholder="Đường dẫn đến ảnh">
+                        <span class="input-group-btn">
+                            <a class="btn btn-success" data-target="#full-width1" data-toggle="modal" onclick="set_destname('txt_thumb_url');"> <i class="fa fa-upload fa-fw"></i> </a>
+                        </span>
+                    </div>
+                </div>
+
+
+                <div class="form-group col-md-6">
+                    <label> Số thứ tự:</label>
+                    <input name="sothutu" id="sothutu" type="number" class="form-control" placeholder="Số thứ tự"  />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-outline dark">Thôi</button>
+                    <button type="button" data-dismiss="modal" class="btn green" id="btnSubmitDialog" data-destname="" onclick="clone_val('thumb_url', this)">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="full-width1" class="modal container fade" tabindex="-1">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+        <h4 class="modal-title">Chọn ảnh</h4>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <label>Đường dẫn ảnh vừa chọn</label>
+            <input type="text" id="thumb_url" class="form-control" placeholder="Đường dẫn đến ảnh" value="">
+        </div>
+        <div class="col-sm-6">
+            <b><u>Lưu ý:</u></b> Sau khi upload xong, cần bấm F5 để ảnh hiển thị ở cột bên cạnh
+            <div class="dropzone needsclick dz-clickable" id="frm_dropzone">
+                <div class="dz-message needsclick">
+                    <h3 class="sbold">Thả hình, ảnh vào đây</h3><br>
+                    <span class="note needsclick">Các hình, ảnh chụp về bài viết<br />(dung lượng tối đa: 4MB)</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 item-img ">
+            <div class="row">
+                @if (Directory.Exists(ViewBag.Images))
+                {
+                    foreach (var files in Directory.GetFiles(ViewBag.Images))
+                    {
+                        var info = new FileInfo(files);
+                        <div class=" col-md-3" style="height:80px;padding-top:5px;padding-bottom:5px;margin-top:5px;margin-bottom:5px;">
+                            <div style="height:80px;width:120px; cursor:pointer;position:relative;display: inline!important">
+                                <i onclick="removeImg(this)" class="fa fa-times btn_remove" aria-hidden="true"></i>
+
+                                <div class="dz-preview dz-processing dz-image-preview dz-success dz-complete">
+                                    <img id="img_id_@Path.GetFileName(info.FullName)" onclick="setusethumbnail(this)" style="max-height:80px;max-width:120px;cursor:pointer;" data-dz-thumbnail="" alt="@Path.GetFileName(info.FullName)" src='/UserData/0/ImgCat/@Path.GetFileName(info.FullName)'>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-outline dark">Thôi</button>
+        <button type="button" data-dismiss="modal" class="btn green" id="btnSubmitDialog" data-destname="" onclick="clone_val('thumb_url', this)">Sử dụng hình ảnh</button>
+    </div>
+</div>

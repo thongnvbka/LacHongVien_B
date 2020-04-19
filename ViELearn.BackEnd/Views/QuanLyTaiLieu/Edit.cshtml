@@ -1,0 +1,624 @@
+﻿@using System.Data
+@using ViELearn.BackEnd.Ultilities;
+
+@model DataTable
+
+@{
+    ViewBag.Title = "Cập nhật thông tin tài liệu";
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+@section stylePageLever{
+    <link href="/UITheme/assets/global/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-summernote/summernote.css" rel="stylesheet" type="text/css" />
+
+    <link href="/UITheme/assets/global/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-tagsinput/bootstrap-tagsinput-typeahead.css" rel="stylesheet" type="text/css" />
+
+    <link href="/UITheme/assets/global/plugins/dropzone/dropzone.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/dropzone/basic.min.css" rel="stylesheet" type="text/css" />
+
+    <style type="text/css">
+        .table-scrollable > .table > thead > tr > th {
+            white-space: pre-wrap !important;
+        }
+        thead > tr > th {
+            vertical-align: middle !important;
+        }
+        thead > tr:not(:first-child) > th {
+            font-weight: normal !important;
+            font-size: 85% !important;
+        }
+        .dropzone .note {
+            border-left: 0 !important
+        }
+        .dz-preview {
+            position: relative;
+            display: inline-block;
+            width: 120px;
+            margin: 0.5em;
+        }
+        .modal {
+            width: auto;
+            min-width: 300px;
+            left: 40%;
+            top: 30%;
+        }
+    </style>
+}
+@section scriptMainPageLevel{
+    <script src="/UITheme/assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootbox/bootbox.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-summernote/summernote.min.js" type="text/javascript"></script>
+
+    <script src="/UITheme/assets/global/plugins/bootstrap-tagsinput/bootstrap-tagsinput.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/typeahead/handlebars.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/typeahead/typeahead.bundle.min.js" type="text/javascript"></script>
+
+    <script src="/UITheme/assets/global/plugins/dropzone/dropzone.min.js" type="text/javascript"></script>
+
+    <script src="~/Scripts/clibs.js" type="text/javascript"></script>
+}
+@section scriptConfigPageLevel{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".select2").select2();
+
+            $('.summernote').summernote({ height: 700 });
+
+            $('.mt-multiselect').each(function () {
+                var btn_class = $(this).attr('class');
+                var clickable_groups = ($(this).data('clickable-groups')) ? $(this).data('clickable-groups') : false;
+                var collapse_groups = ($(this).data('collapse-groups')) ? $(this).data('collapse-groups') : false;
+                var drop_right = ($(this).data('drop-right')) ? $(this).data('drop-right') : false;
+                var drop_up = ($(this).data('drop-up')) ? $(this).data('drop-up') : false;
+                var select_all = ($(this).data('select-all')) ? $(this).data('select-all') : false;
+                var width = ($(this).data('width')) ? $(this).data('width') : '';
+                var height = ($(this).data('height')) ? $(this).data('height') : '';
+                var filter = ($(this).data('filter')) ? $(this).data('filter') : false;
+
+                // advanced functions
+                var onchange_function = function (option, checked, select) {
+                    alert('Changed option ' + $(option).val() + '.');
+                }
+                var dropdownshow_function = function (event) {
+                    alert('Dropdown shown.');
+                }
+                var dropdownhide_function = function (event) {
+                    alert('Dropdown Hidden.');
+                }
+
+                // init advanced functions
+                var onchange = ($(this).data('action-onchange') == true) ? onchange_function : '';
+                var dropdownshow = ($(this).data('action-dropdownshow') == true) ? dropdownshow_function : '';
+                var dropdownhide = ($(this).data('action-dropdownhide') == true) ? dropdownhide_function : '';
+
+                // template functions
+                // init variables
+                var li_template;
+                if ($(this).attr('multiple')) {
+                    li_template = '<li class="mt-checkbox-list"><a href="javascript:void(0);"><label class="mt-checkbox"> <span></span></label></a></li>';
+                } else {
+                    li_template = '<li><a href="javascript:void(0);"><label></label></a></li>';
+                }
+
+                // init multiselect
+                $(this).multiselect({
+                    nonSelectedText: ' -- Mời chọn -- ',
+                    nSelectedText: ' được chọn',
+                    showSearch: true,
+                    searchText: 'Tìm, lọc',
+                    enableClickableOptGroups: clickable_groups,
+                    enableCollapsibleOptGroups: collapse_groups,
+                    disableIfEmpty: true,
+                    enableFiltering: filter,
+                    includeSelectAllOption: select_all,
+                    dropRight: drop_right,
+                    buttonWidth: width,
+                    maxHeight: height,
+                    onChange: onchange,
+                    onDropdownShow: dropdownshow,
+                    onDropdownHide: dropdownhide,
+                    buttonClass: btn_class,
+                    //optionClass: function(element) { return "mt-checkbox"; },
+                    //optionLabel: function(element) { console.log(element); return $(element).html() + '<span></span>'; },
+        			/*templates: {
+		                li: li_template,
+		            }*/
+                });
+            });
+
+            var tags = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                prefetch: {
+                    //url: '/UITheme/typeahead_countries.json',
+                    url: '/QuanLyTaiLieu/DanhSachTags',
+                    filter: function (list) {
+                        return $.map(list, function (tagname) {
+                            return { name: tagname };
+                        });
+                    }
+                }
+            });
+
+            tags.initialize();
+            $('#typeahead_tags').tagsinput({
+                typeaheadjs: {
+                    name: 'tags',
+                    displayKey: 'name',
+                    valueKey: 'name',
+                    source: tags.ttAdapter()
+                }
+            });
+
+            $('#seo_keywords').tagsinput({});
+
+            Dropzone.autoDiscover = false;
+            $("#frm_dropzone_docs").dropzone({
+                url: "/QuanLyTaiLieu/UploadFile?type=1&id=@ViewBag.Id",
+                //acceptedFiles: "image/jpeg,image/png,image/gif",
+                init: function () {
+                    this.on("complete", function (file) {
+                        //console.log('one uploaded');
+                        var stt = 1;
+                        // Lấy ra stt cuối cùng (nếu có)
+                        var x = $('#dsTaiLieu > tbody > tr:last > td:first-child').text();
+                        if (typeof x != 'undefined' && x != '') {
+                            stt = parseInt(x) + 1;
+                        }
+
+                        var new_tr = `<tr>
+                            <td class="text-center">` + stt + `</td>
+                            <td>` + file.name + ` (<a class="fa fa-download" href="/TaiLieu/@ViewBag.Id/` + file.name + `"></a>)</td>
+                            <td class="text-center">` + (new Date()).toLocaleDateString("vi-VN") + ` ` + (new Date()).toLocaleTimeString("vi-VN") + `</td>
+                            <td class="text-center">
+                                <i class="fa fa-trash font-red-pink" style="cursor:pointer" onclick="delete_attachment(this,'/TaiLieu/@ViewBag.Id/` + file.name + `')"></i>
+                            </td>
+                        </tr>`;
+                        $('#dsTaiLieu > tbody:last-child').append(new_tr);
+
+                        if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+                            //doSomething();
+                            //console.log('all file uploaded');
+                            //window.location.reload();
+                        }
+                    });
+                }
+            });
+            $("#frm_dropzone_imgs").dropzone({
+                url: "/QuanLyTaiLieu/UploadFile?id=@ViewBag.Id",
+                acceptedFiles: "image/jpeg,image/png,image/gif",
+                init: function () {
+                    this.on("complete", function (file) {
+                        //console.log('one uploaded');
+                        console.log(file.name);
+                        if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+                            //doSomething();
+                            //console.log('all file uploaded');
+                            window.location.reload();
+                        }
+                    });
+                }
+            });
+        });
+
+        function ShowFilter(name, title) {
+            $('.filter').each(function () {
+                $(this).hide();
+            });
+            $('#' + name).show();
+
+            $("#divData").html('');
+            //$('#title').text(title);
+        }
+
+        function submit(type) {
+            $("#type").val(type);
+
+            // Kiem tra du lieu dau vao
+            $(".required-nonestyle").each(function () {
+                var v = $(this).val();
+                var title = $(this).parent().text().trim();
+                if (typeof title != 'undefined') {
+                    title = title.substr(0, title.indexOf(':')).trim();
+                }
+                if (typeof v == 'undefined' || v == '' || v == 0 || v == '0') {
+                    bootbox.alert("Dữ liệu '" + title + "' không được để trống!");
+                    return false;
+                }
+            });
+
+            var p_data = {
+                _status: $('#trang_thai').val(),
+                _status: $('#trang_thai').val(),
+                _show_athome: $('#show_athome').val(),
+
+                _price: $('#price').val(),
+                _price_src: $('#price_src').val(),
+                _chapter: $('#chapter_count').val(),
+                _page: $('#page_count').val(),
+                _view_temp: $('#view_temp').val(),
+                _luot_tai: $('#luot_tai').val(),
+                _luot_mua: $('#luot_mua').val(),
+                _loai_file: $('#loai_file').val(),
+
+                _title: $('#title').val(),
+                _author: $('#author').val(),
+                _slug: $('#slug').val(),
+                _sapo: $('#sapo').val(),
+                _content: $('#noidung').val(),
+
+                _cates: $('#cates').val(),
+                _cates_slug: string_to_slug($('#cates').val()),
+                _tags: $('#typeahead_tags').val(),
+                _tags_slug: string_to_slug($('#typeahead_tags').val()),
+                _related: $('#related_news').val(),
+                _meta_keywords: $('#seo_keywords').val(),
+                _meta_description: $('#seo_description').val(),
+                
+                _thumbnail: $('#thumb_url').val(),
+                //_preview_urls: $('#thumb_url').val(),
+                //_type: $('#thumb_url').val(),
+                //_top_level: $('#thumb_url').val(),
+                //_order: $('#thumb_url').val(),
+                //_hot_kind: $('#thumb_url').val(),
+            };
+            var p_url = '/QuanLyTaiLieu/Save?id=@ViewBag.Id';
+            ajax_post(p_url, p_data, type, 'QuanLyTaiLieu');
+        }
+
+        function submit_thumbnail_url() {
+            if ($('#thumb_url').val() == '') {
+                var p_data = {
+                    _thumbnail: $('#thumb_url').val()
+                };
+                var p_url = '/QuanLyTaiLieu/SaveThumb?id=@ViewBag.Id';
+                confirm_ajax_post('', 'Bạn chắc chắn muốn xóa thumbnail?', p_url, p_data);
+            } else {
+                var p_data = {
+                    _thumbnail: $('#thumb_url').val()
+                };
+                ajax_post('/QuanLyTaiLieu/SaveThumb?id=@ViewBag.Id', p_data);
+            }
+        }
+
+        function submit_configs() {
+            var p_data = {
+                _status: $('#trang_thai').val(),
+                _show_athome: $('#show_athome').val()
+            };
+            ajax_post('/QuanLyTaiLieu/UpdateConfig?id=@ViewBag.Id', p_data);
+        }
+        function submit_cachetotalview() {
+            var p_data = {
+                _view_temp: $('#view_temp').val()
+            };
+            ajax_post('/QuanLyTaiLieu/CacheViewTemp?id=@ViewBag.Id', p_data);
+        }
+        function submit_luottai() {
+            var p_data = {
+                id: '@ViewBag.Id',
+                _col_name: 'LuotTai',
+                _value: $('#luot_tai').val()
+            };
+            ajax_post('/QuanLyTaiLieu/UpdateOneCol', p_data);
+        }
+        function submit_luotmua() {
+            var p_data = {
+                id: '@ViewBag.Id',
+                _col_name: 'LuotMua',
+                _value: $('#luot_mua').val()
+            };
+            ajax_post('/QuanLyTaiLieu/UpdateOneCol', p_data);
+        }
+
+        function setusethumbnail(itm) {
+            $('#thumb_url').val($(itm).attr('src'));
+            $(itm).addClass('');
+            //bootbox.dialog({
+            //    message: '<img src="' + $(itm).attr('src') + '" style="max-height:800px;max-width:800px" />'
+            //});
+        }
+
+        function delete_attachment(itm, file_path) {
+            var success_func = function () {
+                $(itm).closest('tr').remove();
+            };
+            var error_func = function () { };
+            var p_data = { file_path: file_path };
+            //console.dir(p_data);
+            confirm_ajax_post('', 'Chắc chắn muốn xóa?', 'Đồng ý xóa', 'Thôi', '/QuanLyTaiLieu/XoaFile', p_data, -1, 'QuanLyTaiLieu', false, success_func, error_func);
+        }
+    </script>
+}
+@section actionMenu{
+    <div class="page-bar">
+        <ul class="page-breadcrumb">
+            <li> <i class="fa fa-plus icon-home"></i> <i class="fa fa-angle-right"></i> </li>
+            <li> <a href="/QuanLyTaiLieu">Danh sách</a> <i class="fa fa-angle-right"></i> </li>
+            <li> <span>@ViewBag.Title</span> </li>
+        </ul>
+        <div class="page-toolbar">
+            <div class="btn-group pull-right">
+                <button class="btn btn-info" onclick="submit(1);"><i class="fa fa-save"></i> Lưu, nhập mới</button>
+                <button class="btn btn-primary" onclick="submit(0);"><i class="fa fa-save"></i> Lưu xong đóng</button>
+                @*<button class="btn btn-danger" onclick="submit(2);"><i class="fa fa-save"></i> Công khai</button>*@
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col-lg-4 col-md-5 col-sm-6 col-lg-push-8 col-md-push-7 col-sm-push-6">
+        <div class="form-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Cấu hình <span class="btn btn-sm btn-primary pull-right" style="margin-top: -7px;margin-right: -12px;" onclick="submit_configs()"><i class="fa fa-save" style="padding-left:10px;padding-right:10px;"></i></span></h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="row">
+                            <div class="form-group col-sm-6">
+                                Trạng thái:
+                                <select name="trang_thai" id="trang_thai" class="form-control" @*style="width:100%"*@>
+                                    <option value="0" @(ViewBag.Infos["Status"].ToString() == "0" ? "selected" : "")>Đang soạn thảo</option>
+                                    <option value="1" @(ViewBag.Infos["Status"].ToString() == "1" ? "selected" : "")>Hiển thị</option>
+                                    <option value="4" @(ViewBag.Infos["Status"].ToString() == "4" ? "selected" : "")>Xóa, hạ bài</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                Hiện trang chủ:
+                                <select name="show_athome" id="show_athome" class="form-control" @*style="width:100%"*@>
+                                    <option value="0" @(ViewBag.Infos["show_athome"].ToString() == "False" ? "selected" : "")>Không hiện</option>
+                                    <option value="1" @(ViewBag.Infos["show_athome"].ToString() == "True" ? "selected" : "")>Hiện ở trang chủ</option>
+                                </select>
+                            </div>
+                            <br/>
+                            <div class="form-group col-sm-6">
+                                Giá bán: <small class="pull-right font-green">(ngàn đ)</small>
+                                <input type="number" name="price" id="price" class="form-control" value="@ViewBag.Infos["Price"]" />
+                            </div>
+                            <div class="form-group col-sm-6">
+                                Giá gốc: <small class="pull-right font-green">(ngàn đ)</small>
+                                <input type="number" name="price_src" id="price_src" class="form-control" value="@ViewBag.Infos["Price_src"]" />
+                            </div>
+                            <div class="form-group col-sm-4">
+                                Loại file:
+                                <select name="loai_file" id="loai_file" class="form-control" @*style="width:100%"*@>
+                                    <option value="doc" @(ViewBag.Infos["LoaiFile"].ToString() == "False" ? "selected" : "")>Word (doc)</option>
+                                    <option value="docx" @(ViewBag.Infos["LoaiFile"].ToString() == "False" ? "selected" : "")>Word (docx)</option>
+                                    <option value="xls" @(ViewBag.Infos["LoaiFile"].ToString() == "False" ? "selected" : "")>Excel (xls)</option>
+                                    <option value="xlsx" @(ViewBag.Infos["LoaiFile"].ToString() == "False" ? "selected" : "")>Excel (xlsx)</option>
+                                    <option value="ppt" @(ViewBag.Infos["LoaiFile"].ToString() == "False" ? "selected" : "")>Power Point (ppt)</option>
+                                    <option value="pptx" @(ViewBag.Infos["LoaiFile"].ToString() == "False" ? "selected" : "")>Power Point (pptx)</option>
+                                    <option value="pdf" @(ViewBag.Infos["LoaiFile"].ToString() == "False" ? "selected" : "")>PDF (pdf)</option>
+                                    <option value="zip" @(ViewBag.Infos["LoaiFile"].ToString() == "False" ? "selected" : "")>Compress (zip)</option>
+                                    <option value="rar" @(ViewBag.Infos["LoaiFile"].ToString() == "False" ? "selected" : "")>Compress (rar)</option>
+                                    <option value="7z" @(ViewBag.Infos["LoaiFile"].ToString() == "False" ? "selected" : "")>Compress (7z)</option>
+                                    <option value="jpg" @(ViewBag.Infos["LoaiFile"].ToString() == "False" ? "selected" : "")>Images (jpg)</option>
+                                    <option value="png" @(ViewBag.Infos["LoaiFile"].ToString() == "False" ? "selected" : "")>Images (png)</option>
+                                    <option value="gif" @(ViewBag.Infos["LoaiFile"].ToString() == "False" ? "selected" : "")>Images (gif)</option>
+                                    <option value="txt" @(ViewBag.Infos["LoaiFile"].ToString() == "False" ? "selected" : "")>Plan text (txt)</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-sm-4">
+                                Số chương/tập:
+                                <input type="number" name="chapter_count" id="chapter_count" class="form-control" value="@ViewBag.Infos["SoChapter"]" />
+                            </div>
+                            <div class="form-group col-sm-4">
+                                Số trang:
+                                <input type="number" name="page_count" id="page_count" class="form-control" value="@ViewBag.Infos["SoPage"]" />
+                            </div>
+                            <div class="form-group col-sm-4">
+                                Lượt xem: <small class="pull-right font-green">(Tổng: <b class="font-red">@ViewBag.Infos["view_total"]</b> lượt)</small>
+                                <div class="input-group">
+                                    <input type="number" name="view_temp" id="view_temp" class="form-control" value="@ViewBag.Infos["view_temp"]" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-success" type="button" onclick="submit_cachetotalview()">
+                                            <i class="fa fa-recycle fa-fw"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-4">
+                                Lượt tải:
+                                <div class="input-group">
+                                    <input type="number" name="luot_tai" id="luot_tai" class="form-control" value="@ViewBag.Infos["LuotTai"]" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-success" type="button" onclick="submit_luottai()">
+                                            <i class="fa fa-recycle fa-fw"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-4">
+                                Lượt mua:
+                                <div class="input-group">
+                                    <input type="number" name="luot_mua" id="luot_mua" class="form-control" value="@ViewBag.Infos["LuotMua"]" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-success" type="button" onclick="submit_luotmua()">
+                                            <i class="fa fa-recycle fa-fw"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Hình ảnh</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        Thumbnail url:
+                        <div class="input-group">
+                            <div class="input-icon">
+                                <i class="fa fa-image fa-fw"></i>
+                                <input name="thumb_url" id="thumb_url" class="form-control" value="@ViewBag.Infos["Thumbnail"]" />
+                            </div>
+                            <span class="input-group-btn">
+                                <button class="btn btn-success" type="button" onclick="submit_thumbnail_url();">
+                                    <i class="fa fa-save fa-fw"></i>
+                                </button>
+                            </span>
+                        </div>
+                        <br/>
+                        <div class="col-sm-6">
+                            <div class="dropzone needsclick dz-clickable" id="frm_dropzone_imgs">
+                                <div class="dz-message needsclick">
+                                    <h3 class="sbold">Thả hình ảnh vào đây</h3><br>
+                                    <span class="note needsclick text-center">Các hình, ảnh chụp về bài viết<br />(dung lượng tối đa: 4MB)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            @if (Directory.Exists(ViewBag.Images))
+                            {
+                                foreach (var files in Directory.GetFiles(ViewBag.Images))
+                                {
+                                    var info = new FileInfo(files);
+                                    <div class="dz-preview dz-processing dz-image-preview dz-success dz-complete">
+                                        <img onclick="setusethumbnail(this)" style="max-height:120px;max-width:120px;cursor:pointer;" data-dz-thumbnail="" alt="@Path.GetFileName(info.FullName)" src='/UserData/@(SysBaseInfor.GetIdNguoiDung())/@(ViewBag.Id)/@Path.GetFileName(info.FullName)'>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="portlet box green">
+            <div class="portlet-title">
+                <div class="caption">
+                    SEO
+                </div>
+                <div class="tools">
+                    <a href="javascript:;" class="collapse" data-original-title="" title=""> </a>
+                    @*<a href="#portlet-config" data-toggle="modal" class="config" data-original-title="" title=""> </a>*@
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="form-group">
+                    Slug: <span class="font-red">(*)</span>
+                    <input name="slug" id="slug" class="form-control required-nonestyle" value="@ViewBag.Infos["Slug"]" />
+                </div>
+                <div class="form-group">
+                    Meta-keywords:
+                    <input type="text" value="@ViewBag.Infos["meta_keywords"]" id="seo_keywords">
+                </div>
+                <div class="form-group">
+                    Meta-description:
+                    <input type="text" class="form-control" value="@ViewBag.Infos["meta_descriptions"]" id="seo_description">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8 col-md-7 col-sm-6 col-lg-pull-4 col-md-pull-5 col-sm-pull-6">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="form-group col-md-8">
+                        Tiêu đề: <span class="font-red">(*)</span>
+                        <input name="title" id="title" class="form-control required-nonestyle" onkeyup="update_slug(this, '#slug');" value="@ViewBag.Infos["Title"]" />
+                    </div>
+                    <div class="form-group col-md-4">
+                        Tác giả:
+                        <input name="author" id="author" class="form-control" value="@ViewBag.Infos["TacGia"]" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    Mô tả ngắn:
+                    <textarea name="sapo" id="sapo" class="form-control" rows="4" onkeyup="clone_val(this, '#seo_description')">@ViewBag.Infos["Summary"]</textarea>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    Chuyên mục, chủ đề:
+                    <select name="cates" id="cates" class="form-control select2" multiple style="width:100%">
+                        @foreach (DataRow dr in ViewBag.DsTags.Rows)
+                        {
+                            <option value="@dr["name"]" @($",{ViewBag.Infos["Tags"].ToString().Trim()}," == $"{dr["name"].ToString().Trim()}" || $",{ViewBag.Infos["Tags"].ToString().Trim()},".Contains($",{dr["name"].ToString().Trim()},") ? "selected" : "")>@dr["name"]</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    Từ khóa, tags:
+                    <input type="text" value="@ViewBag.Infos["Tags"]" id="typeahead_tags">
+                </div>
+                <div class="form-group">
+                    Bài viết liên quan:
+                    <select name="related_news" id="related_news" class="form-control select2" multiple style="width:100%">
+                        @foreach (DataRow dr in ViewBag.DsBaiVietLienQuan.Rows)
+                        {
+                            <option value="@dr["id"]" selected>@dr["title"]</option>
+                        }
+                        @foreach (DataRow dr in ViewBag.DsBaiViet.Rows)
+                        {
+                            <option value="@dr["id"]">@dr["title"]</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="dropzone needsclick dz-clickable" id="frm_dropzone_docs">
+                    <div class="dz-message needsclick">
+                        <h3 class="sbold">Thả tài liệu vào đây</h3><br>
+                        <span class="note needsclick text-center">Các file tài liệu word, excel, power point, pdf, zip, rar<br />(dung lượng tối đa: 400MB)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <table class="table table-striped table-hover table-bordered datatable" id="dsTaiLieu">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 35px;">#</th>
+                            <th>Tên file tài liệu</th>
+                            <th class="text-center" style="width: 120px;">Ngày đăng</th>
+                            <th class="text-center" style="width: 100px;">#</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Directory.Exists(ViewBag.Files))
+                        {
+                            var index = 1;
+                            foreach (var files in Directory.GetFiles(ViewBag.Files))
+                            {
+                                var info = new FileInfo(files);
+                                @*<div class="dz-preview dz-processing dz-image-preview dz-success dz-complete">
+                                    <img onclick="setusethumbnail(this)" style="max-height:120px;max-width:120px;cursor:pointer;" data-dz-thumbnail="" alt="@Path.GetFileName(info.FullName)" src='/UserData/@(SysBaseInfor.GetIdNguoiDung())/@(ViewBag.Id)/@Path.GetFileName(info.FullName)'>
+                                </div>*@
+
+                                <tr>
+                                    <td class="text-center">@index</td>
+                                    <td>@Path.GetFileName(info.FullName) (<a class="fa fa-download" href="/TaiLieu/@(ViewBag.Id)/@Path.GetFileName(info.FullName)"></a>)</td>
+                                    <td class="text-center">@(info.CreationTime.ToString("dd/MM/yyyy HH:mm:ss"))</td>
+                                    <td class="text-center">
+                                        <i class="fa fa-trash font-red-pink" style="cursor:pointer" onclick="delete_attachment(this,'/TaiLieu/@ViewBag.Id/@Path.GetFileName(info.FullName)')"></i>
+                                    </td>
+                                </tr>
+                                index++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="col-md-12">
+                <div class="form-group">
+                    Nội dung:
+                    <textarea name="noidung" id="noidung" class="form-control summernote" rows="4">@ViewBag.Infos["FullContent"]</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

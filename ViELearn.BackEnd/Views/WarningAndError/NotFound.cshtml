@@ -1,0 +1,81 @@
+﻿
+@{
+    ViewBag.Title = "NotFound";
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+
+
+
+<style>
+    .note_404 {
+        font: 400 28px/40px arial !important;
+        color: #9f224e;
+        position: relative;
+        display: inline-block;
+        margin-top: 60px;
+    }
+
+        .note_404 .up-triangle {
+            display: inline-block;
+            width: 0;
+            height: 0;
+            border-bottom: 40px solid #ebbe1d;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+        }
+
+        .note_404 .i_info {
+            color: #fff;
+            display: inline-block;
+            margin: 0 25px 0 -24px;
+        }
+
+    .section_404 p.mb20 {
+        font: 400 14px arial;
+        margin-bottom: 10px;
+    }
+
+    .inner_section p {
+        padding: 0 0 10px;
+        font: 400 12px/17px arial;
+    }
+
+    .mb20 {
+        margin-bottom: 20px;
+    }
+
+    .section_404 {
+        text-align: center;
+        padding-top: 30px;
+        font-size: 16px;
+    }
+
+    .inner_section {
+        margin-left: 20px;
+        height: 300px;
+    }
+
+    .mb20 a {
+        color: #ebbe1d;
+    }
+</style>
+@section stylePageLever{
+}
+@section scriptMainPageLevel{
+}
+@section scriptConfigPageLevel{}
+
+<section>
+    <div class="container">
+        <div class="inner_section">
+            <p class="note_404 mb5"><span class="up-triangle"></span><span class="i_info">!</span><b>Không tìm thấy</b> đường dẫn này</p>
+            <p class="mb20">Bạn vui lòng  <a href="/">bấm vào đây</a> để quay về trang chủ.</p>
+
+        </div>
+    </div>
+</section>
+
+
+
+
+

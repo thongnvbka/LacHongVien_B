@@ -1,0 +1,268 @@
+﻿@using System.Data
+
+@model DataTable
+
+@{
+    ViewBag.Title = "Thêm văn bản";
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+@section stylePageLever{
+    <link href="/UITheme/assets/global/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-multiselect/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-summernote/summernote.css" rel="stylesheet" type="text/css" />
+
+    <link href="/UITheme/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/clockface/css/clockface.css" rel="stylesheet" type="text/css" />
+    <link href="~/Scripts/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
+
+    <link href="/UITheme/assets/global/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css" rel="stylesheet" type="text/css" />
+    <link href="/UITheme/assets/global/plugins/bootstrap-tagsinput/bootstrap-tagsinput-typeahead.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+        .table-scrollable > .table > thead > tr > th {
+            white-space: pre-wrap !important;
+        }
+
+        thead > tr > th {
+            vertical-align: middle !important;
+        }
+
+        thead > tr:not(:first-child) > th {
+            font-weight: normal !important;
+            font-size: 85% !important;
+        }
+    </style>
+}
+@section scriptMainPageLevel{
+    <script src="/UITheme/assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootbox/bootbox.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-multiselect/js/bootstrap-multiselect.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-summernote/summernote.min.js" type="text/javascript"></script>
+
+    <script src="/UITheme/assets/global/plugins/moment.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js" type="text/javascript"></script>
+    @*<script src="/UITheme/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>*@
+    <script src="/UITheme/assets/global/plugins/jquery.pulsate.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/clockface/js/clockface.js" type="text/javascript"></script>
+    <script src="~/Scripts/moment-with-locales.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+
+    <script src="/UITheme/assets/global/plugins/bootstrap-tagsinput/bootstrap-tagsinput.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/typeahead/handlebars.min.js" type="text/javascript"></script>
+    <script src="/UITheme/assets/global/plugins/typeahead/typeahead.bundle.min.js" type="text/javascript"></script>
+}
+@section scriptConfigPageLevel{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".select2").select2();
+
+            $('.date-picker').datetimepicker({
+                format: 'L',
+                locale: 'vi',
+                sideBySide: true
+            });
+            $('.datetime-picker').datetimepicker({
+                format: 'L LT',
+                locale: 'vi',
+                sideBySide: true
+            });
+            $('.datetime-picker').on('dp.change', function (e) {
+                //console.log(e.date); // Thời gian trước khi thay đổi
+                //console.log('thoi gian: ' + $(this).val()); // Thời gian sau khi thay đổi
+
+                // Kích hoạt sự kiện onchange
+                $(this).change();
+            })
+        });
+
+        function ShowFilter(name, title) {
+            $('.filter').each(function () {
+                $(this).hide();
+            });
+            $('#' + name).show();
+
+            $("#divData").html('');
+            //$('#title').text(title);
+        }
+
+        function filterChilds(itm, childname) {
+            var pid = $(itm).val();
+            $("#" + childname + " > option").each(function () {
+                if (pid == $(this).data("parent")) {
+                    $(this).show();
+                    $(this).prop("disabled", false);
+                } else {
+                    $(this).hide();
+                    $(this).prop("disabled", true);
+                }
+            });
+            $("#" + childname + " > option").first().prop("disabled", false);
+            $("#" + childname).val(0).trigger('change');
+            $("#" + childname).select2("destroy");
+            $("#" + childname).select2({});
+        }
+
+        function submit(type) {
+            $("#type").val(type);
+
+            // Kiem tra du lieu dau vao
+            $(".required-nonestyle").each(function () {
+                var v = $(this).val();
+                var title = $(this).parent().text().trim();
+                if (typeof title != 'undefined') {
+                    title = title.substr(0, title.indexOf(':')).trim();
+                }
+                if (typeof v == 'undefined' || v == '' || v == 0 || v == '0') {
+                    bootbox.alert("Dữ liệu '" + title + "' không được để trống!");
+                    return false;
+                }
+            });
+
+            $.ajax({
+                data: {
+                    _coquan: $('#coquanbanhanh').val(),
+                    _loaivb: $('#loaivanban').val(),
+                    _linhvuc: $('#linhvuc').val(),
+                    _tinhtrang: $('#tinhtrang').val(),
+                    _trichyeu: $('#trichyeu').val(),
+                    _trichyeu_slug: string_to_slug($('#trichyeu').val()),
+                    _sovb: $('#sovanban').val(),
+                    _kyhieu: $('#kyhieuvanban').val(),
+                    _ngaybanhanh: $('#ngaybanhanh').val(),
+                    _summary: $('#summary').val(),
+                },
+                type: 'POST',
+                datatype: 'json',
+                url: '/QuanLyVanBan/Save?id=0',
+                success: function (responsive) {
+                    if (responsive.status) {
+                        if (type == 0) {
+                            window.location.replace("/QuanLyVanBan");
+                        } else if (type == 1) {
+                            window.location.replace("/QuanLyVanBan/Create");
+                        } else if (type == 2) {
+                            window.location.replace("/QuanLyVanBan/Edit/" + responsive.newid);
+                        }
+                    } else {
+                        bootbox.alert(responsive.message);
+                    }
+                },
+                error: function (responsive) {
+                    bootbox.alert("Có lỗi xảy ra!");
+                }
+            });
+        }
+
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            if (charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
+            return true;
+        }
+        function update_slug(itm) {
+            $('#slug').val(string_to_slug($(itm).val().trim()));
+        }
+        function string_to_slug(str) {
+            if (str == null || typeof (str) == 'undefined') return '';
+            str = str.replace(/^\s+|\s+$/g, ''); // trim
+            str = str.toLowerCase();
+
+            // remove accents, swap ñ for n, etc
+            var from = "áàảãạâấầẩẫậăắằẳẵặđéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵÁÀẢÃẠÂẤẦẨẪẬĂẮẰẲẴẶĐÉÈẺẼẸÊẾỀỂỄỆÍÌỈĨỊÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢÚÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴàáäâèéëêìíïîòóöôùúüûñç·/_:;";
+            var to =   "aaaaaaaaaaaaaaaaadeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyyaaaaaaaaaaaaaaaaadeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyyaaaaeeeeiiiioooouuuunc-----";
+            for (var i = 0, l = from.length; i < l; i++) {
+                str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+            }
+
+            str = str.replace(/[^a-z0-9-,]/g, '') // remove invalid chars
+                .replace(/\s+/g, '-') // collapse whitespace and replace by -
+                .replace(/-+/g, '-') // collapse dashes
+                .replace('"', '');
+
+            return str;
+        }
+    </script>
+}
+@section actionMenu{
+    <div class="page-bar">
+        <ul class="page-breadcrumb">
+            <li><i class="fa fa-plus icon-home"></i> <i class="fa fa-angle-right"></i></li>
+            <li><a href="/QuanLyVanBan">Danh sách</a> <i class="fa fa-angle-right"></i></li>
+            <li><span>@ViewBag.Title</span></li>
+        </ul>
+        <div class="page-toolbar">
+            <div class="btn-group pull-right">
+                <button class="btn btn-success" onclick="submit(2);"><i class="fa fa-file-pdf-o"></i> Tải văn bản, tài liệu đính kèm</button>
+                <button class="btn btn-info" onclick="submit(1);"><i class="fa fa-save"></i> Lưu, nhập mới</button>
+                <button class="btn btn-primary" onclick="submit(0);"><i class="fa fa-save"></i> Lưu xong đóng</button>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="form-group col-md-3">
+            Cơ quan ban hành:
+            <select name="coquanbanhanh" id="coquanbanhanh" class="form-control select2">
+                <option value="0">-- Tất cả --</option>
+                @foreach (DataRow dr in ViewBag.DsCoQuanBh.Rows)
+                {
+                    <option value="@dr["id"]">@dr["TenDanhMuc"]</option>
+                }
+            </select>
+        </div>
+        <div class="form-group col-md-3">
+            Loại văn bản:
+            <select name="loaivanban" id="loaivanban" class="form-control select2">
+                <option value="0">-- Tất cả --</option>
+                @foreach (DataRow dr in ViewBag.DsLoaiVanBan.Rows)
+                {
+                    <option value="@dr["id"]">@dr["TenDanhMuc"]</option>
+                }
+            </select>
+        </div>
+        <div class="form-group col-md-3">
+            Lĩnh vực:
+            <select name="linhvuc" id="linhvuc" class="form-control select2">
+                <option value="0">-- Tất cả --</option>
+                @foreach (DataRow dr in ViewBag.DsLinhVuc.Rows)
+                {
+                    <option value="@dr["id"]">@dr["TenDanhMuc"]</option>
+                }
+            </select>
+        </div>
+        <div class="form-group col-md-3">
+            Tình trạng văn bản:
+            <select name="tinhtrang" id="tinhtrang" class="form-control select2">
+                <option value="1">Còn hiệu lực</option>
+                <option value="0">Hết hiệu lực</option>
+            </select>
+        </div>
+        <div class="form-group col-md-5">
+            Trích yếu: <span class="font-red">(*)</span>
+            <input name="trichyeu" id="trichyeu" class="form-control required" placeholder="Trích yếu" />
+        </div>
+        <div class="form-group col-md-2">
+            Số văn bản:
+            <input name="sovanban" id="sovanban" class="form-control" placeholder="Số văn bản" />
+        </div>
+        <div class="form-group col-md-2">
+            Ký hiệu văn bản:
+            <input name="kyhieuvanban" id="kyhieuvanban" class="form-control" placeholder="Ký hiệu văn bản" />
+        </div>
+        <div class="form-group col-md-3">
+            Ngày ban hành:
+            <input type="text" class="form-control date-picker" name="from" id="ngaybanhanh" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+        </div>
+        <div class="form-group col-md-12">
+            Thông tin thêm:
+            <textarea name="summary" id="summary" class="form-control"></textarea>
+        </div>
+    </div>
+</div>

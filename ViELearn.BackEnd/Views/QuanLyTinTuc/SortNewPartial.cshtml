@@ -1,0 +1,76 @@
+﻿@using System.Data
+@using ViELearn.BackEnd.Ultilities
+
+<div style="float:right" class="page-toolbar">
+    <div class="btn-group">
+        <a onclick="saveSortnews()"><span class="btn btn-fit-height btn-primary"> Lưu thứ tự bài viết</span></a>
+    </div>
+</div>
+<div class=" cover-table">
+    <table class="table table-striped table-hover table-bordered" id="dsBaiViet">
+        <thead>
+            <tr>
+                @*<th class="text-center mb-hidden" style="width: 10px;">STT</th>*@
+                <th class="text-center" style="width: 30px;margin:0px">Ảnh</th>
+                <th style="width:400px">Tên bài viết</th>
+            </tr>
+        </thead>
+        <tbody id="sortable-news">
+
+            @if (ViewBag.Data != null)
+            {
+                int stt = 0;
+                foreach (DataRow dr in ViewBag.Data.Rows)
+                {
+                    stt++;
+                    <tr style="cursor:pointer" data-id="@dr["id"]" data-cates="@dr["CatesId"]">
+                        @*<td class="text-center">@stt</td>*@
+                        <td class="text-center"><div style="background-image: url('@(dr["Thumbnail"])');background-size:cover;width:80px;height:80px;margin:auto;"></div></td>
+                        <td><a class="title-up">@dr["title"]</a><br /><br />
+                            <span class="info-other">
+                                <b>
+                                    Người tạo:
+                                    @(dr["CreatedBy"].ToString() == "0" ? "Quản trị viên" : dr["CreatedBy"].ToString()),
+                                    Ngày tạo: @Html.Raw(dr["CreatedAt"] != null ? (CLibs.UnixTimeStampToDateTimeOrgin(double.Parse(dr["CreatedAt"].ToString())).ToString("HH:mm:ss dd/MM/yyyy")) : "")
+                                </b>
+                            </span>
+                            <p> @dr["Summary"]</p>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+
+    </table>
+ 
+</div>
+
+<script>
+    function sortnewstable() {
+        $("#sortable-news").sortable();
+    };
+    function saveSortnews() {
+        var values = '';
+        $("#sortable-news tr").each(function (index) {
+            var id = $(this).data('id');
+            values += id + ": " + index + ';';
+        });
+        //console.log(values);
+        //return;
+        $.ajax({
+            data: {
+                values: values
+            },
+            type: 'POST',
+            datatype: 'json',
+            url: '/QuanLyTinTuc/SaveSort',
+            success: function () {
+                bootbox.alert("Cập nhật thành công!");
+            },
+            error: function (responsive) {
+                bootbox.alert("Có lỗi xảy ra!");
+            }
+        });
+    };
+    sortnewstable();
+</script>

@@ -1,0 +1,243 @@
+﻿@{
+    ViewBag.Title = "Danh sách Tin tức";
+    Layout = "~/Views/Shared/_Layoutv3.cshtml";
+}
+
+<link href="~/Scripts/bootstrap-table-master/dist/extensions/filter-control/bootstrap-table-filter-control.css" rel="stylesheet" type="text/css">
+
+<style>
+    input[type="search"]::-webkit-search-cancel-button {-webkit-appearance: searchfield-cancel-button;}
+</style>
+
+<script src="~/Scripts/bootstrap-table-master/dist/extensions/filter-control/bootstrap-table-filter-control.js"></script>
+<script src="~/UITheme/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+<script src="~/Scripts/jquery.ui.datepicker-vi-VN.js"></script>
+
+@section actionMenu{
+    <ul class="page-breadcrumb">
+        <li> <i class="icon-home"></i> <a href="/">Trang chủ</a> <i class="fa fa-angle-right"></i> </li>
+        <li> <span>Tổng biên tập</span> <i class="fa fa-angle-right"></i> </li>
+        <li> <span>@ViewBag.Title</span> </li>
+    </ul>
+    <div class="page-toolbar">
+    </div>
+}
+
+<script type="text/javascript">
+    var jLstCategory = @Html.Raw(Json.Encode(ViewBag.lstCategory));
+    var jLstHotNew = @Html.Raw(Json.Encode(ViewBag.lstHotNew));
+    var jLstStatusNew = @Html.Raw(Json.Encode(ViewBag.lstStatusNew));
+    var jLstCategoryType = @Html.Raw(Json.Encode(ViewBag.lstCategoryType));
+</script>
+
+@*<script src="~/Scripts/bootstrap-table-master/dist/extensions/toolbar/bootstrap-table-toolbar.js"></script>*@
+
+<div class="row">
+    <div class="portlet">
+        <div class="portlet-body">
+            <div class="row">
+                <div class="col-md-2">
+                    <a href="@Url.Action("ShowDetailNew", "NewsManage", new { idNews = 0 })" class="btn blue"><i class="fa fa-plus"></i>Thêm mới</a>
+                </div>
+
+                <div class="col-md-10">
+                    <button type="button" class="btn green-steel pull-right" style="margin-left: 5px" id="btnGetDataMany" disabled><i class="fa fa-magic"></i>Tải ảnh&tài liệu trong tin lên server</button>
+                    @*<a href="@Url.Action("ShowDetailNew", "NewsManage", new { idNews = 0 })" class="btn green-steel pull-right" style="margin-left: 5px"><i class="fa fa-flag" id="btnPublishMany"></i>Xuất bản</a>
+                    <a href="@Url.Action("ShowDetailNew", "NewsManage", new { idNews = 0 })" class="btn green-steel pull-right" style="margin-left: 5px"><i class="fa fa-check" id="btnApporveMany"></i>Duyệt</a>
+                    <a href="@Url.Action("ShowDetailNew", "NewsManage", new { idNews = 0 })" class="btn green-steel pull-right" style="margin-left: 5px"><i class="fa fa-share" id="btnForwardMany"></i>Chuyển</a>*@
+                </div>
+            </div>            
+
+            <table id="tableNews"                   
+                   data-toggle="tableNews"
+                   data-show-refresh="true"   
+                   data-show-columns="true"                
+                   data-search="true"
+                   data-id-table="advancedTable"
+                   data-filter-control="true">
+                <thead>
+                    <tr>
+                        <th data-field="state" data-checkbox="true"></th>
+                        <th data-field="ImageUrl" data-align="center" data-sortable="true" data-formatter="operateImage" data-searchable="false">Ảnh</th>
+                        <th data-field="Title" data-align="left" data-sortable="true" data-formatter="operateName" data-filter-control="input">Tiêu đề</th>
+                        <th data-field="CategoryName" data-align="left" data-sortable="true" data-filter-control="select" data-selector="jLstCategory">Chuyên mục</th>
+                        <th data-field="CategoryType" data-formatter="operateCategoryType" data-align="left" data-sortable="true" data-filter-control="select" data-selector="jLstCategoryType">Loại chuyên mục</th>
+                        <th data-field="Type" data-align="left" data-formatter="operateType" data-sortable="true" data-filter-control="select" data-selector="jLstHotNew">Loại tin</th>
+                        <th data-field="UserCreatedName" data-align="left" data-sortable="true" data-filter-control="input">Người tạo</th>
+                        <th data-field="CreatedAt" data-formatter="operateDateTime" data-sortable="true" data-align="center" data-filter-control="datepicker" data-filter-datepicker-options='{"autoclose":true, "clearBtn": true, "todayHighlight": true, "orientation": "bottom", "format": "dd/mm/yyyy"}'>Ngày tạo</th>                        
+                        <th data-field="Status" data-formatter="operateStatus" data-align="center" data-filter-control="select" data-selector="jLstStatusNew">Trạng Thái</th>
+                        <th data-field="Id" data-formatter="operateDelete" data-align="center" data-searchable="false"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var tableViewControl = $('#tableNews');
+    var $btnGetDataMany = $('#btnGetDataMany');
+    tableViewControl.bootstrapTable({
+        method: "post",
+        queryParams: "postQueryParams",
+        url: "@Url.Action("GetListNews", "NewsManage")",
+        pagination: "true",
+        sidePagination: "client",
+        pageSize: 10,
+        pageList: "[5,10,15]",
+        select: true
+    });
+
+    tableViewControl.on('check.bs.table uncheck.bs.table ' +
+    'check-all.bs.table uncheck-all.bs.table', function () {
+        $btnGetDataMany.prop('disabled', !tableViewControl.bootstrapTable('getSelections').length);
+        selections = getIdSelections();
+    });
+
+    function getIdSelections() {
+        return $.map(tableViewControl.bootstrapTable('getSelections'), function (row) {
+            return row.Id
+        });
+    }
+
+    $btnGetDataMany.click(function () {
+                    var ids = getIdSelections();                    
+                    var dataPostGetData = JSON.stringify({ 'lstNewsGetData': ids });
+
+                    var dialogWaiting = bootbox.dialog({
+                        title: 'Tải ảnh & tài liệu có trong tin tức lên server',
+                        message: '<p><i class="fa fa-spin fa-spinner"></i> Xin chờ trong giây lát...</p>'
+                    });
+
+                    $.ajax({
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        type: 'POST',
+                        url: "../NewsManage/GetDataNews",
+                        data: dataPostGetData,
+                        success: function (resultData) {                                                       
+                            
+                            if (resultData.Msg == "Success") {
+                                dialogWaiting.init(function(){
+                                    dialogWaiting.find('.bootbox-body').html('Đã thực hiện xong!');
+                                });
+                                tableViewControl.bootstrapTable('uncheckAll');
+                                $btnGetDataMany.prop('disabled', true);                                
+                            }
+                            else
+                            {
+                                dialogWaiting.init(function(){
+                                    dialogWaiting.find('.bootbox-body').html('Có lỗi xảy ra, vui lòng thực hiện lại!');
+                                });
+                            }
+                        },
+                        failure: function (response) {
+                            dialogWaiting.init(function(){
+                                dialogWaiting.find('.bootbox-body').html('Có lỗi xảy ra, vui lòng thực hiện lại!');
+                            });
+                        }
+                    });
+    });
+
+    function postQueryParams(params) {
+        params.IPS = 1; // 1 client pagination - 2 server pagination        
+        return params;
+    }
+
+    function operateName(value, row, index) {
+        return [
+                '<a href="../NewsManage/ShowDetailNew?idNews='+row.Id+'" class="openModalProject">'+row.Title+'</a>'
+        ].join('');
+    }
+
+    function operateType(value, row, index) {
+        var result = $.grep(jLstHotNew, function(e){ return e.Value == value; });
+        if (result[0] != undefined) return result[0].Text;
+        else
+            return "";
+    }
+
+    function operateDateTime(value, row, index) {
+        if (value != null)
+        {
+            var dateString = value.substr(6);
+            var currentTime = new Date(parseInt(dateString ));
+            var month = ('0' + (currentTime.getMonth()+1)).slice(-2);
+            var day = ('0' + currentTime.getDate()).slice(-2);            
+            var year = currentTime.getFullYear();
+            var date = day + "/" + month + "/" + year;
+            return date;
+        }
+        else
+        {
+            return "";
+        }
+    }
+
+    function operateStatus(value, row, index) {
+        var result = $.grep(jLstStatusNew, function(e){ return e.Value == value; });
+        if (result[0] != undefined) return result[0].Text;
+        else
+            return "";
+    }
+
+    function operateCategoryType(value,row,index){
+        var result = $.grep(jLstCategoryType, function(e){ return e.Value == value; });
+        if (result[0] != undefined) return result[0].Text;
+        else
+            return "";
+    }
+
+    function operateDelete(value, row, index) {
+        return [
+                '<i class="fa fa-trash-o btn-save" id="'+value+'" data-id="'+value+'" style="color:orangered;cursor:pointer;" onclick="DeleteNew(this)">',
+                '</i>'
+        ].join('');
+    }
+
+    function operateImage(value, row, index) {
+
+        if (value != null)
+            return [
+                    '<img id="imgThumbnailPreview" style="width: 100px;"  src="'+value+'">'
+            ].join('');
+        else
+            return "";
+    }
+
+    function DeleteNew(itm) {
+        bootbox.confirm({
+            message: "Bạn chắc chắn muốn xóa?",
+            buttons: {
+                confirm: {
+                    className: 'btn-danger'
+                },
+                cancel: {
+                    className: 'btn-success'
+                }
+            },
+            callback: function (result) {
+                if (result == true) {
+                    $.ajax({
+                        type: 'post',
+                        url: '@Url.Action("DeleteNew", "NewsManage")',
+                        ajaxasync: true,
+                        data: { idNews : $(itm).attr('data-id') },
+                        success: function (data) {
+                            if (data == "Success") {
+                                tableViewControl.bootstrapTable('refresh');
+                                bootbox.alert("Xóa dữ liệu thành công!");
+                            }
+                            else {
+                                bootbox.alert(data);
+                            }
+                        },
+                        error: function (data) {
+                            bootbox.alert("Có lỗi xảy ra!");
+                        }
+                    });
+                }
+            }
+        });
+    }
+</script>
